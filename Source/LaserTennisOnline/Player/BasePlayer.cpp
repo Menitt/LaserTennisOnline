@@ -23,7 +23,6 @@ Super(ObjectInitializer.SetDefaultSubobjectClass<UCustomCharacterMovementCompone
 	// Character Movement Component
 	CustomCharacterMovementComponent = Cast<UCustomCharacterMovementComponent>(GetCharacterMovement());
 	CustomCharacterMovementComponent->SetIsReplicated(true);
-	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 0.f, 350.0f);
 	GetCharacterMovement()->JumpZVelocity = 700.f;
 	GetCharacterMovement()->AirControl = 0.35f;
@@ -40,7 +39,7 @@ Super(ObjectInitializer.SetDefaultSubobjectClass<UCustomCharacterMovementCompone
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
-
+	
 }
 
 // Called when the game starts or when spawned
@@ -56,8 +55,9 @@ void ABasePlayer::BeginPlay()
 		}
 	}
 
-	this->bUseControllerRotationYaw = 0;
-
+	// Let Character Movement Component handles Pawn rotation
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+	bUseControllerRotationYaw = false;
 }
 
 #pragma endregion
@@ -86,6 +86,8 @@ void ABasePlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 		this, &ABasePlayer::jump);
 		enhancedInputComponent->BindAction(pauseGameAction, ETriggerEvent::Started, 
 		this, &ABasePlayer::pauseGame);
+		enhancedInputComponent->BindAction(dodgeAction, ETriggerEvent::Started, 
+		CustomCharacterMovementComponent, &UCustomCharacterMovementComponent::DashPressed);
 	}
 
 
@@ -94,14 +96,10 @@ void ABasePlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 void ABasePlayer::move(const FInputActionValue &value)
 {
 	FVector2D moveValue = value.Get<FVector2D>();	
-	AddMovementInput(FVector(1,0,0),moveValue.X*10);
-	AddMovementInput(FVector(0,1,0),moveValue.Y*10);
+	AddMovementInput(FVector(1,0,0),moveValue.X);
+	AddMovementInput(FVector(0,1,0),moveValue.Y);
 
-	FRotator newRotation = FVector(moveValue.X,moveValue.Y,0).Rotation();
-	FRotator rotationOffset = newRotation-GetActorRotation();
-	
-	FRotator localRotationOffset = FRotator(GetActorTransform().InverseTransformRotation(FQuat(rotationOffset)));
-	
+	// Update Controller rotation so that character Rotates with while moving
 	if (Controller)
 	{
 		Controller->SetControlRotation(FVector(moveValue.X,moveValue.Y,0).Rotation());
@@ -118,5 +116,7 @@ void ABasePlayer::pauseGame(const FInputActionValue& value)
 {
 	return;
 }
+
+
 
 #pragma endregion

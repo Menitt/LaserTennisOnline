@@ -183,7 +183,7 @@ void UCustomCharacterMovementComponent::PerformDash()
     float DashImpulse = (MovementMode == MOVE_Falling) ? DashImpulseAir : DashImpulseLand; 
 
 	FVector DashDirection = (Acceleration.IsNearlyZero() ? UpdatedComponent->GetForwardVector() : Acceleration).GetSafeNormal2D();
-    DashDirection += FVector::UpVector * .1f;
+    DashDirection += FVector::UpVector * DashUpwardScaler;
     Velocity = DashImpulse * DashDirection;
 
     FQuat NewRotation = FRotationMatrix::MakeFromXZ(DashDirection, FVector::UpVector).ToQuat();

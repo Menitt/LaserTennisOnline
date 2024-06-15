@@ -63,6 +63,9 @@ private:
 	class UInputAction* jumpAction;
 	UPROPERTY(EditDefaultsOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	class UInputAction* pauseGameAction;
+	UPROPERTY(EditDefaultsOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	class UInputAction* dodgeAction;
+	
 
 	// Input Binding Functions
 	void move(const FInputActionValue& value);

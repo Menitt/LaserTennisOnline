@@ -84,8 +84,9 @@ private:
 
 	// Dash
 	UPROPERTY(EditDefaultsOnly) float DashImpulseLand=1200.f;
-	UPROPERTY(EditDefaultsOnly) float DashImpulseAir=500.f;
+	UPROPERTY(EditDefaultsOnly) float DashImpulseAir=900.f;
 	UPROPERTY(EditDefaultsOnly) float DashCooldownDuration=1.f;
+	UPROPERTY(EditDefaultsOnly) float DashUpwardScaler=0.3f;
 	UPROPERTY(EditDefaultsOnly) float AuthDashCooldownDuration=.9f; // (Anti-cheat)
 	// UPROPERTY(EditDefaultsOnly) UAnimMontage* DashMontage; // (Animation)
 
