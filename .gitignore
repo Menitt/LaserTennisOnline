@@ -1,8 +1,10 @@
 # Ignore all folders except Source and Content
-/.rsp
-/.vscode
-/Binaries
-/Config
-/DerivedDataCache
-/Intermediate
-/Saved
+.vscode/
+Binaries/
+Config/
+DerivedDataCache/
+Intermediate/
+Saved/
+Content/*
+
+*.uproject
