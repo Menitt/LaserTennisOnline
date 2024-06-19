@@ -8,6 +8,8 @@ public class LaserTennisOnline : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
+		PrivateIncludePaths.AddRange(new string [] {"LaserTennisOnline\\GameActors", "LaserTennisOnline\\GameModes", "LaserTennisOnline\\Player"});
+
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
