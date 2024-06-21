@@ -17,17 +17,22 @@ class LASERTENNISONLINE_API ALaserTennisGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 
+
+virtual void BeginPlay() override;
+
+
+
 //
 // Gameplay Actors Containers
 //
 private:
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<AActor> laserGeneratorClass;
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	TSubclassOf<ALaserGenerator> laserGeneratorClass;
 	TArray<AActor*> laserGenerators1;
 	TArray<AActor*> laserGenerators2;
 
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<AActor> laserActivationPlatformClass;
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	TSubclassOf<ALaserActivationPlatform> laserActivationPlatformClass;
 	TArray<AActor*> laserPlatforms1; 
 	TArray<AActor*> laserPlatforms2;
 
