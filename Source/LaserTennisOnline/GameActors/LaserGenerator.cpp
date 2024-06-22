@@ -3,6 +3,7 @@
 
 #include "LaserGenerator.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/SceneComponent.h"
 
 // Sets default values
 ALaserGenerator::ALaserGenerator()
@@ -10,8 +11,15 @@ ALaserGenerator::ALaserGenerator()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
-	RootComponent = mesh;
+	//
+	// Components
+	//
+	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
+	RootComponent = Mesh;
+	LaserSpawnPoint = CreateDefaultSubobject<USceneComponent>("Laser Spawn Point");
+
+	LaserSpawnPoint->SetupAttachment(RootComponent);
+
 }
 
 // Called when the game starts or when spawned
@@ -28,3 +36,15 @@ void ALaserGenerator::Tick(float DeltaTime)
 
 }
 
+void ALaserGenerator::SpawnLaser()
+{
+	UE_LOG(LogTemp, Display, TEXT("Inside Laser Generator->Spawning Laser!"));
+
+	UWorld* World = GetWorld();
+	if (World)
+	{	
+		World->SpawnActor<AActor>(LaserRayClass, LaserSpawnPoint->GetComponentLocation(), 
+		LaserSpawnPoint->GetComponentRotation());
+	}
+
+}

@@ -44,6 +44,10 @@ void ALaserActivationPlatform::BeginPlay()
 
 	baseMesh->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 
+	if (Tags.Num() > 0) 
+	{
+		PlayerTag = Tags[0];
+	}
 }
 
 // Called every frame
@@ -94,6 +98,9 @@ AActor *OtherActor, UPrimitiveComponent *OtherComp, int32 OtherBodyIndex, bool b
 		FTimerHandle DummyHandle;
 		GetWorldTimerManager().SetTimer(DummyHandle, this, &ThisClass::ResetPlatform, DeactivationTime/2, false);
 
+		// Send Spawn Laser Request
+		SendSpawnLaserRequest();
+
 	}
 }
 
@@ -108,4 +115,13 @@ void ALaserActivationPlatform::StopMovement()
 {
 	bShouldMove = false;
 	bIsReady = true;
+}
+
+
+void ALaserActivationPlatform::SendSpawnLaserRequest()
+{
+	if (GameMode)
+	{
+		GameMode->SpawnLaserRequest(PlayerTag);
+	}
 }

@@ -4,19 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "LaserRay.h"
-
-#include "LaserGenerator.generated.h"
-
+#include "LaserRay.generated.h"
 
 UCLASS()
-class LASERTENNISONLINE_API ALaserGenerator : public AActor
+class LASERTENNISONLINE_API ALaserRay : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	ALaserGenerator();
+	ALaserRay();
 
 protected:
 	// Called when the game starts or when spawned
@@ -26,6 +23,11 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+protected:
+// Destructor
+	virtual void Destroyed() override;
+
+
 //
 // Components
 //
@@ -34,14 +36,19 @@ private:
 	class UStaticMeshComponent* Mesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"));
-	class USceneComponent* LaserSpawnPoint;
+	class UProjectileMovementComponent* ProjectileComp;
 
-	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<ALaserRay> LaserRayClass;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"));
+	class UBoxComponent* CollisionComponent;
 
+//
+// Gameplay
+//
+// Bind to OnComponentHit delegate.
+	UFUNCTION(Category="Projectile")
+    void OnHitPlayer(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
-public:
-	void SpawnLaser();
+	
 
 
 };

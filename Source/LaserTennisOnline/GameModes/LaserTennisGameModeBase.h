@@ -42,4 +42,10 @@ private:
 private:
 	void SetupGame();
 
+//
+// Gameplay
+//
+public:
+	void SpawnLaserRequest(FName PlayerTag);
+
 };

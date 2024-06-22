@@ -62,6 +62,9 @@ float DeactivationMovementOffset = 100;
 
 class ALaserTennisGameModeBase* GameMode;
 
+FName PlayerTag;
+void SendSpawnLaserRequest();
+
 
 
 };

@@ -4,6 +4,8 @@
 #include "LaserTennisGameModeBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
+#include "Kismet/KismetMathLibrary.h"
+
 
 void ALaserTennisGameModeBase::SetupGame()
 {
@@ -38,4 +40,31 @@ void ALaserTennisGameModeBase::BeginPlay()
     Super::BeginPlay();
 
     SetupGame();
+}
+
+
+void ALaserTennisGameModeBase::SpawnLaserRequest(FName PlayerTag)
+{
+    UE_LOG(LogTemp, Display, TEXT("Inside GameMode->SpawnLaserRequest"));
+
+    // Pick one generator randomly:
+    int nGenerators1 = laserGenerators1.Num();
+    int nGenerators2 = laserGenerators2.Num();
+    ALaserGenerator* Generator;
+
+    if (PlayerTag == "1")
+    {
+        int RandInt = UKismetMathLibrary::RandomInteger(nGenerators2);
+        Generator = Cast<ALaserGenerator>(laserGenerators2[RandInt]);
+    }
+    else 
+    {
+        int RandInt = UKismetMathLibrary::RandomInteger(nGenerators1);
+        Generator = Cast<ALaserGenerator>(laserGenerators1[RandInt]);
+    }
+
+    if (Generator)
+    {
+        Generator->SpawnLaser();
+    }
 }
