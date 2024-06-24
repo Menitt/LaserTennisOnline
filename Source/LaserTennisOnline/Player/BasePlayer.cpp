@@ -11,6 +11,8 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "CustomCharacterMovementComponent.h"
+#include "HealthComponent.h"
+
 
 #pragma region Constructor & Initialization
 
@@ -39,6 +41,10 @@ Super(ObjectInitializer.SetDefaultSubobjectClass<UCustomCharacterMovementCompone
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
+
+
+	// Heath Component
+	HealthComponent = CreateDefaultSubobject<UHealthComponent>("Health Component");
 	
 }
 
@@ -118,5 +124,14 @@ void ABasePlayer::pauseGame(const FInputActionValue& value)
 }
 
 
+#pragma endregion
+
+
+#pragma region Gameplay
+
+void ABasePlayer::CustomTakeDamage()
+{
+	HealthComponent->TakeDamage();
+}
 
 #pragma endregion

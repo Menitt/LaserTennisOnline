@@ -40,6 +40,9 @@ private:
 	class USpringArmComponent* CameraBoom;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true")) 
 	class UCameraComponent* FollowCamera;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Health, meta = (AllowPrivateAccess = "true")) 
+	class UHealthComponent* HealthComponent;
 
 //
 // Constructor
@@ -71,5 +74,11 @@ private:
 	void move(const FInputActionValue& value);
 	void jump(const FInputActionValue& value);
 	void pauseGame(const FInputActionValue& value);
+
+//
+// Gameplay
+//
+public:
+	void CustomTakeDamage();
 
 };

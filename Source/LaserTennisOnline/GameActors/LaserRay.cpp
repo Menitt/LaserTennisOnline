@@ -59,6 +59,8 @@ void ALaserRay::OnHitPlayer(UPrimitiveComponent *HitComponent, AActor *OtherActo
 	{
 		UE_LOG(LogTemp, Warning, TEXT("LaserRay->OnHitPlayer"));
 
+		Player->CustomTakeDamage();
+
 		Destroy();
 	}
 
