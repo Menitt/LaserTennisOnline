@@ -9,6 +9,8 @@
 #include "Kismet\GameplayStatics.h"
 #include "LaserTennisGameModeBase.h"
 #include "DrawDebugHelpers.h"
+#include "Net/UnrealNetwork.h"
+#include "Engine/Engine.h"
 
 
 // Sets default values
@@ -16,6 +18,8 @@ ALaserActivationPlatform::ALaserActivationPlatform()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	bReplicates = true;
 
 	// Components
 	baseMesh = CreateDefaultSubobject<UStaticMeshComponent>("Base Mesh");
@@ -32,16 +36,22 @@ void ALaserActivationPlatform::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// Bind Function to Delegate and Setup Movement target
+	bReplicates = true;
+	
+	// Run on all Clients
 	if (overlappingComp)
 	{
+		InitialLocation = GetActorLocation();
 		overlappingComp->OnComponentBeginOverlap.AddDynamic(this,&ThisClass::OnBeginOverlap);
 		overlappingComp->OnComponentEndOverlap.AddDynamic(this,&ThisClass::OnEndOverlap);
-		InitialLocation = GetActorLocation();
+	}
+
+	// Run only on Server
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		GameMode = Cast<ALaserTennisGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
 	}
 	
-	GameMode = Cast<ALaserTennisGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
-
 	baseMesh->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 
 	if (Tags.Num() > 0) 
@@ -57,10 +67,9 @@ void ALaserActivationPlatform::Tick(float DeltaTime)
 
 	if (bShouldMove)
 	{
-		SetActorLocation(FMath::VInterpConstantTo(GetActorLocation(),Target,
+		SetActorLocation(FMath::VInterpConstantTo(GetActorLocation(),InitialLocation-FVector(0.,0.,zTargetOffset),
 		DeltaTime,DeactivationMovementOffset/DeactivationTime*2));
 	}
-
 
 	//
 	// Debug
@@ -72,12 +81,18 @@ void ALaserActivationPlatform::Tick(float DeltaTime)
 
 void ALaserActivationPlatform::OnEndOverlap(UPrimitiveComponent *OverlappedComponent, AActor *OtherActor, UPrimitiveComponent *OtherComp, int32 OtherBodyIndex)
 {
-	ABasePlayer* player = Cast<ABasePlayer>(OtherActor);
 	
-	if (player and !bIsPlayerReset and !bIsReady)
+	// Do nothing if not on Server
+
+	if (GetLocalRole() == ROLE_Authority)
 	{
-		bIsPlayerReset = true;
-		UE_LOG(LogTemp, Warning, TEXT("End Overlap"));
+		ABasePlayer* player = Cast<ABasePlayer>(OtherActor);
+
+		if (player and !bIsPlayerReset and !bIsReady)
+		{
+			bIsPlayerReset = true;
+			UE_LOG(LogTemp, Warning, TEXT("End Overlap"));
+		}
 	}
 }
 
@@ -85,28 +100,34 @@ void ALaserActivationPlatform::OnEndOverlap(UPrimitiveComponent *OverlappedCompo
 void ALaserActivationPlatform::OnBeginOverlap(UPrimitiveComponent *OverlappedComponent, 
 AActor *OtherActor, UPrimitiveComponent *OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult)
 {
-	ABasePlayer* player = Cast<ABasePlayer>(OtherActor);
 	
-	if (player and bIsPlayerReset and bIsReady)
+	// Do nothing if not on Server
+
+	if (GetLocalRole() == ROLE_Authority)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Start Overlap"));
-	
-		bIsPlayerReset = false;
-		bIsReady = false;
-		Target = InitialLocation - FVector::UpVector*DeactivationMovementOffset;
-		bShouldMove = true;
-		FTimerHandle DummyHandle;
-		GetWorldTimerManager().SetTimer(DummyHandle, this, &ThisClass::ResetPlatform, DeactivationTime/2, false);
+		ABasePlayer* player = Cast<ABasePlayer>(OtherActor);
+		
+		if (player and bIsPlayerReset and bIsReady)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Start Overlap"));
+		
+			bIsPlayerReset = false;
+			bIsReady = false;
+			zTargetOffset = DeactivationMovementOffset;
+			bShouldMove = true;
+			FTimerHandle DummyHandle;
+			GetWorldTimerManager().SetTimer(DummyHandle, this, &ThisClass::ResetPlatform, DeactivationTime/2, false);
 
-		// Send Spawn Laser Request
-		SendSpawnLaserRequest();
+			// Send Spawn Laser Request
+			SendSpawnLaserRequest();
 
+		}
 	}
 }
 
 void ALaserActivationPlatform::ResetPlatform()
 {
-	Target = InitialLocation;
+	zTargetOffset = 0;
 	FTimerHandle DummyHandle;
 	GetWorldTimerManager().SetTimer(DummyHandle, this, &ThisClass::StopMovement, DeactivationTime/2+0.1f, false);
 }
@@ -123,5 +144,23 @@ void ALaserActivationPlatform::SendSpawnLaserRequest()
 	if (GameMode)
 	{
 		GameMode->SpawnLaserRequest(PlayerTag);
+	}
+}
+
+void ALaserActivationPlatform::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ALaserActivationPlatform, bShouldMove);
+	DOREPLIFETIME(ALaserActivationPlatform, bIsReady);
+	DOREPLIFETIME(ALaserActivationPlatform, bIsPlayerReset);
+	DOREPLIFETIME(ALaserActivationPlatform, zTargetOffset);
+}
+
+void ALaserActivationPlatform::OnRep_ShouldMove()
+{
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, "Executing OnRep_ShouldMove");
 	}
 }
