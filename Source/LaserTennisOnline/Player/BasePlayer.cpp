@@ -12,6 +12,8 @@
 #include "EnhancedInputSubsystems.h"
 #include "CustomCharacterMovementComponent.h"
 #include "HealthComponent.h"
+#include "Net/UnrealNetwork.h"
+#include "Engine/Engine.h"
 
 
 #pragma region Constructor & Initialization
@@ -36,7 +38,7 @@ Super(ObjectInitializer.SetDefaultSubobjectClass<UCustomCharacterMovementCompone
 	// Camera Components
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
-	CameraBoom->TargetArmLength = 800.0f;
+	CameraBoom->TargetArmLength = 1600.0f;
 	CameraBoom->bUsePawnControlRotation = false;
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
@@ -129,7 +131,7 @@ void ABasePlayer::pauseGame(const FInputActionValue& value)
 
 #pragma region Gameplay
 
-void ABasePlayer::CustomTakeDamage()
+void ABasePlayer::CustomTakeDamage_Implementation()
 {
 	HealthComponent->TakeDamage();
 }

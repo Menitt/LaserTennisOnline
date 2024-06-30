@@ -41,6 +41,7 @@ private:
 
 
 public:
+	UFUNCTION(Client,Reliable)
 	void SpawnLaser();
 
 

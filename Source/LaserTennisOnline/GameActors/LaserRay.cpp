@@ -13,6 +13,9 @@ ALaserRay::ALaserRay()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	// Replication
+	bReplicates = true;
+
 	// Components
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");	
 	ProjectileComp = CreateDefaultSubobject<UProjectileMovementComponent>("Projectile Component");
@@ -53,15 +56,20 @@ void ALaserRay::Tick(float DeltaTime)
 
 void ALaserRay::OnHitPlayer(UPrimitiveComponent *HitComponent, AActor *OtherActor, UPrimitiveComponent *OtherComp, FVector NormalImpulse, const FHitResult &Hit)
 {
-	ABasePlayer* Player = Cast<ABasePlayer>(OtherActor);
 
-	if (Player)
+	// Do nothing if not Server (~ let server decide)
+	if (GetLocalRole() == ROLE_Authority)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("LaserRay->OnHitPlayer"));
+		ABasePlayer* Player = Cast<ABasePlayer>(OtherActor);
 
-		Player->CustomTakeDamage();
+		if (Player)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("LaserRay->OnHitPlayer"));
 
-		Destroy();
+			Player->CustomTakeDamage();
+
+			Destroy();
+		}
 	}
 
 }

@@ -81,7 +81,6 @@ void ALaserActivationPlatform::Tick(float DeltaTime)
 
 void ALaserActivationPlatform::OnEndOverlap(UPrimitiveComponent *OverlappedComponent, AActor *OtherActor, UPrimitiveComponent *OtherComp, int32 OtherBodyIndex)
 {
-	
 	// Do nothing if not on Server
 
 	if (GetLocalRole() == ROLE_Authority)

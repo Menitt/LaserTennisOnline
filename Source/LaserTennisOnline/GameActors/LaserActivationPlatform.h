@@ -71,6 +71,7 @@ virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimePr
 UFUNCTION()
 void OnRep_ShouldMove();
 
+
 FName PlayerTag;
 void SendSpawnLaserRequest();
 

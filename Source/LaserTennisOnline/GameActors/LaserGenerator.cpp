@@ -4,6 +4,9 @@
 #include "LaserGenerator.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SceneComponent.h"
+#include "Net/UnrealNetwork.h"
+#include "Engine/Engine.h"
+
 
 // Sets default values
 ALaserGenerator::ALaserGenerator()
@@ -36,7 +39,7 @@ void ALaserGenerator::Tick(float DeltaTime)
 
 }
 
-void ALaserGenerator::SpawnLaser()
+void ALaserGenerator::SpawnLaser_Implementation()
 {
 	UE_LOG(LogTemp, Display, TEXT("Inside Laser Generator->Spawning Laser!"));
 

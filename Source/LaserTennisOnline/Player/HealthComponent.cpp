@@ -48,5 +48,8 @@ void UHealthComponent::TakeDamage()
 
 void UHealthComponent::HandleCharacterDeath()
 {
-	UE_LOG(LogTemp, Warning, TEXT("HealthComponent->HandleCharacterDeath"));
+	if (GEngine and GetLocalRole()==ROLE_Authority)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, "HealthComponent->HandleCharacterDeath");
+	}
 }

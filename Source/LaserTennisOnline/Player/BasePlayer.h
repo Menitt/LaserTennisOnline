@@ -79,6 +79,7 @@ private:
 // Gameplay
 //
 public:
+	UFUNCTION(Client, Reliable)
 	void CustomTakeDamage();
 
 };
