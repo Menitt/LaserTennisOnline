@@ -118,6 +118,11 @@ void ABasePlayer::jump(const FInputActionValue& value)
 {
 	bool jumpNow = value.Get<bool>();
 	if(jumpNow) ACharacter::Jump();
+
+	if (GetNetMode() == NM_ListenServer and GEngine and GetLocalRole() == ROLE_Authority)
+	{
+		GEngine->AddOnScreenDebugMessage(12,2,FColor::Blue,"ABasePlayer->jump");
+	}
 } 
 
 void ABasePlayer::pauseGame(const FInputActionValue& value)
@@ -135,5 +140,13 @@ void ABasePlayer::CustomTakeDamage_Implementation()
 {
 	HealthComponent->TakeDamage();
 }
+
+
+void ABasePlayer::GameOver_Implementation(bool bWonGame)
+{
+	return;
+}
+
+
 
 #pragma endregion

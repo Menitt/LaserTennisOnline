@@ -2,6 +2,10 @@
 
 
 #include "HealthComponent.h"
+#include "LaserTennisGameModeBase.h"
+#include "Kismet\GameplayStatics.h"
+#include "BasePlayer.h"
+
 
 // Sets default values for this component's properties
 UHealthComponent::UHealthComponent()
@@ -21,6 +25,7 @@ void UHealthComponent::BeginPlay()
 
 	Health = MaxHealth;
 	
+	PlayerOwner = Cast<ABasePlayer>(GetOwner());
 }
 
 
@@ -48,8 +53,13 @@ void UHealthComponent::TakeDamage()
 
 void UHealthComponent::HandleCharacterDeath()
 {
-	if (GEngine and GetLocalRole()==ROLE_Authority)
+	if (GEngine and PlayerOwner and PlayerOwner->GetLocalRole()==ROLE_Authority)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, "HealthComponent->HandleCharacterDeath");
+		ALaserTennisGameModeBase* GameMode = Cast<ALaserTennisGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
+		if (GameMode)
+		{
+			GameMode->GameOver();
+		}
 	}
 }

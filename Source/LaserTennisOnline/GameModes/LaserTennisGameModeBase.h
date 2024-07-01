@@ -48,4 +48,6 @@ private:
 public:
 	void SpawnLaserRequest(FName PlayerTag);
 
+	void GameOver();
+
 };

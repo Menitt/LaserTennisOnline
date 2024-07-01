@@ -5,7 +5,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
 #include "Kismet/KismetMathLibrary.h"
-
+#include "BasePlayer.h"
 
 void ALaserTennisGameModeBase::SetupGame()
 {
@@ -66,5 +66,21 @@ void ALaserTennisGameModeBase::SpawnLaserRequest(FName PlayerTag)
     if (Generator)
     {
         Generator->SpawnLaser();
+    }
+}
+
+
+void ALaserTennisGameModeBase::GameOver()
+{
+    TArray<AActor*> Players;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABasePlayer::StaticClass(), Players);
+
+    for (AActor* player : Players)
+    {
+        ABasePlayer* BasePlayer = Cast<ABasePlayer>(player);
+        if (BasePlayer)
+        {
+            BasePlayer->GameOver(true);
+        }
     }
 }

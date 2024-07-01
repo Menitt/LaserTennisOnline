@@ -82,4 +82,6 @@ public:
 	UFUNCTION(Client, Reliable)
 	void CustomTakeDamage();
 
+	UFUNCTION(Client, Reliable)
+	void GameOver(bool bWonGame);
 };

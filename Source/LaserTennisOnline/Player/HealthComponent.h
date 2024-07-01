@@ -31,6 +31,8 @@ private:
 
 	int Health;
 
+	class ABasePlayer* PlayerOwner;
+
 public:
 
 	void TakeDamage();
