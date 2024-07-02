@@ -75,6 +75,8 @@ void ALaserTennisGameModeBase::GameOver()
     TArray<AActor*> Players;
     UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABasePlayer::StaticClass(), Players);
 
+    GEngine->AddOnScreenDebugMessage(-1,3.,FColor::Red,"ALaserTennisGameModeBase->GameOver");
+    
     for (AActor* player : Players)
     {
         ABasePlayer* BasePlayer = Cast<ABasePlayer>(player);

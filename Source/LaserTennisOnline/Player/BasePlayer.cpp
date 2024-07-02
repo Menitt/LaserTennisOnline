@@ -144,7 +144,17 @@ void ABasePlayer::CustomTakeDamage_Implementation()
 
 void ABasePlayer::GameOver_Implementation(bool bWonGame)
 {
-	return;
+	if (IsLocallyControlled())
+	{
+		if (bWonGame)
+		{
+			GEngine->AddOnScreenDebugMessage(-1,3.,FColor::Red,"VICTORY!");		
+		}
+		else
+		{
+			GEngine->AddOnScreenDebugMessage(-1,3.,FColor::Red,"DEFEAT!");
+		}
+	}
 }
 
 

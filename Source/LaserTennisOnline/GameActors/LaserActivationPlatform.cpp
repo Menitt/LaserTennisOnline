@@ -38,12 +38,6 @@ void ALaserActivationPlatform::BeginPlay()
 
 	bReplicates = true;
 
-	if (GetLocalRole() == ROLE_Authority)
-	{
-		GEngine->AddOnScreenDebugMessage(-1,3.,FColor::Blue,"LaserActivationPlatform->BeginPlay");
-	}
-
-
 	// Run on all Clients
 	if (overlappingComp)
 	{
@@ -114,10 +108,6 @@ AActor *OtherActor, UPrimitiveComponent *OtherComp, int32 OtherBodyIndex, bool b
 		
 		if (player and bIsPlayerReset and bIsReady)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Start Overlap"));
-		
-			GEngine->AddOnScreenDebugMessage(-1,2,FColor::Blue,"ALaserActivationPlatform->OnBeginOverlap");
-
 			bIsPlayerReset = false;
 			bIsReady = false;
 			zTargetOffset = DeactivationMovementOffset;
@@ -162,24 +152,4 @@ void ALaserActivationPlatform::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	DOREPLIFETIME(ALaserActivationPlatform, bIsReady);
 	DOREPLIFETIME(ALaserActivationPlatform, bIsPlayerReset);
 	DOREPLIFETIME(ALaserActivationPlatform, zTargetOffset);
-}
-
-// OnRep functions are only executed on the clients (that did not changed the variable?)
-void ALaserActivationPlatform::OnRep_ShouldMove()
-{
-	ENetRole role = GetLocalRole();
-	switch (role)
-	{
-	case ROLE_Authority:
-		GEngine->AddOnScreenDebugMessage(-1,3.,FColor::Red,"LaserActivationPlatform->OnRep_ShouldMove : Role_Authority");
-		break;
-	case ROLE_AutonomousProxy:
-		GEngine->AddOnScreenDebugMessage(-1,3.,FColor::Red,"LaserActivationPlatform->OnRep_ShouldMove : ROLE_AuthonomousProxy");
-		break;
-	case ROLE_SimulatedProxy:
-		GEngine->AddOnScreenDebugMessage(-1,3.,FColor::Red,"LaserActivationPlatform->OnRep_ShouldMove : ROLE_SimulatedProxy");
-		break;
-	default:
-		break;
-	}
 }

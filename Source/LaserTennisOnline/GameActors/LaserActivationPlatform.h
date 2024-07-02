@@ -63,13 +63,11 @@ class ALaserTennisGameModeBase* GameMode;
 
 // Replicated Properties to syncronize platform movement
 UPROPERTY(Replicated) bool bShouldMove = false;
-UPROPERTY(ReplicatedUsing = OnRep_ShouldMove) bool bIsPlayerReset = true;
+UPROPERTY(Replicated) bool bIsPlayerReset = true;
 UPROPERTY(Replicated) bool bIsReady = true;
 UPROPERTY(Replicated) float zTargetOffset = 0.f;
 virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-UFUNCTION()
-void OnRep_ShouldMove();
 
 
 FName PlayerTag;
