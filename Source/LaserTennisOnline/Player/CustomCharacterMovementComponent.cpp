@@ -193,7 +193,7 @@ void UCustomCharacterMovementComponent::PerformDash()
     
     SetMovementMode(MOVE_Falling);
 	
-	// CharacterOwner->PlayAnimMontage(DashMontage);
+	CharacterOwner->PlayAnimMontage(DashMontage);
 	DashStartDelegate.Broadcast();
 }
 

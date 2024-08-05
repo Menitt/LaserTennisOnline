@@ -88,7 +88,7 @@ private:
 	UPROPERTY(EditDefaultsOnly) float DashCooldownDuration=1.f;
 	UPROPERTY(EditDefaultsOnly) float DashUpwardScaler=0.3f;
 	UPROPERTY(EditDefaultsOnly) float AuthDashCooldownDuration=.9f; // (Anti-cheat)
-	// UPROPERTY(EditDefaultsOnly) UAnimMontage* DashMontage; // (Animation)
+	UPROPERTY(EditDefaultsOnly) UAnimMontage* DashMontage; // (Animation)
 
 //
 // Transient

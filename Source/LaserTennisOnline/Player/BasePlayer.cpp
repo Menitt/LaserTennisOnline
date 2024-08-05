@@ -138,6 +138,7 @@ void ABasePlayer::pauseGame(const FInputActionValue& value)
 
 void ABasePlayer::CustomTakeDamage_Implementation()
 {
+
 	HealthComponent->TakeDamage();
 }
 
