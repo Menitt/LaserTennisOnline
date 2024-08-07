@@ -48,6 +48,7 @@ Super(ObjectInitializer.SetDefaultSubobjectClass<UCustomCharacterMovementCompone
 	// Heath Component
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>("Health Component");
 	
+
 }
 
 // Called when the game starts or when spawned
@@ -66,6 +67,20 @@ void ABasePlayer::BeginPlay()
 	// Let Character Movement Component handles Pawn rotation
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	bUseControllerRotationYaw = false;
+
+	// Take Damage Delegate
+	USkeletalMeshComponent* SkeletalMesh = GetMesh();
+	if (SkeletalMesh)
+	{
+		UAnimInstance* AnimInstance = SkeletalMesh->GetAnimInstance();
+		if (AnimInstance)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("ABasePlayer::BeginPlay -> Binding Delegate"));
+			AnimInstance->OnMontageEnded.AddDynamic(this, &ThisClass::OnTakeDamageMontageCompleted);
+		}
+	}
+
+
 }
 
 #pragma endregion
@@ -139,6 +154,21 @@ void ABasePlayer::pauseGame(const FInputActionValue& value)
 void ABasePlayer::CustomTakeDamage_Implementation()
 {
 
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+
+	if (PlayerController)
+	{
+		this->DisableInput(PlayerController);
+		UE_LOG(LogTemp, Warning, TEXT("ABasePlayer::CustomTakeGamage->Disabling Input"));
+	}
+
+	UAnimationAsset* DummyAniumationAsset = new UAnimationAsset;
+
+	// Stop Current Animation
+	GetMesh()->PlayAnimation(nullptr, false);
+
+	// this->PlayAnimMontage(TakeDamageMontage);
+	
 	HealthComponent->TakeDamage();
 }
 
@@ -157,6 +187,29 @@ void ABasePlayer::GameOver_Implementation(bool bWonGame)
 		}
 	}
 }
+
+
+void ABasePlayer::OnTakeDamageMontageCompleted(UAnimMontage* AnimMontage, bool bInterrupted)
+{
+	
+	
+	UE_LOG(LogTemp, Warning, TEXT("ABasePlayer::OnTakeDamageCompleted"));
+	
+	
+	if (AnimMontage == TakeDamageMontage)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ABasePlayer::OnTakeDamageCompleted"));
+		
+		APlayerController* PlayerController = Cast<APlayerController>(GetController());
+
+		if (PlayerController)
+		{
+			this->EnableInput(PlayerController);
+		}
+	}
+}
+
+
 
 
 

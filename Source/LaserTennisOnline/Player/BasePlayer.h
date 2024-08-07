@@ -85,7 +85,12 @@ public:
 	UFUNCTION(Client, Reliable)
 	void GameOver(bool bWonGame);
 
+	UPROPERTY(EditDefaultsOnly) UAnimMontage* TakeDamageMontage; // (Animation)
 
+	
+	
+	UFUNCTION()
+	void OnTakeDamageMontageCompleted(UAnimMontage* AnimMontage, bool bInterrupted);
 
 
 
