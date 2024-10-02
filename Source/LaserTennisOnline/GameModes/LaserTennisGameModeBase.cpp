@@ -22,13 +22,13 @@ void ALaserTennisGameModeBase::SetupGame()
     
     for (auto actor : laserGenerators1)
     {
-        DrawDebugSphere(GetWorld(), actor->GetActorLocation(), 100, 20, FColor::Red,
-        true);
+        // DrawDebugSphere(GetWorld(), actor->GetActorLocation(), 100, 20, FColor::Red,
+        // true);
     }
     for (auto actor : laserPlatforms1)
     {
-        DrawDebugSphere(GetWorld(), actor->GetActorLocation(), 100, 20, FColor::Red,
-        true);
+        // DrawDebugSphere(GetWorld(), actor->GetActorLocation(), 100, 20, FColor::Red,
+        // true);
     }
     
     return;
@@ -82,7 +82,7 @@ void ALaserTennisGameModeBase::GameOver()
         ABasePlayer* BasePlayer = Cast<ABasePlayer>(player);
         if (BasePlayer)
         {
-            BasePlayer->GameOver(true);
+            BasePlayer->GameOver(BasePlayer->bIsAlive());
         }
     }
 }

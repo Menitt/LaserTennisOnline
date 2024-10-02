@@ -35,6 +35,8 @@ private:
 
 public:
 
+	bool bIsPlayerAlive() const {return Health>0;};
+
 	void TakeDamage();
 
 private:

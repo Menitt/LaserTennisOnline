@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
-
+#include "HealthComponent.h"
 #include "BasePlayer.generated.h"
 
 
@@ -86,8 +86,11 @@ public:
 	void GameOver(bool bWonGame);
 
 	UPROPERTY(EditDefaultsOnly) UAnimMontage* TakeDamageMontage; // (Animation)
-
 	
+	UPROPERTY(EditDefaultsOnly) UAnimMontage* DoubleJumpMontage; // (Animation)
+
+
+	bool bIsAlive() const {return HealthComponent->bIsPlayerAlive();};
 	
 	UFUNCTION()
 	void OnTakeDamageMontageCompleted(UAnimMontage* AnimMontage, bool bInterrupted);

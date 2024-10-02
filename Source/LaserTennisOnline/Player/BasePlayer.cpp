@@ -132,12 +132,24 @@ void ABasePlayer::move(const FInputActionValue &value)
 void ABasePlayer::jump(const FInputActionValue& value)
 {
 	bool jumpNow = value.Get<bool>();
-	if(jumpNow) ACharacter::Jump();
+	if(jumpNow) 
+	{
+		// Animation for double jump
+		if (JumpCurrentCount == 1)
+		{
+			this->PlayAnimMontage(DoubleJumpMontage);	
+		}
+		ACharacter::Jump();
+
+	}
 
 	if (GetNetMode() == NM_ListenServer and GEngine and GetLocalRole() == ROLE_Authority)
 	{
 		GEngine->AddOnScreenDebugMessage(12,2,FColor::Blue,"ABasePlayer->jump");
 	}
+
+
+
 } 
 
 void ABasePlayer::pauseGame(const FInputActionValue& value)
@@ -159,15 +171,9 @@ void ABasePlayer::CustomTakeDamage_Implementation()
 	if (PlayerController)
 	{
 		this->DisableInput(PlayerController);
-		UE_LOG(LogTemp, Warning, TEXT("ABasePlayer::CustomTakeGamage->Disabling Input"));
 	}
 
-	UAnimationAsset* DummyAniumationAsset = new UAnimationAsset;
-
-	// Stop Current Animation
-	GetMesh()->PlayAnimation(nullptr, false);
-
-	// this->PlayAnimMontage(TakeDamageMontage);
+	this->PlayAnimMontage(TakeDamageMontage);
 	
 	HealthComponent->TakeDamage();
 }
@@ -208,9 +214,6 @@ void ABasePlayer::OnTakeDamageMontageCompleted(UAnimMontage* AnimMontage, bool b
 		}
 	}
 }
-
-
-
 
 
 #pragma endregion
