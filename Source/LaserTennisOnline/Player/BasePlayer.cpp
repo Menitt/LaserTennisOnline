@@ -14,7 +14,7 @@
 #include "HealthComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "Engine/Engine.h"
-
+#include "Blueprint/UserWidget.h"
 
 #pragma region Constructor & Initialization
 
@@ -191,6 +191,15 @@ void ABasePlayer::GameOver_Implementation(bool bWonGame)
 		{
 			GEngine->AddOnScreenDebugMessage(-1,3.,FColor::Red,"DEFEAT!");
 		}
+	
+		UUserWidget* GameOverWidget = CreateWidget<UUserWidget>(GetWorld(),
+		GameOverWidgetClass);
+
+		if (GameOverWidget)
+		{
+			GameOverWidget->AddToViewport();
+		}
+	
 	}
 }
 
@@ -214,6 +223,9 @@ void ABasePlayer::OnTakeDamageMontageCompleted(UAnimMontage* AnimMontage, bool b
 		}
 	}
 }
+
+
+
 
 
 #pragma endregion

@@ -79,7 +79,7 @@ private:
 // Gameplay
 //
 public:
-	UFUNCTION(Client, Reliable)
+	UFUNCTION(NetMulticast, Reliable)
 	void CustomTakeDamage();
 
 	UFUNCTION(Client, Reliable)
@@ -94,6 +94,15 @@ public:
 	
 	UFUNCTION()
 	void OnTakeDamageMontageCompleted(UAnimMontage* AnimMontage, bool bInterrupted);
+
+//
+// UI
+//
+
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> GameOverWidgetClass;
+
 
 
 

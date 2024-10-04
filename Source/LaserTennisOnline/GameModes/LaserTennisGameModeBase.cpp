@@ -6,6 +6,7 @@
 #include "DrawDebugHelpers.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "BasePlayer.h"
+#include "Blueprint/UserWidget.h"
 
 void ALaserTennisGameModeBase::SetupGame()
 {
@@ -72,11 +73,20 @@ void ALaserTennisGameModeBase::SpawnLaserRequest(FName PlayerTag)
 
 void ALaserTennisGameModeBase::GameOver()
 {
+    EndMatch();
+}
+
+void ALaserTennisGameModeBase::HandleMatchHasEnded()
+{
+    Super::HandleMatchHasEnded();
+
+    GEngine->AddOnScreenDebugMessage(-1,3.,FColor::Red,"HandleMatchHasEnded!");	
+
     TArray<AActor*> Players;
     UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABasePlayer::StaticClass(), Players);
 
     GEngine->AddOnScreenDebugMessage(-1,3.,FColor::Red,"ALaserTennisGameModeBase->GameOver");
-    
+
     for (AActor* player : Players)
     {
         ABasePlayer* BasePlayer = Cast<ABasePlayer>(player);
@@ -85,4 +95,5 @@ void ALaserTennisGameModeBase::GameOver()
             BasePlayer->GameOver(BasePlayer->bIsAlive());
         }
     }
+
 }

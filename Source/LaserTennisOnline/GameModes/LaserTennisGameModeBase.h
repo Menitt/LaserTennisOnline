@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/GameModeBase.h"
+#include "GameFramework/GameMode.h"
 #include "LaserGenerator.h"
 #include "LaserActivationPlatform.h"
 
@@ -13,7 +13,7 @@
  * 
  */
 UCLASS()
-class LASERTENNISONLINE_API ALaserTennisGameModeBase : public AGameModeBase
+class LASERTENNISONLINE_API ALaserTennisGameModeBase : public AGameMode
 {
 	GENERATED_BODY()
 
@@ -42,6 +42,7 @@ private:
 private:
 	void SetupGame();
 
+
 //
 // Gameplay
 //
@@ -49,5 +50,8 @@ public:
 	void SpawnLaserRequest(FName PlayerTag);
 
 	void GameOver();
+
+	virtual void HandleMatchHasEnded();
+
 
 };
