@@ -91,7 +91,8 @@ public:
 
 
 	bool bIsAlive() const {return HealthComponent->bIsPlayerAlive();};
-	
+	int GetPlayerHealth() const {return HealthComponent->GetPlayerHealth();};	
+
 	UFUNCTION()
 	void OnTakeDamageMontageCompleted(UAnimMontage* AnimMontage, bool bInterrupted);
 

@@ -6,6 +6,7 @@
 #include "MultiplayerSessionsSubsystem.h"
 #include "OnlineSessionSettings.h"
 #include "OnlineSubsystem.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 void UMenu::MenuSetup(int32 NumberOfPublicConnections, FString TypeOfMatch, FString LobbyPath)
 {
@@ -61,6 +62,10 @@ bool UMenu::Initialize()
 	if (JoinButton)
 	{
 		JoinButton->OnClicked.AddDynamic(this, &ThisClass::JoinButtonClicked);
+	}
+	if (QuitButton)
+	{
+		QuitButton->OnClicked.AddDynamic(this, &ThisClass::QuitButtonClicked);
 	}
 
 	return true;
@@ -174,6 +179,18 @@ void UMenu::JoinButtonClicked()
 		MultiplayerSessionsSubsystem->FindSessions(10000);
 	}
 }
+
+
+void UMenu::QuitButtonClicked()
+{
+	JoinButton->SetIsEnabled(false);
+
+	if (GEngine)
+    {
+        UKismetSystemLibrary::QuitGame(this, nullptr, EQuitPreference::Quit, false);
+    }
+}
+
 
 void UMenu::MenuTearDown()
 {

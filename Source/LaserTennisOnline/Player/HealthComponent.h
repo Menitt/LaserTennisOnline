@@ -36,6 +36,7 @@ private:
 public:
 
 	bool bIsPlayerAlive() const {return Health>0;};
+	int GetPlayerHealth() const {return Health;};
 
 	void TakeDamage();
 

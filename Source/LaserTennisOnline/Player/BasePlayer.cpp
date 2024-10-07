@@ -15,6 +15,7 @@
 #include "Net/UnrealNetwork.h"
 #include "Engine/Engine.h"
 #include "Blueprint/UserWidget.h"
+#include "GameOverWidget.h"
 
 #pragma region Constructor & Initialization
 
@@ -173,8 +174,11 @@ void ABasePlayer::CustomTakeDamage_Implementation()
 		this->DisableInput(PlayerController);
 	}
 
+
+	// Animation
 	this->PlayAnimMontage(TakeDamageMontage);
 	
+	// Update Health
 	HealthComponent->TakeDamage();
 }
 
@@ -183,23 +187,29 @@ void ABasePlayer::GameOver_Implementation(bool bWonGame)
 {
 	if (IsLocallyControlled())
 	{
-		if (bWonGame)
+		
+		// Disable Input
+		APlayerController* PlayerController = Cast<APlayerController>(GetController());
+		this->DisableInput(PlayerController);
+		
+		// Show Mouse Cursor
+		if (PlayerController)
 		{
-			GEngine->AddOnScreenDebugMessage(-1,3.,FColor::Red,"VICTORY!");		
+			PlayerController->bShowMouseCursor = true;
+			PlayerController->SetInputMode(FInputModeUIOnly());
 		}
-		else
-		{
-			GEngine->AddOnScreenDebugMessage(-1,3.,FColor::Red,"DEFEAT!");
-		}
-	
-		UUserWidget* GameOverWidget = CreateWidget<UUserWidget>(GetWorld(),
+
+
+		// Spawn Menu Widget
+		UGameOverWidget* GameOverWidget =CreateWidget<UGameOverWidget>(GetWorld(),
 		GameOverWidgetClass);
 
 		if (GameOverWidget)
 		{
+			GameOverWidget->SetText(bWonGame);
 			GameOverWidget->AddToViewport();
 		}
-	
+
 	}
 }
 
