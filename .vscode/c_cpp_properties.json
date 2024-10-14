@@ -6,8 +6,7 @@
             "cStandard": "c17",
             "cppStandard": "c++20",
             "intelliSenseMode": "msvc-x64",
-            "compileCommands": "C:\\Users\\busan\\Documents\\git\\GameDev\\LaserTennisOnline\\.vscode\\compileCommands_LaserTennisOnline.json",
-            "includePath": ["${workspaceFolder}\\Intermediate","${workspaceFolder}\\Plugins","${workspaceFolder}\\Source\\**" ]
+            "compileCommands": "C:\\Users\\busan\\Documents\\git\\GameDev\\LaserTennisOnline\\.vscode\\compileCommands_LaserTennisOnline.json"
         },
         {
             "name": "Win32",

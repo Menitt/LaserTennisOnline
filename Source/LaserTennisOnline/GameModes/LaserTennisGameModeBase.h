@@ -20,7 +20,7 @@ class LASERTENNISONLINE_API ALaserTennisGameModeBase : public AGameMode
 
 virtual void BeginPlay() override;
 
-
+virtual void PostLogin(APlayerController* NewPlayer) override;
 
 //
 // Gameplay Actors Containers
@@ -36,6 +36,11 @@ private:
 	TArray<AActor*> laserPlatforms1; 
 	TArray<AActor*> laserPlatforms2;
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<ACharacter> ClassPlayer1;
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<ACharacter> ClassPlayer2;
+	bool bIsPlayer1 = true;
 //
 // Setup Function
 //

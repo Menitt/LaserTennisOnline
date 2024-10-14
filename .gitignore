@@ -7,5 +7,6 @@ DerivedDataCache/
 Intermediate/
 Saved/
 Content/*
+Build/
 
 *.uproject

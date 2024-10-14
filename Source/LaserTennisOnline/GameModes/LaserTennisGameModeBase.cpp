@@ -7,6 +7,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "BasePlayer.h"
 #include "Blueprint/UserWidget.h"
+#include "GameFramework/PlayerStart.h"
 
 void ALaserTennisGameModeBase::SetupGame()
 {
@@ -34,6 +35,74 @@ void ALaserTennisGameModeBase::SetupGame()
     
     return;
 }
+
+
+void ALaserTennisGameModeBase::PostLogin(APlayerController* NewPlayer)
+{
+    
+    Super::PostLogin(NewPlayer);
+
+    UE_LOG(LogTemp, Warning, TEXT("ALaserTennisGameModeBase->PostLogin()"));
+
+    if (HasAuthority())
+    {
+        
+        APawn* Pawn = NewPlayer->GetPawn();
+        
+        if (Pawn)
+        {
+            NewPlayer->UnPossess();
+            Pawn->Destroy();
+            UE_LOG(LogTemp, Warning, TEXT("Destroy Pawn"));
+        }
+
+        // Get the PlayerStart actors in the level
+        TArray<AActor*> PlayerStarts;
+        if (bIsPlayer1)
+        {
+            UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), APlayerStart::StaticClass(), "1", PlayerStarts);
+        }
+        else
+        {
+            UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), APlayerStart::StaticClass(), "2", PlayerStarts);
+        }
+        
+        // Randomly select a PlayerStart
+        if (PlayerStarts.Num() > 0)
+        {
+            
+            APlayerStart* SelectedStart = Cast<APlayerStart>(PlayerStarts[0]);
+            
+            if (SelectedStart)
+            {
+                // Spawn the player pawn at the selected start location
+                FVector SpawnLocation = SelectedStart->GetActorLocation();
+                FRotator SpawnRotation = SelectedStart->GetActorRotation();
+
+                if (bIsPlayer1)
+                {
+                    // Assuming you have a reference to your player pawn class
+                    ABasePlayer* NewPawn = GetWorld()->SpawnActor<ABasePlayer>(ClassPlayer1, SpawnLocation, SpawnRotation);
+                    NewPlayer->Possess(NewPawn);
+                }
+                else
+                {
+                    // Assuming you have a reference to your player pawn class
+                    ABasePlayer* NewPawn = GetWorld()->SpawnActor<ABasePlayer>(ClassPlayer2, SpawnLocation, SpawnRotation);
+                    NewPlayer->Possess(NewPawn);
+                }
+            }
+        }
+
+        bIsPlayer1 = false;
+    }
+
+    
+}
+
+
+
+
 
 
 void ALaserTennisGameModeBase::BeginPlay()

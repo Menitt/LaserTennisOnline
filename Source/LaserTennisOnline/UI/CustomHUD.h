@@ -21,8 +21,8 @@ public:
 	virtual void BeginPlay() override;
 
 protected:
-	int PlayerHealth = 5;
-	int PlayerMaxHealth = 5;
+	int PlayerHealth;
+	int PlayerMaxHealth;
 
 public:
 
@@ -38,7 +38,7 @@ public:
 	void UpdatePlayerMaxHealth(int MaxHealth){PlayerMaxHealth = MaxHealth;};
 
 	UFUNCTION(BlueprintCallable)
-	int GetPlayerHealth(){return PlayerHealth;};
+	int GetPlayerHealth(){return PlayerMaxHealth;};
 
 
 };

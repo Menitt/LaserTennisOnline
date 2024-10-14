@@ -47,6 +47,9 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UButton* QuitButton;
 
+	UPROPERTY(meta = (BindWidget))
+	UButton* TestButton;
+
 
 
 	UFUNCTION()
@@ -58,6 +61,12 @@ private:
 	UFUNCTION()
 	void QuitButtonClicked();
 
+	UFUNCTION()
+	void TestButtonClicked();
+
+	UPROPERTY(EditDefaultsOnly)
+	FName TestLevel;
+	
 	void MenuTearDown();
 
 	// The subsystem designed to handle all online session functionality

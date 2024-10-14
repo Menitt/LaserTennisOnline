@@ -16,6 +16,7 @@
 #include "Engine/Engine.h"
 #include "Blueprint/UserWidget.h"
 #include "GameOverWidget.h"
+#include "OnlineSubsystem.h"
 
 #pragma region Constructor & Initialization
 
@@ -49,6 +50,24 @@ Super(ObjectInitializer.SetDefaultSubobjectClass<UCustomCharacterMovementCompone
 	// Heath Component
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>("Health Component");
 	
+
+
+	IOnlineSubsystem* OnlineSubsystem = IOnlineSubsystem::Get();
+
+    if (OnlineSubsystem)
+    {
+        OnlineSessionInterface2 = OnlineSubsystem->GetSessionInterface();
+
+        if (GEngine)
+        {
+            GEngine->AddOnScreenDebugMessage(-1,
+											15.f,
+											FColor::Blue,
+											FString::Printf(TEXT("Found subsystem %s"), *OnlineSubsystem->GetSubsystemName().ToString()));
+        }
+    }
+
+
 
 }
 
@@ -187,7 +206,6 @@ void ABasePlayer::GameOver_Implementation(bool bWonGame)
 {
 	if (IsLocallyControlled())
 	{
-		
 		// Disable Input
 		APlayerController* PlayerController = Cast<APlayerController>(GetController());
 		this->DisableInput(PlayerController);
@@ -199,6 +217,7 @@ void ABasePlayer::GameOver_Implementation(bool bWonGame)
 			PlayerController->SetInputMode(FInputModeUIOnly());
 		}
 
+		HandleDestruction();
 
 		// Spawn Menu Widget
 		UGameOverWidget* GameOverWidget =CreateWidget<UGameOverWidget>(GetWorld(),
@@ -214,10 +233,15 @@ void ABasePlayer::GameOver_Implementation(bool bWonGame)
 }
 
 
+void ABasePlayer::HandleDestruction()
+{
+	Destroy();
+}
+
+
 void ABasePlayer::OnTakeDamageMontageCompleted(UAnimMontage* AnimMontage, bool bInterrupted)
 {
-	
-	
+
 	UE_LOG(LogTemp, Warning, TEXT("ABasePlayer::OnTakeDamageCompleted"));
 	
 	

@@ -43,8 +43,4 @@ void ACustomHUD::BeginPlay()
 {
     Super::BeginPlay();
 
-    ABasePlayer* Player = Cast<ABasePlayer>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-
-    PlayerMaxHealth = Player->GetPlayerHealth();
-
 }

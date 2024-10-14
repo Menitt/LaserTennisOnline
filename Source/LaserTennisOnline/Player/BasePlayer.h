@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
 #include "HealthComponent.h"
+#include "Interfaces/OnlineSessionInterface.h"
+
 #include "BasePlayer.generated.h"
 
 
@@ -18,7 +20,7 @@ public:
 
 protected:
 	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	virtual void BeginPlay() override;TSharedPtr<class IOnlineSession, ESPMode::ThreadSafe> OnlineSessionInterface;
 
 public:	
 	// Called every frame
@@ -96,6 +98,9 @@ public:
 	UFUNCTION()
 	void OnTakeDamageMontageCompleted(UAnimMontage* AnimMontage, bool bInterrupted);
 
+
+	void HandleDestruction();
+
 //
 // UI
 //
@@ -105,6 +110,6 @@ private:
 	TSubclassOf<UUserWidget> GameOverWidgetClass;
 
 
-
+	IOnlineSessionPtr OnlineSessionInterface2;
 
 };

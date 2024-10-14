@@ -7,6 +7,7 @@
 #include "OnlineSessionSettings.h"
 #include "OnlineSubsystem.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/GameplayStatics.h"
 
 void UMenu::MenuSetup(int32 NumberOfPublicConnections, FString TypeOfMatch, FString LobbyPath)
 {
@@ -66,6 +67,10 @@ bool UMenu::Initialize()
 	if (QuitButton)
 	{
 		QuitButton->OnClicked.AddDynamic(this, &ThisClass::QuitButtonClicked);
+	}
+	if (TestButton)
+	{
+		TestButton->OnClicked.AddDynamic(this, &ThisClass::TestButtonClicked);
 	}
 
 	return true;
@@ -183,7 +188,7 @@ void UMenu::JoinButtonClicked()
 
 void UMenu::QuitButtonClicked()
 {
-	JoinButton->SetIsEnabled(false);
+	QuitButton->SetIsEnabled(false);
 
 	if (GEngine)
     {
@@ -191,6 +196,15 @@ void UMenu::QuitButtonClicked()
     }
 }
 
+void UMenu::TestButtonClicked()
+{
+	TestButton->SetIsEnabled(false);
+
+	if (GEngine)
+    {	
+		UGameplayStatics::OpenLevel(GetWorld(), TestLevel);
+    }
+}
 
 void UMenu::MenuTearDown()
 {

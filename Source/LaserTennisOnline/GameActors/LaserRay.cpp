@@ -6,6 +6,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/BoxComponent.h"
 #include "BasePlayer.h"
+#include "Engine/BlockingVolume.h"
 
 // Sets default values
 ALaserRay::ALaserRay()
@@ -22,7 +23,12 @@ ALaserRay::ALaserRay()
 	CollisionComponent = CreateDefaultSubobject<UBoxComponent>("Collision Component");
 
 	// Collision
-	CollisionComponent->SetCollisionProfileName("BlockAllDynamic");
+	CollisionComponent->SetCollisionProfileName("BlockAll");
+	CollisionComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	CollisionComponent->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
+
+    CollisionComponent->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+	CollisionComponent->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block);
 	RootComponent = CollisionComponent;
 
 	if (GetLocalRole() == ROLE_Authority)
@@ -60,19 +66,40 @@ void ALaserRay::OnHitPlayer(UPrimitiveComponent *HitComponent, AActor *OtherActo
 	// Do nothing if not Server (~ let server decide)
 	if (GetLocalRole() == ROLE_Authority)
 	{
-		ABasePlayer* Player = Cast<ABasePlayer>(OtherActor);
+		
+		UE_LOG(LogTemp, Warning, TEXT("Hitting SOmething!!!"));
 
-		if (Player)
+		if (OtherActor && (OtherActor != this) && OtherComp)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("LaserRay->OnHitPlayer"));
+			ABasePlayer* Player = Cast<ABasePlayer>(OtherActor);
 
-			Player->CustomTakeDamage();
+			if (Player)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("LaserRay->OnHitPlayer"));
 
-			Destroy();
+				Player->CustomTakeDamage();
+
+				Destroy();
+			}
+
+			else
+			{
+				ABlockingVolume* Volume = Cast<ABlockingVolume>(OtherActor);
+
+				if (Volume)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("LaserRay->OnHitPlayer (Volume)"));
+
+					Destroy();
+				}
+			}	
 		}
+
+	
 	}
 
 }
+
 
 void ALaserRay::Destroyed()
 {
