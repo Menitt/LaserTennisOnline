@@ -91,6 +91,17 @@ void UMenu::OnCreateSession(bool bWasSuccessful)
 		{
 			World->ServerTravel(PathToLobby);
 		}
+
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(
+				-1,
+				15.f,
+				FColor::Green,
+				FString(TEXT("Successfully Created Session!"))
+			);
+		}
+	
 	}
 	else
 	{

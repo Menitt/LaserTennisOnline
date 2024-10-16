@@ -6,7 +6,7 @@
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
 #include "HealthComponent.h"
-#include "Interfaces/OnlineSessionInterface.h"
+// #include "Interfaces/OnlineSessionInterface.h"
 
 #include "BasePlayer.generated.h"
 
@@ -110,6 +110,6 @@ private:
 	TSubclassOf<UUserWidget> GameOverWidgetClass;
 
 
-	IOnlineSessionPtr OnlineSessionInterface2;
+	// IOnlineSessionPtr OnlineSessionInterface2;
 
 };
