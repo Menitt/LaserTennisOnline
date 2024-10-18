@@ -42,6 +42,7 @@ void ALaserActivationPlatform::BeginPlay()
 	if (overlappingComp)
 	{
 		InitialLocation = GetActorLocation();
+		RestingLocation = InitialLocation - DeactivationMovementOffset;
 		overlappingComp->OnComponentBeginOverlap.AddDynamic(this,&ThisClass::OnBeginOverlap);
 		overlappingComp->OnComponentEndOverlap.AddDynamic(this,&ThisClass::OnEndOverlap);
 	}
@@ -65,10 +66,34 @@ void ALaserActivationPlatform::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (bShouldMove)
+	// 
+	// Activation
+	//
+	if (bShouldActivate)
 	{
-		SetActorLocation(FMath::VInterpConstantTo(GetActorLocation(),InitialLocation-FVector(0.,0.,zTargetOffset),
-		DeltaTime,DeactivationMovementOffset/DeactivationTime*2));
+		SetActorLocation(FMath::VInterpConstantTo(GetActorLocation(),InitialLocation,
+		DeltaTime,MovementSpeed));
+	}
+
+	if (GetActorLocation() == InitialLocation and bIsPlayerReset)
+	{
+		bIsReady = true;
+		bShouldActivate = false;
+	}
+
+	//
+	// Deactivation
+	//
+	if (bShouldDeactivate)
+	{
+		SetActorLocation(FMath::VInterpConstantTo(GetActorLocation(),RestingLocation,
+		DeltaTime,MovementSpeed));
+	}
+
+	if (GetActorLocation() == RestingLocation)
+	{
+		bShouldDeactivate = false;
+		bIsResting = true;
 	}
 
 	//
@@ -108,33 +133,18 @@ AActor *OtherActor, UPrimitiveComponent *OtherComp, int32 OtherBodyIndex, bool b
 		
 		if (player and bIsPlayerReset and bIsReady)
 		{
+		
 			bIsPlayerReset = false;
-			bIsReady = false;
-			zTargetOffset = DeactivationMovementOffset;
-			bShouldMove = true;
-			FTimerHandle DummyHandle;
-			GetWorldTimerManager().SetTimer(DummyHandle, this, &ThisClass::ResetPlatform, DeactivationTime/2, false);
-
+		
 			// Send Spawn Laser Request
 			SendSpawnLaserRequest();
+
+			// Deactivate
+			Deactivate();
 
 		}
 	}
 }
-
-void ALaserActivationPlatform::ResetPlatform()
-{
-	zTargetOffset = 0;
-	FTimerHandle DummyHandle;
-	GetWorldTimerManager().SetTimer(DummyHandle, this, &ThisClass::StopMovement, DeactivationTime/2+0.1f, false);
-}
-
-void ALaserActivationPlatform::StopMovement()
-{
-	bShouldMove = false;
-	bIsReady = true;
-}
-
 
 void ALaserActivationPlatform::SendSpawnLaserRequest()
 {
@@ -148,8 +158,38 @@ void ALaserActivationPlatform::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(ALaserActivationPlatform, bShouldMove);
+	DOREPLIFETIME(ALaserActivationPlatform, bShouldActivate);
+	DOREPLIFETIME(ALaserActivationPlatform, bShouldDeactivate);
 	DOREPLIFETIME(ALaserActivationPlatform, bIsReady);
 	DOREPLIFETIME(ALaserActivationPlatform, bIsPlayerReset);
-	DOREPLIFETIME(ALaserActivationPlatform, zTargetOffset);
+	DOREPLIFETIME(ALaserActivationPlatform, bIsResting);
 }
+
+void ALaserActivationPlatform::Deactivate()
+{
+	if (bShouldActivate or bShouldDeactivate)
+	{
+		return;
+	}
+
+	bIsReady = false;
+	bShouldDeactivate = true;
+	bShouldActivate = false;
+	bIsResting = false;
+
+}
+
+void ALaserActivationPlatform::Activate()
+{
+	if (bShouldActivate or bShouldDeactivate)
+	{
+		return;
+	}
+
+	bIsReady = false;
+	bShouldDeactivate = false;
+	bShouldActivate = true;
+	bIsResting = false;
+
+}
+

@@ -40,39 +40,45 @@ private:
 //
 // Gameplay
 //
-UFUNCTION()
-void OnBeginOverlap(class UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+private:
+	UFUNCTION()
+	void OnBeginOverlap(class UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-UFUNCTION()
-void OnEndOverlap(class UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	UFUNCTION()
+	void OnEndOverlap(class UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
-void ResetPlatform();
-void StopMovement();
+	FVector InitialLocation;
+	FVector RestingLocation;
+	FVector DeactivationMovementOffset = FVector(0.,0.,100.);
+	FName PlayerTag;
+	UPROPERTY(EditDefaultsOnly)
+	float MovementSpeed = 75.f;
 
-float DeactivationTime = 2.0f;
+	// Game Mode Exists only on the Server
+	class ALaserTennisGameModeBase* GameMode;
+	void SendSpawnLaserRequest();
 
+public:
+	void Activate();
+	void Deactivate();
 
-FVector InitialLocation;
-
-float DeactivationMovementOffset = 100;
-
-// Game Mode Exists only on the Server
-class ALaserTennisGameModeBase* GameMode;
-
-// Replicated Properties to syncronize platform movement
-UPROPERTY(Replicated) bool bShouldMove = false;
-UPROPERTY(Replicated) bool bIsPlayerReset = true;
-UPROPERTY(Replicated) bool bIsReady = true;
-UPROPERTY(Replicated) float zTargetOffset = 0.f;
-virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	bool IsPlatformActive() const {return bIsReady or bShouldActivate;};
 
 
+private:
+	//
+	// Replication
+	//
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-FName PlayerTag;
-void SendSpawnLaserRequest();
-
+	// Replicated Properties to syncronize platform movement
+	UPROPERTY(Replicated) bool bShouldActivate = false;
+	UPROPERTY(Replicated) bool bShouldDeactivate = false;
+	UPROPERTY(Replicated) bool bIsPlayerReset = true;
+	UPROPERTY(Replicated) bool bIsReady = true;
+	UPROPERTY(Replicated) bool bIsResting = false;
 
 
 };

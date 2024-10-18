@@ -22,6 +22,8 @@ virtual void BeginPlay() override;
 
 virtual void PostLogin(APlayerController* NewPlayer) override;
 
+virtual void Tick(float DeltaTime) override;
+
 //
 // Gameplay Actors Containers
 //
@@ -35,6 +37,10 @@ private:
 	TSubclassOf<ALaserActivationPlatform> laserActivationPlatformClass;
 	TArray<AActor*> laserPlatforms1; 
 	TArray<AActor*> laserPlatforms2;
+
+	TArray<int> ActiveLaserPlatforms1; 
+	TArray<int> ActiveLaserPlatforms2;
+
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<ACharacter> ClassPlayer1;
@@ -52,11 +58,30 @@ private:
 // Gameplay
 //
 public:
+	
+	void UpdateActivePlatformsList();
+
+	void AdjustPlatforms();
+
+	void ActivatePlatform1();
+	void ActivatePlatform2();
+
+	void DeactivatePlatform1();
+	void DeactivatePlatform2();
+
+	int GetNumberActivePlatforms(const TArray<int>& PlatformsMap) const;
+
 	void SpawnLaserRequest(FName PlayerTag);
 
 	void GameOver();
 
 	virtual void HandleMatchHasEnded();
 
+
+	int CountActivePlatforms1 = 0;
+	int CountActivePlatforms2 = 0;
+
+	UPROPERTY(EditDefaultsOnly)
+	int nActivePlatforms;
 
 };

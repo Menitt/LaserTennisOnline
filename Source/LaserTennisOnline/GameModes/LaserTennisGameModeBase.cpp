@@ -8,6 +8,7 @@
 #include "BasePlayer.h"
 #include "Blueprint/UserWidget.h"
 #include "GameFramework/PlayerStart.h"
+#include "Math/UnrealMathUtility.h"
 
 void ALaserTennisGameModeBase::SetupGame()
 {
@@ -21,20 +22,232 @@ void ALaserTennisGameModeBase::SetupGame()
     laserPlatforms1);
     UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(),laserActivationPlatformClass,"2",
     laserPlatforms2);
-    
-    for (auto actor : laserGenerators1)
-    {
-        // DrawDebugSphere(GetWorld(), actor->GetActorLocation(), 100, 20, FColor::Red,
-        // true);
-    }
-    for (auto actor : laserPlatforms1)
-    {
-        // DrawDebugSphere(GetWorld(), actor->GetActorLocation(), 100, 20, FColor::Red,
-        // true);
-    }
-    
+
+
+    ActiveLaserPlatforms1.Init(1,laserPlatforms1.Num());
+    ActiveLaserPlatforms2.Init(1,laserPlatforms2.Num());
+
     return;
 }
+
+
+void ALaserTennisGameModeBase::Tick(float DeltaTime)
+{
+    Super::Tick(DeltaTime);
+
+    UpdateActivePlatformsList();
+
+    AdjustPlatforms();
+}
+
+
+
+void ALaserTennisGameModeBase::UpdateActivePlatformsList()
+{
+    int nPlatforms1 = laserPlatforms1.Num();
+    int nPlatforms2 = laserPlatforms2.Num();
+    
+    for (int i=0; i<nPlatforms1; ++i)
+    {
+        AActor* Actor = laserPlatforms1[i];
+        ALaserActivationPlatform* Platform = Cast<ALaserActivationPlatform>(Actor);
+        if (Platform)
+        {
+            ActiveLaserPlatforms1[i] = (Platform->IsPlatformActive()) ? 1 : 0;
+        }
+    }
+
+    for (int i=0; i<nPlatforms2; ++i)
+    {
+        AActor* Actor = laserPlatforms2[i];
+        ALaserActivationPlatform* Platform = Cast<ALaserActivationPlatform>(Actor);
+        if (Platform)
+        {
+            ActiveLaserPlatforms2[i] = (Platform->IsPlatformActive()) ? 1 : 0;
+        }
+    }
+}
+
+
+
+void ALaserTennisGameModeBase::AdjustPlatforms()
+{
+    
+    //
+    // Player 1 Platforms
+    //
+    int nAdjust1 = nActivePlatforms - GetNumberActivePlatforms(ActiveLaserPlatforms1);
+    
+    if (nAdjust1 > 0)
+    {
+        for (int i=0; i<nAdjust1; ++i)
+        {
+            ActivatePlatform1();
+        }
+    }
+    if (nAdjust1 < 0)
+    {
+        for (int i=0; i<-nAdjust1; ++i)
+        {
+            DeactivatePlatform1();
+        }
+    }
+
+    //
+    // Player 2 Platforms
+    //
+    int nAdjust2 = nActivePlatforms - GetNumberActivePlatforms(ActiveLaserPlatforms2);
+    
+    if (nAdjust2 > 0)
+    {
+        for (int i=0; i<nAdjust2; ++i)
+        {
+            ActivatePlatform2();
+        }
+    }
+    if (nAdjust2 < 0)
+    {
+        for (int i=0; i<-nAdjust2; ++i)
+        {
+            DeactivatePlatform2();
+        }
+    }
+
+
+}
+
+
+void ALaserTennisGameModeBase::ActivatePlatform1()
+{
+    int nRestingPlatforms = ActiveLaserPlatforms1.Num() - GetNumberActivePlatforms(ActiveLaserPlatforms1);
+
+    int32 RandomInt = FMath::RandRange(1, nRestingPlatforms);
+
+    int index = 0;
+    for (int i=0; i<ActiveLaserPlatforms1.Num(); ++i)
+    {
+        if (ActiveLaserPlatforms1[i] == 0)
+        {
+            index++;
+        }
+        
+        if (index == RandomInt)
+        {
+            AActor* Actor = laserPlatforms1[i];
+            ALaserActivationPlatform* Platform = Cast<ALaserActivationPlatform>(Actor);
+            if (Platform)
+            {
+                Platform->Activate();        
+            }
+            ActiveLaserPlatforms1[i] = 1;
+        }
+
+        break;
+        
+    }
+}
+
+void ALaserTennisGameModeBase::DeactivatePlatform1()
+{
+    
+    int32 RandomInt = FMath::RandRange(1, GetNumberActivePlatforms(ActiveLaserPlatforms1));
+
+    int index = 0;
+    for (int i=0; i<ActiveLaserPlatforms1.Num(); ++i)
+    {
+        if (ActiveLaserPlatforms1[i] == 1)
+        {
+            index++;
+        }
+        
+        if (index == RandomInt)
+        {
+            AActor* Actor = laserPlatforms1[i];
+            ALaserActivationPlatform* Platform = Cast<ALaserActivationPlatform>(Actor);
+            if (Platform)
+            {
+                Platform->Deactivate();        
+            }
+            ActiveLaserPlatforms1[i] = 0;
+        }
+
+        break;
+        
+    }
+}
+
+
+void ALaserTennisGameModeBase::ActivatePlatform2()
+{
+    int nRestingPlatforms = ActiveLaserPlatforms2.Num() - GetNumberActivePlatforms(ActiveLaserPlatforms2);
+
+    int32 RandomInt = FMath::RandRange(1, nRestingPlatforms);
+
+    int index = 0;
+    for (int i=0; i<ActiveLaserPlatforms2.Num(); ++i)
+    {
+        if (ActiveLaserPlatforms2[i] == 0)
+        {
+            index++;
+        }
+        
+        if (index == RandomInt)
+        {
+            AActor* Actor = laserPlatforms2[i];
+            ALaserActivationPlatform* Platform = Cast<ALaserActivationPlatform>(Actor);
+            if (Platform)
+            {
+                Platform->Activate();        
+            }
+            ActiveLaserPlatforms2[i] = 1;
+        }
+
+        break;
+        
+    }
+}
+
+void ALaserTennisGameModeBase::DeactivatePlatform2()
+{
+    
+    int32 RandomInt = FMath::RandRange(1, GetNumberActivePlatforms(ActiveLaserPlatforms2));
+
+    int index = 0;
+    for (int i=0; i<ActiveLaserPlatforms2.Num(); ++i)
+    {
+        if (ActiveLaserPlatforms2[i] == 1)
+        {
+            index++;
+        }
+        
+        if (index == RandomInt)
+        {
+            AActor* Actor = laserPlatforms2[i];
+            ALaserActivationPlatform* Platform = Cast<ALaserActivationPlatform>(Actor);
+            if (Platform)
+            {
+                Platform->Deactivate();        
+            }
+            ActiveLaserPlatforms2[i] = 0;
+        }
+
+        break;
+        
+    }
+}
+
+
+int ALaserTennisGameModeBase::GetNumberActivePlatforms(const TArray<int>& PlatformsMap) const
+{
+    int counter = 0;
+    for (int k : PlatformsMap)
+    {
+        counter += k;
+    }
+
+    return counter;
+}
+
 
 
 void ALaserTennisGameModeBase::PostLogin(APlayerController* NewPlayer)
