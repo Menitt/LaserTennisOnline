@@ -54,7 +54,7 @@ private:
 	FVector DeactivationMovementOffset = FVector(0.,0.,100.);
 	FName PlayerTag;
 	UPROPERTY(EditDefaultsOnly)
-	float MovementSpeed = 75.f;
+	float MovementSpeed = 100.f;
 
 	// Game Mode Exists only on the Server
 	class ALaserTennisGameModeBase* GameMode;
@@ -64,7 +64,10 @@ public:
 	void Activate();
 	void Deactivate();
 
-	bool IsPlatformActive() const {return bIsReady or bShouldActivate;};
+	bool IsPlatformActive() const {return bIsReady;};
+	bool IsPlatformResting() const {return bIsResting;};
+	bool IsPlatformActivating() const {return bShouldActivate;};
+	bool IsPlatformDeactivating() const {return bShouldDeactivate;};
 
 
 private:
@@ -79,6 +82,5 @@ private:
 	UPROPERTY(Replicated) bool bIsPlayerReset = true;
 	UPROPERTY(Replicated) bool bIsReady = true;
 	UPROPERTY(Replicated) bool bIsResting = false;
-
 
 };

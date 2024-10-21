@@ -53,33 +53,31 @@ private:
 private:
 	void SetupGame();
 
+	void SetupTimer();
+	FTimerHandle TimerHandle;
 
 //
 // Gameplay
 //
 public:
 	
-	void UpdateActivePlatformsList();
+	void ManagePlatforms();
 
-	void AdjustPlatforms();
+	void UpdateActivePlatformsList(TArray<int>& PlatformsMap, TArray<AActor*>& PlatformList);
 
-	void ActivatePlatform1();
-	void ActivatePlatform2();
+	void AdjustPlatforms(TArray<int>& PlatformsMap, TArray<AActor*>& PlatformList);
 
-	void DeactivatePlatform1();
-	void DeactivatePlatform2();
+	void ActivatePlatform(TArray<int>& PlatformsMap, TArray<AActor*>& PlatformList);
 
-	int GetNumberActivePlatforms(const TArray<int>& PlatformsMap) const;
+	void DeactivatePlatform(TArray<int>& PlatformsMap, TArray<AActor*>& PlatformList);
+
+	int GetNumberPlatformsByKey(const TArray<int>& PlatformsMap, int key) const;
 
 	void SpawnLaserRequest(FName PlayerTag);
 
 	void GameOver();
 
 	virtual void HandleMatchHasEnded();
-
-
-	int CountActivePlatforms1 = 0;
-	int CountActivePlatforms2 = 0;
 
 	UPROPERTY(EditDefaultsOnly)
 	int nActivePlatforms;

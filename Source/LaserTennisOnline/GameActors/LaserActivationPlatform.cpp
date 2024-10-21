@@ -11,7 +11,7 @@
 #include "DrawDebugHelpers.h"
 #include "Net/UnrealNetwork.h"
 #include "Engine/Engine.h"
-
+#include "DrawDebugHelpers.h"
 
 // Sets default values
 ALaserActivationPlatform::ALaserActivationPlatform()
@@ -59,6 +59,7 @@ void ALaserActivationPlatform::BeginPlay()
 	{
 		PlayerTag = Tags[0];
 	}
+
 }
 
 // Called every frame
@@ -75,12 +76,6 @@ void ALaserActivationPlatform::Tick(float DeltaTime)
 		DeltaTime,MovementSpeed));
 	}
 
-	if (GetActorLocation() == InitialLocation and bIsPlayerReset)
-	{
-		bIsReady = true;
-		bShouldActivate = false;
-	}
-
 	//
 	// Deactivation
 	//
@@ -90,17 +85,27 @@ void ALaserActivationPlatform::Tick(float DeltaTime)
 		DeltaTime,MovementSpeed));
 	}
 
-	if (GetActorLocation() == RestingLocation)
+	if (GetLocalRole() == ROLE_Authority)
 	{
-		bShouldDeactivate = false;
-		bIsResting = true;
+		if (GetActorLocation() == InitialLocation and bIsPlayerReset)
+		{
+			bIsReady = true;
+			bShouldActivate = false;
+		}
+		
+		if (GetActorLocation() == RestingLocation)
+		{
+			bShouldDeactivate = false;
+			bIsResting = true;
+
+		}
 	}
 
-	//
-	// Debug
-	// 
-	DrawDebugBox(GetWorld(), overlappingComp->GetComponentLocation(), 
-	overlappingComp->GetScaledBoxExtent(), FColor::Blue, false,-1);
+	// //
+	// // Debug
+	// // 
+	// DrawDebugBox(GetWorld(), overlappingComp->GetComponentLocation(), 
+	// overlappingComp->GetScaledBoxExtent(), FColor::Blue, false,-1);
 
 }
 
