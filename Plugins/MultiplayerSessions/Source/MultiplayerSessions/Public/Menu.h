@@ -36,6 +36,10 @@ protected:
 	UFUNCTION()
 	void OnStartSession(bool bWasSuccessful);
 
+	UFUNCTION()
+	void OnReadFriendsListComplete(int32 LocalUserNum, bool bWasSuccessful, const FString& ListName, const FString& ErrorStr);
+
+
 private:
 
 	UPROPERTY(meta = (BindWidget))
@@ -50,7 +54,8 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UButton* TestButton;
 
-
+	UPROPERTY(meta = (BindWidget))
+	UButton* FriendsButton;
 
 	UFUNCTION()
 	void HostButtonClicked();
@@ -63,6 +68,9 @@ private:
 
 	UFUNCTION()
 	void TestButtonClicked();
+
+	UFUNCTION()
+	void FriendsButtonClicked();
 
 	UPROPERTY(EditDefaultsOnly)
 	FName TestLevel;

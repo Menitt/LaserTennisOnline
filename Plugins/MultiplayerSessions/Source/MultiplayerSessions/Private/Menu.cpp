@@ -8,6 +8,10 @@
 #include "OnlineSubsystem.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include "Online.h"
+#include "Interfaces/OnlineFriendsInterface.h"
+#include "GameFramework/PlayerController.h"  // For APlayerController
+#include "Engine/LocalPlayer.h"
 
 void UMenu::MenuSetup(int32 NumberOfPublicConnections, FString TypeOfMatch, FString LobbyPath)
 {
@@ -71,6 +75,10 @@ bool UMenu::Initialize()
 	if (TestButton)
 	{
 		TestButton->OnClicked.AddDynamic(this, &ThisClass::TestButtonClicked);
+	}
+	if (FriendsButton)
+	{
+		FriendsButton->OnClicked.AddDynamic(this, &ThisClass::FriendsButtonClicked);
 	}
 
 	return true;
@@ -216,6 +224,74 @@ void UMenu::TestButtonClicked()
 		UGameplayStatics::OpenLevel(GetWorld(), TestLevel);
     }
 }
+
+void UMenu::FriendsButtonClicked()
+{
+	FriendsButton->SetIsEnabled(false);
+
+	IOnlineSubsystem* OnlineSubsystem = IOnlineSubsystem::Get();
+
+
+
+	if (OnlineSubsystem)
+	{
+		IOnlineFriendsPtr FriendsInterface = OnlineSubsystem->GetFriendsInterface();
+        // IOnlineIdentityPtr IdentityInterface = OnlineSubsystem->GetIdentityInterface();
+		APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+
+		if (FriendsInterface.IsValid() and PlayerController)
+        {
+			int32 UserId = PlayerController->GetLocalPlayer()->GetUniqueID();
+			// Assuming the player is logged in
+			// const FUniqueNetIdPtr UserId = IdentityInterface->GetUniquePlayerId(0);;
+			FriendsInterface->ReadFriendsList(UserId, TEXT("default"), FOnReadFriendsListComplete::CreateUObject(this, &ThisClass::OnReadFriendsListComplete));
+		}
+	}
+}
+
+
+void UMenu::OnReadFriendsListComplete(int32 LocalUserNum, bool bWasSuccessful, const FString& ListName, const FString& ErrorStr)
+{
+	UWorld* World = GetWorld();
+	
+	if (bWasSuccessful and World)
+    {
+		APlayerController* PlayerController = World->GetFirstPlayerController();
+        if (PlayerController)
+		{
+			// Process friends list
+			TArray<TSharedRef<FOnlineFriend>>  Friends;
+			IOnlineFriendsPtr FriendsInterface = IOnlineSubsystem::Get()->GetFriendsInterface();
+			FriendsInterface->GetFriendsList(PlayerController->GetLocalPlayer()->GetUniqueID(), ListName, Friends);
+
+			if (Friends.Num() == 0)
+			{
+				if (GEngine)
+				{
+					GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Red, "No Friends Found");
+				}
+			}
+			
+			for (const TSharedRef<FOnlineFriend>& Friend : Friends)
+			{
+				if (GEngine)
+				{
+					FString FriendName = *Friend->GetDisplayName();
+					GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Green, FriendName);
+				}
+			}
+
+		} 
+    }
+    else
+    {
+        if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Red, "No Friends Found");
+		}
+    }
+}
+
 
 void UMenu::MenuTearDown()
 {

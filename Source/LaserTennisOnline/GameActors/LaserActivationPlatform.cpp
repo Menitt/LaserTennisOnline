@@ -101,12 +101,6 @@ void ALaserActivationPlatform::Tick(float DeltaTime)
 		}
 	}
 
-	// //
-	// // Debug
-	// // 
-	// DrawDebugBox(GetWorld(), overlappingComp->GetComponentLocation(), 
-	// overlappingComp->GetScaledBoxExtent(), FColor::Blue, false,-1);
-
 }
 
 void ALaserActivationPlatform::OnEndOverlap(UPrimitiveComponent *OverlappedComponent, AActor *OtherActor, UPrimitiveComponent *OtherComp, int32 OtherBodyIndex)
@@ -159,18 +153,18 @@ void ALaserActivationPlatform::SendSpawnLaserRequest()
 	}
 }
 
-void ALaserActivationPlatform::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+// void ALaserActivationPlatform::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+// {
+// 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(ALaserActivationPlatform, bShouldActivate);
-	DOREPLIFETIME(ALaserActivationPlatform, bShouldDeactivate);
-	DOREPLIFETIME(ALaserActivationPlatform, bIsReady);
-	DOREPLIFETIME(ALaserActivationPlatform, bIsPlayerReset);
-	DOREPLIFETIME(ALaserActivationPlatform, bIsResting);
-}
+// 	DOREPLIFETIME(ALaserActivationPlatform, bShouldActivate);
+// 	DOREPLIFETIME(ALaserActivationPlatform, bShouldDeactivate);
+// 	DOREPLIFETIME(ALaserActivationPlatform, bIsReady);
+// 	DOREPLIFETIME(ALaserActivationPlatform, bIsPlayerReset);
+// 	DOREPLIFETIME(ALaserActivationPlatform, bIsResting);
+// }
 
-void ALaserActivationPlatform::Deactivate()
+void ALaserActivationPlatform::Deactivate_Implementation()
 {
 	if (bShouldActivate or bShouldDeactivate)
 	{
@@ -184,7 +178,7 @@ void ALaserActivationPlatform::Deactivate()
 
 }
 
-void ALaserActivationPlatform::Activate()
+void ALaserActivationPlatform::Activate_Implementation()
 {
 	if (bShouldActivate or bShouldDeactivate)
 	{

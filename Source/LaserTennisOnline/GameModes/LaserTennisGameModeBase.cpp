@@ -33,7 +33,7 @@ void ALaserTennisGameModeBase::SetupGame()
 void ALaserTennisGameModeBase::SetupTimer()
 {
     // Set the timer to call MyFunction every 1 second, for 5 seconds
-    GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ThisClass::ManagePlatforms, 0.5f, true, 1.0f);
+    GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ThisClass::ManagePlatforms, 0.5f, true, 5.f);
 }
 
 void ALaserTennisGameModeBase::ManagePlatforms()
@@ -304,4 +304,13 @@ void ALaserTennisGameModeBase::HandleMatchHasEnded()
         }
     }
 
+}
+
+
+void ALaserTennisGameModeBase::ReturnToMainMenuHost()
+{
+
+    // UGameplayStatics::OpenLevel(GetWorld(), MainMenuLevel);
+
+    Super::ReturnToMainMenuHost();
 }

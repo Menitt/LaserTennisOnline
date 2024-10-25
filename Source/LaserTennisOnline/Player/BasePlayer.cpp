@@ -16,6 +16,7 @@
 #include "Engine/Engine.h"
 #include "Blueprint/UserWidget.h"
 #include "GameOverWidget.h"
+#include "InGameMenu.h"
 // #include "OnlineSubsystem.h"
 
 #pragma region Constructor & Initialization
@@ -49,24 +50,6 @@ Super(ObjectInitializer.SetDefaultSubobjectClass<UCustomCharacterMovementCompone
 
 	// Heath Component
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>("Health Component");
-	
-
-
-	// IOnlineSubsystem* OnlineSubsystem = IOnlineSubsystem::Get();
-
-    // if (OnlineSubsystem)
-    // {
-    //     OnlineSessionInterface2 = OnlineSubsystem->GetSessionInterface();
-
-    //     if (GEngine)
-    //     {
-    //         GEngine->AddOnScreenDebugMessage(-1,
-	// 										15.f,
-	// 										FColor::Blue,
-	// 										FString::Printf(TEXT("Found subsystem %s"), *OnlineSubsystem->GetSubsystemName().ToString()));
-    //     }
-    // }
-
 
 
 }
@@ -174,7 +157,14 @@ void ABasePlayer::jump(const FInputActionValue& value)
 
 void ABasePlayer::pauseGame(const FInputActionValue& value)
 {
-	return;
+	// Spawn Menu Widget
+	UInGameMenu* InGameMenu =CreateWidget<UInGameMenu>(GetWorld(),
+	InGameMenuWidgetClass);
+
+	if (InGameMenu)
+	{
+		InGameMenu->MenuSetup();
+	}
 }
 
 

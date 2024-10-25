@@ -77,6 +77,7 @@ private:
 	void jump(const FInputActionValue& value);
 	void pauseGame(const FInputActionValue& value);
 
+
 //
 // Gameplay
 //
@@ -101,6 +102,8 @@ public:
 
 	void HandleDestruction();
 
+
+
 //
 // UI
 //
@@ -109,6 +112,8 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UUserWidget> GameOverWidgetClass;
 
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> InGameMenuWidgetClass;
 
 	// IOnlineSessionPtr OnlineSessionInterface2;
 

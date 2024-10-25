@@ -82,4 +82,12 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	int nActivePlatforms;
 
+//
+// UI
+//
+	virtual void ReturnToMainMenuHost() override;
+
+	UPROPERTY(EditDefaultsOnly)
+	FName MainMenuLevel;
+
 };

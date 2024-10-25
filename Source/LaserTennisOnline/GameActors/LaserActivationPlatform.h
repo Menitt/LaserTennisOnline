@@ -61,7 +61,11 @@ private:
 	void SendSpawnLaserRequest();
 
 public:
+
+	UFUNCTION(NetMulticast, Reliable)
 	void Activate();
+
+	UFUNCTION(NetMulticast, Reliable)
 	void Deactivate();
 
 	bool IsPlatformActive() const {return bIsReady;};
@@ -71,16 +75,16 @@ public:
 
 
 private:
-	//
-	// Replication
-	//
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	// //
+	// // Replication
+	// //
+	// virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	// Replicated Properties to syncronize platform movement
-	UPROPERTY(Replicated) bool bShouldActivate = false;
-	UPROPERTY(Replicated) bool bShouldDeactivate = false;
-	UPROPERTY(Replicated) bool bIsPlayerReset = true;
-	UPROPERTY(Replicated) bool bIsReady = true;
-	UPROPERTY(Replicated) bool bIsResting = false;
+	bool bShouldActivate = false;
+	bool bShouldDeactivate = false;
+	bool bIsPlayerReset = true;
+	bool bIsReady = true;
+	bool bIsResting = false;
 
 };
