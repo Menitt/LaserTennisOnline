@@ -6,6 +6,16 @@
             "cStandard": "c17",
             "cppStandard": "c++20",
             "intelliSenseMode": "msvc-x64",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "C:/Program Files/Epic Games/UE_4.27/Engine/Source/**",
+                "C:/Program Files/Epic Games/UE_4.27/Engine/Plugins/**",
+                "C:/Program Files/Epic Games/UE_4.27/Engine/Intermediate/Build/Win64/**",
+                "C:/Program Files/Epic Games/UE_4.27/Engine/Source/Runtime/**",
+                "C:/Program Files/Epic Games/UE_4.27/Engine/Source/Developer/**",
+                "C:/Program Files/Epic Games/UE_4.27/Engine/Source/Editor/**",
+                "C:/Program Files/Epic Games/UE_4.27/Engine/Source/Programs/**"
+            ],
             "compileCommands": "C:\\Users\\busan\\Documents\\git\\GameDev\\LaserTennisOnline\\.vscode\\compileCommands_LaserTennisOnline.json"
         },
         {
