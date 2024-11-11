@@ -4,7 +4,7 @@
 #include "MovingBeltObject.h"
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
-
+#include "Components/BoxComponent.h"
 
 
 // Sets default values
@@ -15,15 +15,30 @@ AMovingBeltObject::AMovingBeltObject()
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
 
+	BoxComponent = CreateDefaultSubobject<UBoxComponent>("Overlap Box Component");
+
 	RootComponent = Mesh;
+
+	BoxComponent->SetupAttachment(RootComponent);
 
 	MovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>("Movement Component");
 
-	MovementComponent->InitialSpeed = 300.0f;
-	MovementComponent->MaxSpeed = 300.0f;
+	MovementComponent->InitialSpeed = 900.0f;
+	MovementComponent->MaxSpeed = 900.0f;
 	MovementComponent->bRotationFollowsVelocity = true;
 	MovementComponent->ProjectileGravityScale = 0.0f;
 
+	UE_LOG(LogTemp, Warning, TEXT("AMovingBeltObject->Constructor!"));
+
+	// Enable overlap events
+    BoxComponent->SetGenerateOverlapEvents(true);
+    
+    // Set the collision response
+    BoxComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+    BoxComponent->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);  // For dynamic world actors
+    BoxComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
+
+	BoxComponent->SetHiddenInGame(false);
 
 }
 
@@ -32,6 +47,7 @@ void AMovingBeltObject::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	BoxComponent->SetHiddenInGame(false);
 }
 
 // Called every frame

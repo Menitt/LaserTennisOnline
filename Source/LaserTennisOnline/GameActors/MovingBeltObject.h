@@ -33,7 +33,8 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	class UProjectileMovementComponent* MovementComponent;
-
-
+	
+	UPROPERTY(EditDefaultsOnly)
+	class UBoxComponent* BoxComponent;
 
 };
