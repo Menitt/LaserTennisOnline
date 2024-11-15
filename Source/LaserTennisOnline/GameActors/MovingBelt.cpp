@@ -8,6 +8,7 @@
 #include "Engine/Engine.h"
 #include "MovingBeltObject.h"
 #include "Components/BoxComponent.h"
+#include "Math/UnrealMathUtility.h"
 
 // Sets default values
 AMovingBelt::AMovingBelt()
@@ -39,7 +40,7 @@ void AMovingBelt::BeginPlay()
 	AMovingBeltObject* Object = Cast<AMovingBeltObject>(GetWorld()->SpawnActor<AActor>(MovingBeltObjectClass,
 	ObjectSpawnPoint->GetComponentLocation(),ObjectSpawnPoint->GetComponentRotation()));
 
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ThisClass::SpawnObject, 0.5f, false);
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ThisClass::SpawnObject, 1.f, true);
 
 
 	// Enable overlap events
@@ -49,8 +50,6 @@ void AMovingBelt::BeginPlay()
     BoxComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
     BoxComponent->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);  // For dynamic world actors
     BoxComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
-
-	BoxComponent->SetHiddenInGame(false);
 
 	BoxComponent->OnComponentBeginOverlap.AddDynamic(this,&AMovingBelt::OnOverlapBegin);
 }
@@ -69,11 +68,19 @@ void AMovingBelt::SpawnObject()
 
 	if (Object and ObjectMeshArray.Num()>0)
 	{
+		
+		int Index = FMath::RandRange(0, ObjectMeshArray.Num()-1);	
+		
 		UStaticMeshComponent* ObjectMesh = Cast<UStaticMeshComponent>(Object->GetRootComponent());
 		if (ObjectMesh)
 		{
-			ObjectMesh->SetStaticMesh(ObjectMeshArray[0]);
+			float ScaleFactor = 0.7;
+    		UStaticMesh* NewMesh = ObjectMeshArray[Index];
+			ObjectMesh->SetStaticMesh(NewMesh);
+			ObjectMesh->SetWorldScale3D(ScaleFactor * FVector(1,1,1));
 			ObjectMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+			
 		}
 	}
 }
@@ -84,23 +91,10 @@ class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyI
 bool bFromSweep, const FHitResult& SweepResult)
 {
 
-	// OtherActor is the actor (e.g., the player) that overlapped
-        UE_LOG(LogTemp, Warning, TEXT("Overlapped with actor: %s"), *OtherActor->GetName());
-        
-        // OtherComp is the component of the OtherActor (e.g., the player's CapsuleComponent)
-        UE_LOG(LogTemp, Warning, TEXT("Overlapped with component: %s"), *OtherComp->GetName());
-
-
 	AMovingBeltObject* ObjectToDespawn = Cast<AMovingBeltObject>(OtherActor);
 
 	if (ObjectToDespawn)
 	{
 		ObjectToDespawn->Destroy();
-		UE_LOG(LogTemp, Warning, TEXT("MovingBelt Object Destroyed!"));
-	}
-	
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Moving Object is not destroyed"));
 	}
 }

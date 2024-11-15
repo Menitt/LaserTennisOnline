@@ -28,8 +28,6 @@ AMovingBeltObject::AMovingBeltObject()
 	MovementComponent->bRotationFollowsVelocity = true;
 	MovementComponent->ProjectileGravityScale = 0.0f;
 
-	UE_LOG(LogTemp, Warning, TEXT("AMovingBeltObject->Constructor!"));
-
 	// Enable overlap events
     BoxComponent->SetGenerateOverlapEvents(true);
     
