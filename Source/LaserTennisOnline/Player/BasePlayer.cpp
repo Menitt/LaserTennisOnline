@@ -17,6 +17,7 @@
 #include "Blueprint/UserWidget.h"
 #include "GameOverWidget.h"
 #include "InGameMenu.h"
+#include "BaseUserWidget.h"
 // #include "OnlineSubsystem.h"
 
 #pragma region Constructor & Initialization
@@ -165,6 +166,8 @@ void ABasePlayer::pauseGame(const FInputActionValue& value)
 	{
 		InGameMenu->MenuSetup();
 	}
+
+	DisplayLobbyWidgets();
 }
 
 
@@ -249,6 +252,46 @@ void ABasePlayer::OnTakeDamageMontageCompleted(UAnimMontage* AnimMontage, bool b
 }
 
 
+#pragma endregion
+
+
+#pragma region UI
+
+
+void ABasePlayer::DisplayLobbyWidgets()
+{
+	// Spawn Menu Widget
+	GameInputsWidget = CreateWidget<UBaseUserWidget>(GetWorld(),GameInputsWidgetClass);
+
+	if (GameInputsWidget)
+	{
+		GameInputsWidget->MenuSetup();
+	}
+
+	GameTutorialWidget = CreateWidget<UBaseUserWidget>(GetWorld(),GameTutorialWidgetClass);
+
+	if (GameTutorialWidget)
+	{
+		GameTutorialWidget->MenuSetup();
+	}
+
+
+}
+
+void ABasePlayer::RemoveLobbyWidgets()
+{
+	if (GameInputsWidget)
+	{
+		GameInputsWidget->MenuTearDown();
+	}
+	if (GameTutorialWidget)
+	{
+		GameTutorialWidget->MenuTearDown();
+	}
+
+
+
+}
 
 
 

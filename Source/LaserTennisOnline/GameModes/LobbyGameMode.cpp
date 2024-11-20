@@ -2,7 +2,8 @@
 
 #include "LobbyGameMode.h"
 #include "GameFramework/GameStateBase.h"
-
+#include "GameFramework/PlayerState.h"
+#include "BasePlayer.h"
 
 
 void ALobbyGameMode::PostLogin(APlayerController* NewPlayer)
@@ -23,3 +24,27 @@ void ALobbyGameMode::PostLogin(APlayerController* NewPlayer)
 }
 
 
+void ALobbyGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+
+	TArray<TObjectPtr<APlayerState>> PlayerStateArray = GameState.Get()->PlayerArray;
+	
+	for (TObjectPtr<APlayerState> PlayerStatePtr : PlayerStateArray)
+	{
+		
+		APlayerController* PlayerController = PlayerStatePtr->GetPlayerController();
+
+		if (PlayerController)
+		{
+			ABasePlayer* BasePlayer = Cast<ABasePlayer>(PlayerController->GetPawn());
+
+			if (BasePlayer)
+			{
+				BasePlayer->DisplayLobbyWidgets();
+			}
+		}
+
+	}
+
+}

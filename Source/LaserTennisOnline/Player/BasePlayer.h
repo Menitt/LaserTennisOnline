@@ -7,6 +7,7 @@
 #include "InputActionValue.h"
 #include "HealthComponent.h"
 // #include "Interfaces/OnlineSessionInterface.h"
+#include "BaseUserWidget.h"
 
 #include "BasePlayer.generated.h"
 
@@ -114,6 +115,24 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UUserWidget> InGameMenuWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UBaseUserWidget> GameInputsWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UBaseUserWidget> GameTutorialWidgetClass;
+
+	
+	class UBaseUserWidget* GameInputsWidget;
+	class UBaseUserWidget* GameTutorialWidget;
+
+
+public:
+	void DisplayLobbyWidgets();
+	void RemoveLobbyWidgets();
+
+
+
 
 	// IOnlineSessionPtr OnlineSessionInterface2;
 

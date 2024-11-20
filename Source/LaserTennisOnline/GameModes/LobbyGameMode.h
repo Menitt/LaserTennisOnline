@@ -17,8 +17,11 @@ class LASERTENNISONLINE_API ALobbyGameMode : public AGameMode
 protected:
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 
+	virtual void BeginPlay() override;
 
 	UPROPERTY(EditDefaultsOnly)
 	FString GameLevel;
+
+
 
 };
