@@ -23,5 +23,11 @@ protected:
 	FString GameLevel;
 
 
+	void InitiateStartGame();
+	void StartGame();
+
+	FTimerHandle TimerHandle;
+
+
 
 };

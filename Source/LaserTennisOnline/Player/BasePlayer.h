@@ -122,15 +122,20 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UBaseUserWidget> GameTutorialWidgetClass;
 
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UBaseUserWidget> GameStartCountdownClass;
+
 	
-	class UBaseUserWidget* GameInputsWidget;
-	class UBaseUserWidget* GameTutorialWidget;
+	UBaseUserWidget* GameInputsWidget;
+	UBaseUserWidget* GameTutorialWidget;
+	UBaseUserWidget* GameStartCountdown;
 
 
 public:
 	void DisplayLobbyWidgets();
-	void RemoveLobbyWidgets();
+	void DisplayCountdown();
 
+	void RemoveLobbyWidgets();
 
 
 

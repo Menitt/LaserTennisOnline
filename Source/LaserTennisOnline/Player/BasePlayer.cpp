@@ -159,7 +159,7 @@ void ABasePlayer::jump(const FInputActionValue& value)
 void ABasePlayer::pauseGame(const FInputActionValue& value)
 {
 	// Spawn Menu Widget
-	UInGameMenu* InGameMenu =CreateWidget<UInGameMenu>(GetWorld(),
+	UInGameMenu* InGameMenu = CreateWidget<UInGameMenu>(GetWorld(),
 	InGameMenuWidgetClass);
 
 	if (InGameMenu)
@@ -167,7 +167,15 @@ void ABasePlayer::pauseGame(const FInputActionValue& value)
 		InGameMenu->MenuSetup();
 	}
 
-	DisplayLobbyWidgets();
+	GameStartCountdown = CreateWidget<UBaseUserWidget>(GetWorld(),
+	GameStartCountdownClass);
+
+	if (GameStartCountdown)
+	{
+		GameStartCountdown->MenuSetup();
+	}
+
+
 }
 
 
@@ -289,9 +297,18 @@ void ABasePlayer::RemoveLobbyWidgets()
 		GameTutorialWidget->MenuTearDown();
 	}
 
-
-
 }
+
+void ABasePlayer::DisplayCountdown()
+{
+	GameStartCountdown = CreateWidget<UBaseUserWidget>(GetWorld(),GameStartCountdownClass);
+
+	if (GameStartCountdown)
+	{
+		GameStartCountdown->MenuSetup();
+	}
+}
+
 
 
 
