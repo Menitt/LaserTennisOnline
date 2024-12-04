@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "MovingBeltObject.generated.h"
+#include "GeneratorSignal.generated.h"
 
 UCLASS()
-class LASERTENNISONLINE_API AMovingBeltObject : public AActor
+class LASERTENNISONLINE_API AGeneratorSignal : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	AMovingBeltObject();
+	AGeneratorSignal();
 
 protected:
 	// Called when the game starts or when spawned
@@ -23,18 +23,24 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-//
-// Components
-//
-private:
+	void SetPath(TArray<FVector2D> NavigationPath, int nPlayer, int nGenerator);
 
-	UPROPERTY(EditDefaultsOnly)
-	class USceneComponent* Mesh;
+	void SetCentralGenerator(class ACentralGenerator* Generator);
 
-	UPROPERTY(EditDefaultsOnly)
-	class UProjectileMovementComponent* MovementComponent;
+private:	
+
 	
+	int Player;
+	int Generator;
+	
+	class ACentralGenerator* CentralGenerator;
+
+	TArray<FVector2D> Path;
+
+	int StopCounter = 0;
+
 	UPROPERTY(EditDefaultsOnly)
-	class UBoxComponent* BoxComponent;
+	float Speed = 10;
+
 
 };

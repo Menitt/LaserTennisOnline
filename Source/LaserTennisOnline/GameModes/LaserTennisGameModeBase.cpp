@@ -23,9 +23,77 @@ void ALaserTennisGameModeBase::SetupGame()
     UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(),laserActivationPlatformClass,"2",
     laserPlatforms2);
 
+    TArray<AActor*> TempArray;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(),CentralGeneratorClass,TempArray);
+    if (TempArray.Num() > 0)
+    {
+        CentralGenerator = Cast<ACentralGenerator>(TempArray[0]);
+    }
+
+    if (CentralGenerator)
+    {
+        CentralGenerator->OnSignalArrived.AddDynamic(this, &ALaserTennisGameModeBase::SpawnLaser);
+    }
+
+    UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(),laserGeneratorClass,"11",
+        TempArray);
+    if (TempArray.Num()>0)
+    {
+        LaserGenerator1_1 = Cast<ALaserGenerator>(TempArray[0]);
+    }
+
+    UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(),laserGeneratorClass,"12",
+        TempArray);
+    if (TempArray.Num()>0)
+    {
+        LaserGenerator1_2 = Cast<ALaserGenerator>(TempArray[0]);
+    }
+
+    UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(),laserGeneratorClass,"13",
+        TempArray);
+    if (TempArray.Num()>0)
+    {
+        LaserGenerator1_3 = Cast<ALaserGenerator>(TempArray[0]);
+    }
+
+    UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(),laserGeneratorClass,"14",
+        TempArray);
+    if (TempArray.Num()>0)
+    {
+        LaserGenerator1_4 = Cast<ALaserGenerator>(TempArray[0]);
+    }
+
+    UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(),laserGeneratorClass,"21",
+        TempArray);
+    if (TempArray.Num()>0)
+    {
+        LaserGenerator2_1 = Cast<ALaserGenerator>(TempArray[0]);
+    }
+
+    UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(),laserGeneratorClass,"22",
+        TempArray);
+    if (TempArray.Num()>0)
+    {
+        LaserGenerator2_2 = Cast<ALaserGenerator>(TempArray[0]);
+    }
+
+    UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(),laserGeneratorClass,"23",
+        TempArray);
+    if (TempArray.Num()>0)
+    {
+        LaserGenerator2_3 = Cast<ALaserGenerator>(TempArray[0]);
+    }
+
+    UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(),laserGeneratorClass,"24",
+        TempArray);
+    if (TempArray.Num()>0)
+    {
+        LaserGenerator2_4 = Cast<ALaserGenerator>(TempArray[0]);
+    }
 
     ActiveLaserPlatforms1.Init(1,laserPlatforms1.Num());
     ActiveLaserPlatforms2.Init(1,laserPlatforms2.Num());
+
 
 }
 
@@ -33,7 +101,7 @@ void ALaserTennisGameModeBase::SetupGame()
 void ALaserTennisGameModeBase::SetupTimer()
 {
     // Set the timer to call MyFunction every 1 second, for 5 seconds
-    GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ThisClass::ManagePlatforms, 0.5f, true, 5.f);
+    GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ALaserTennisGameModeBase::ManagePlatforms, 0.5f, true, 5.f);
 }
 
 void ALaserTennisGameModeBase::ManagePlatforms()
@@ -183,8 +251,6 @@ void ALaserTennisGameModeBase::PostLogin(APlayerController* NewPlayer)
     
     Super::PostLogin(NewPlayer);
 
-    UE_LOG(LogTemp, Warning, TEXT("ALaserTennisGameModeBase->PostLogin()"));
-
     if (HasAuthority())
     {
         
@@ -255,28 +321,38 @@ void ALaserTennisGameModeBase::BeginPlay()
 
 void ALaserTennisGameModeBase::SpawnLaserRequest(FName PlayerTag)
 {
-    UE_LOG(LogTemp, Display, TEXT("Inside GameMode->SpawnLaserRequest"));
 
     // Pick one generator randomly:
     int nGenerators1 = laserGenerators1.Num();
     int nGenerators2 = laserGenerators2.Num();
     ALaserGenerator* Generator;
 
+    int RandInt;
+    int PlayerID;
+
     if (PlayerTag == "1")
     {
-        int RandInt = UKismetMathLibrary::RandomInteger(nGenerators2);
+        RandInt = UKismetMathLibrary::RandomInteger(nGenerators2);
         Generator = Cast<ALaserGenerator>(laserGenerators2[RandInt]);
+        PlayerID = 1;
     }
     else 
     {
-        int RandInt = UKismetMathLibrary::RandomInteger(nGenerators1);
+        RandInt = UKismetMathLibrary::RandomInteger(nGenerators1);
         Generator = Cast<ALaserGenerator>(laserGenerators1[RandInt]);
+        PlayerID = 2;
     }
 
-    if (Generator)
+    // if (Generator)
+    // {
+    //     Generator->SpawnLaser();
+    // }
+
+    if (CentralGenerator)
     {
-        Generator->SpawnLaser();
+        CentralGenerator->SendSignal(PlayerID, RandInt);
     }
+
 }
 
 void ALaserTennisGameModeBase::GameOver()
@@ -306,11 +382,75 @@ void ALaserTennisGameModeBase::HandleMatchHasEnded()
 
 }
 
-
 void ALaserTennisGameModeBase::ReturnToMainMenuHost()
 {
 
     // UGameplayStatics::OpenLevel(GetWorld(), MainMenuLevel);
 
     Super::ReturnToMainMenuHost();
+}
+
+void ALaserTennisGameModeBase::SpawnLaser(int nPlayer, int nGenerator)
+{
+    int GeneratorID = 10*nPlayer + nGenerator;
+    switch (GeneratorID)
+	{
+		case 11:
+			if (LaserGenerator1_1)
+            {
+                LaserGenerator1_1->SpawnLaser();
+            }
+			break;
+		
+		case 12:
+			if (LaserGenerator1_2)
+            {
+                LaserGenerator1_2->SpawnLaser();
+            }
+			break;
+		
+		case 13:
+			if (LaserGenerator1_3)
+            {
+                LaserGenerator1_3->SpawnLaser();
+            }
+			break;
+
+		case 14:
+			if (LaserGenerator1_4)
+            {
+                LaserGenerator1_4->SpawnLaser();
+            }
+			break;
+		
+		case 21:
+			if (LaserGenerator2_1)
+            {
+                LaserGenerator2_1->SpawnLaser();
+            }
+			break;
+		
+		case 22:
+			if (LaserGenerator2_2)
+            {
+                LaserGenerator2_2->SpawnLaser();
+            }
+			break;
+		
+		case 23:
+			if (LaserGenerator2_3)
+            {
+                LaserGenerator2_3->SpawnLaser();
+            }
+			break;
+		
+		case 24:
+			if (LaserGenerator2_4)
+            {
+                LaserGenerator2_4->SpawnLaser();
+            }
+			break;
+		default:
+			break;
+	}
 }

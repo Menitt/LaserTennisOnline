@@ -66,16 +66,12 @@ void ALaserRay::OnHitPlayer(UPrimitiveComponent *HitComponent, AActor *OtherActo
 	// Do nothing if not Server (~ let server decide)
 	if (GetLocalRole() == ROLE_Authority)
 	{
-		
-		UE_LOG(LogTemp, Warning, TEXT("Hitting SOmething!!!"));
-
 		if (OtherActor && (OtherActor != this) && OtherComp)
 		{
 			ABasePlayer* Player = Cast<ABasePlayer>(OtherActor);
 
 			if (Player)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("LaserRay->OnHitPlayer"));
 
 				Player->CustomTakeDamage();
 
@@ -88,8 +84,6 @@ void ALaserRay::OnHitPlayer(UPrimitiveComponent *HitComponent, AActor *OtherActo
 
 				if (Volume)
 				{
-					UE_LOG(LogTemp, Warning, TEXT("LaserRay->OnHitPlayer (Volume)"));
-
 					Destroy();
 				}
 			}	
@@ -103,5 +97,5 @@ void ALaserRay::OnHitPlayer(UPrimitiveComponent *HitComponent, AActor *OtherActo
 
 void ALaserRay::Destroyed()
 {
-	UE_LOG(LogTemp, Warning, TEXT("ALaserRay->Destroyed"));
+
 }

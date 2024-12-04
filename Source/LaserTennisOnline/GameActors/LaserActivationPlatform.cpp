@@ -114,7 +114,6 @@ void ALaserActivationPlatform::OnEndOverlap(UPrimitiveComponent *OverlappedCompo
 		if (player and !bIsPlayerReset and !bIsReady)
 		{
 			bIsPlayerReset = true;
-			UE_LOG(LogTemp, Warning, TEXT("End Overlap"));
 		}
 	}
 }

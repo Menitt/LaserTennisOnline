@@ -79,7 +79,6 @@ void ABasePlayer::BeginPlay()
 		UAnimInstance* AnimInstance = SkeletalMesh->GetAnimInstance();
 		if (AnimInstance)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("ABasePlayer::BeginPlay -> Binding Delegate"));
 			AnimInstance->OnMontageEnded.AddDynamic(this, &ThisClass::OnTakeDamageMontageCompleted);
 		}
 	}
@@ -242,14 +241,9 @@ void ABasePlayer::HandleDestruction()
 
 void ABasePlayer::OnTakeDamageMontageCompleted(UAnimMontage* AnimMontage, bool bInterrupted)
 {
-
-	UE_LOG(LogTemp, Warning, TEXT("ABasePlayer::OnTakeDamageCompleted"));
-	
 	
 	if (AnimMontage == TakeDamageMontage)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("ABasePlayer::OnTakeDamageCompleted"));
-		
+	{		
 		APlayerController* PlayerController = Cast<APlayerController>(GetController());
 
 		if (PlayerController)

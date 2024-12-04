@@ -6,6 +6,7 @@
 #include "GameFramework/GameMode.h"
 #include "LaserGenerator.h"
 #include "LaserActivationPlatform.h"
+#include "CentralGenerator.h"
 
 #include "LaserTennisGameModeBase.generated.h"
 
@@ -41,12 +42,28 @@ private:
 	TArray<int> ActiveLaserPlatforms1; 
 	TArray<int> ActiveLaserPlatforms2;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	TSubclassOf<ACentralGenerator> CentralGeneratorClass;
+	ACentralGenerator* CentralGenerator;
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<ACharacter> ClassPlayer1;
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<ACharacter> ClassPlayer2;
 	bool bIsPlayer1 = true;
+
+	class ALaserGenerator* LaserGenerator1_1;
+	class ALaserGenerator* LaserGenerator1_2;
+	class ALaserGenerator* LaserGenerator1_3;
+	class ALaserGenerator* LaserGenerator1_4;
+	class ALaserGenerator* LaserGenerator2_1;
+	class ALaserGenerator* LaserGenerator2_2;
+	class ALaserGenerator* LaserGenerator2_3;
+	class ALaserGenerator* LaserGenerator2_4;
+
+
+
+
 //
 // Setup Function
 //
@@ -55,6 +72,9 @@ private:
 
 	void SetupTimer();
 	FTimerHandle TimerHandle;
+
+	UFUNCTION()
+	void SpawnLaser(int nPlayer, int nGenerator);
 
 //
 // Gameplay
