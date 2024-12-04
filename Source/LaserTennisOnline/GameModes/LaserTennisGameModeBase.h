@@ -51,6 +51,9 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<ACharacter> ClassPlayer2;
 	bool bIsPlayer1 = true;
+	class ABasePlayer* Player1;
+	class ABasePlayer* Player2;
+
 
 	class ALaserGenerator* LaserGenerator1_1;
 	class ALaserGenerator* LaserGenerator1_2;

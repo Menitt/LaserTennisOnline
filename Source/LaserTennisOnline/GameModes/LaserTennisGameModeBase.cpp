@@ -12,6 +12,22 @@
 
 void ALaserTennisGameModeBase::SetupGame()
 {
+    TArray<AActor*> TempArray;
+    
+    // Get Players
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(),ClassPlayer1,TempArray);
+    if (TempArray.Num() > 0)
+    {
+        Player1 = Cast<ABasePlayer>(TempArray[0]);
+    }
+    
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(),ClassPlayer2,TempArray);
+    if (TempArray.Num() > 0)
+    {
+        Player2 = Cast<ABasePlayer>(TempArray[0]);
+    }
+    
+    
     // Get All Gameplay Actors
     UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(),laserGeneratorClass,"1",
     laserGenerators1);
@@ -23,73 +39,6 @@ void ALaserTennisGameModeBase::SetupGame()
     UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(),laserActivationPlatformClass,"2",
     laserPlatforms2);
 
-    TArray<AActor*> TempArray;
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(),CentralGeneratorClass,TempArray);
-    if (TempArray.Num() > 0)
-    {
-        CentralGenerator = Cast<ACentralGenerator>(TempArray[0]);
-    }
-
-    if (CentralGenerator)
-    {
-        CentralGenerator->OnSignalArrived.AddDynamic(this, &ALaserTennisGameModeBase::SpawnLaser);
-    }
-
-    UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(),laserGeneratorClass,"11",
-        TempArray);
-    if (TempArray.Num()>0)
-    {
-        LaserGenerator1_1 = Cast<ALaserGenerator>(TempArray[0]);
-    }
-
-    UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(),laserGeneratorClass,"12",
-        TempArray);
-    if (TempArray.Num()>0)
-    {
-        LaserGenerator1_2 = Cast<ALaserGenerator>(TempArray[0]);
-    }
-
-    UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(),laserGeneratorClass,"13",
-        TempArray);
-    if (TempArray.Num()>0)
-    {
-        LaserGenerator1_3 = Cast<ALaserGenerator>(TempArray[0]);
-    }
-
-    UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(),laserGeneratorClass,"14",
-        TempArray);
-    if (TempArray.Num()>0)
-    {
-        LaserGenerator1_4 = Cast<ALaserGenerator>(TempArray[0]);
-    }
-
-    UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(),laserGeneratorClass,"21",
-        TempArray);
-    if (TempArray.Num()>0)
-    {
-        LaserGenerator2_1 = Cast<ALaserGenerator>(TempArray[0]);
-    }
-
-    UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(),laserGeneratorClass,"22",
-        TempArray);
-    if (TempArray.Num()>0)
-    {
-        LaserGenerator2_2 = Cast<ALaserGenerator>(TempArray[0]);
-    }
-
-    UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(),laserGeneratorClass,"23",
-        TempArray);
-    if (TempArray.Num()>0)
-    {
-        LaserGenerator2_3 = Cast<ALaserGenerator>(TempArray[0]);
-    }
-
-    UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(),laserGeneratorClass,"24",
-        TempArray);
-    if (TempArray.Num()>0)
-    {
-        LaserGenerator2_4 = Cast<ALaserGenerator>(TempArray[0]);
-    }
 
     ActiveLaserPlatforms1.Init(1,laserPlatforms1.Num());
     ActiveLaserPlatforms2.Init(1,laserPlatforms2.Num());
@@ -392,65 +341,21 @@ void ALaserTennisGameModeBase::ReturnToMainMenuHost()
 
 void ALaserTennisGameModeBase::SpawnLaser(int nPlayer, int nGenerator)
 {
-    int GeneratorID = 10*nPlayer + nGenerator;
-    switch (GeneratorID)
-	{
-		case 11:
-			if (LaserGenerator1_1)
-            {
-                LaserGenerator1_1->SpawnLaser();
-            }
-			break;
-		
-		case 12:
-			if (LaserGenerator1_2)
-            {
-                LaserGenerator1_2->SpawnLaser();
-            }
-			break;
-		
-		case 13:
-			if (LaserGenerator1_3)
-            {
-                LaserGenerator1_3->SpawnLaser();
-            }
-			break;
+    
+    FString String1 = FString::FromInt(nPlayer);
+    FString String2 = FString::FromInt(nGenerator);
 
-		case 14:
-			if (LaserGenerator1_4)
-            {
-                LaserGenerator1_4->SpawnLaser();
-            }
-			break;
-		
-		case 21:
-			if (LaserGenerator2_1)
-            {
-                LaserGenerator2_1->SpawnLaser();
-            }
-			break;
-		
-		case 22:
-			if (LaserGenerator2_2)
-            {
-                LaserGenerator2_2->SpawnLaser();
-            }
-			break;
-		
-		case 23:
-			if (LaserGenerator2_3)
-            {
-                LaserGenerator2_3->SpawnLaser();
-            }
-			break;
-		
-		case 24:
-			if (LaserGenerator2_4)
-            {
-                LaserGenerator2_4->SpawnLaser();
-            }
-			break;
-		default:
-			break;
-	}
+    FName LookupTag(*(String1 + String2));
+    
+    TArray<AActor*> TempArray;
+
+    UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(),laserGeneratorClass,LookupTag,TempArray);
+    if (TempArray.Num() > 0)
+    {
+        ALaserGenerator* LaserGenerator = Cast<ALaserGenerator>(TempArray[0]);
+        if (LaserGenerator)
+        {
+            LaserGenerator->SpawnLaser();
+        }
+    }
 }
