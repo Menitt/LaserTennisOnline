@@ -24,7 +24,7 @@ void AGeneratorSignal::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (Path.Num()>StopCounter and FVector2D(GetActorLocation().X, GetActorLocation().Y) == Path[StopCounter])
+	if (Path.Num()>StopCounter and (FVector2D(GetActorLocation().X, GetActorLocation().Y)-Path[StopCounter]).Size()<10)
 	{
 		StopCounter += 1;
 	}
@@ -40,11 +40,11 @@ void AGeneratorSignal::Tick(float DeltaTime)
 
 	if (Path.Num()>StopCounter)
 	{
-		FVector2D Direction = Path[StopCounter] - FVector2D(GetActorLocation().X, GetActorLocation().Y);
+		FVector TargetLocation = FVector(Path[StopCounter].X, Path[StopCounter].Y, GetActorLocation().Z);
 
-		FVector2D NextLocation = Direction.GetSafeNormal() * Speed * DeltaTime; 
-
-		SetActorLocation(FVector(NextLocation.X, NextLocation.Y, 0) + GetActorLocation());
+		FVector NewLocation = FMath::VInterpTo(GetActorLocation(), TargetLocation, DeltaTime, Speed);
+	
+		SetActorLocation(NewLocation);
 	}
 
 }

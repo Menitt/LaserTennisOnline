@@ -23,6 +23,12 @@ ACentralGenerator::ACentralGenerator()
 	Spawn3 = CreateDefaultSubobject<USceneComponent>("Spawn 3");
 	Spawn4 = CreateDefaultSubobject<USceneComponent>("Spawn 4");
 
+	Spawn1->SetupAttachment(RootComponent);
+	Spawn2->SetupAttachment(RootComponent);
+	Spawn3->SetupAttachment(RootComponent);
+	Spawn4->SetupAttachment(RootComponent);
+
+
 }
 
 // Called when the game starts or when spawned
@@ -56,43 +62,43 @@ void ACentralGenerator::SendSignal(int nPlayer, int nGenerator)
 	switch (PathID)
 	{
 		case 11:
-			SendSignal(SignalPath1_1, nPlayer, nGenerator);
 			SignalSpawnLocation = Spawn1->GetComponentLocation();
+			SendSignal(SignalPath1_1, nPlayer, nGenerator);
 			break;
 		
 		case 12:
-			SendSignal(SignalPath1_2, nPlayer, nGenerator);
 			SignalSpawnLocation = Spawn2->GetComponentLocation();
+			SendSignal(SignalPath1_2, nPlayer, nGenerator);
 			break;
 		
 		case 13:
-			SendSignal(SignalPath1_3, nPlayer, nGenerator);
 			SignalSpawnLocation = Spawn2->GetComponentLocation();
+			SendSignal(SignalPath1_3, nPlayer, nGenerator);
 			break;
 
 		case 14:
-			SendSignal(SignalPath1_4, nPlayer, nGenerator);
 			SignalSpawnLocation = Spawn4->GetComponentLocation();
+			SendSignal(SignalPath1_4, nPlayer, nGenerator);
 			break;
 		
 		case 21:
-			SendSignal(SignalPath2_1, nPlayer, nGenerator);
 			SignalSpawnLocation = Spawn1->GetComponentLocation();
+			SendSignal(SignalPath2_1, nPlayer, nGenerator);	
 			break;
 		
 		case 22:
-			SendSignal(SignalPath2_2, nPlayer, nGenerator);
 			SignalSpawnLocation = Spawn3->GetComponentLocation();
+			SendSignal(SignalPath2_2, nPlayer, nGenerator);
 			break;
 		
 		case 23:
-			SendSignal(SignalPath2_3, nPlayer, nGenerator);
 			SignalSpawnLocation = Spawn3->GetComponentLocation();
+			SendSignal(SignalPath2_3, nPlayer, nGenerator);
 			break;
 		
 		case 24:
-			SendSignal(SignalPath2_4, nPlayer, nGenerator);
 			SignalSpawnLocation = Spawn4->GetComponentLocation();
+			SendSignal(SignalPath2_4, nPlayer, nGenerator);
 			break;
 
 		default:
@@ -106,6 +112,8 @@ void ACentralGenerator::SendSignal(const TArray<FVector2D>& SignalPath, int nPla
 	
 	AGeneratorSignal* GeneratorSignal = Cast<AGeneratorSignal>(GetWorld()->SpawnActor<AActor>(
 		SignalClass,SignalSpawnLocation,GetActorRotation()));
+
+
 
 	if (GeneratorSignal)
 	{

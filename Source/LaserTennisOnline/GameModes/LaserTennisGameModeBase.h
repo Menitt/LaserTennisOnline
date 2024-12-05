@@ -29,10 +29,9 @@ virtual void Tick(float DeltaTime) override;
 // Gameplay Actors Containers
 //
 private:
+
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
-	TSubclassOf<ALaserGenerator> laserGeneratorClass;
-	TArray<AActor*> laserGenerators1;
-	TArray<AActor*> laserGenerators2;
+	TSubclassOf<AActor> LaserGeneratorClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
 	TSubclassOf<ALaserActivationPlatform> laserActivationPlatformClass;
@@ -53,18 +52,6 @@ private:
 	bool bIsPlayer1 = true;
 	class ABasePlayer* Player1;
 	class ABasePlayer* Player2;
-
-
-	class ALaserGenerator* LaserGenerator1_1;
-	class ALaserGenerator* LaserGenerator1_2;
-	class ALaserGenerator* LaserGenerator1_3;
-	class ALaserGenerator* LaserGenerator1_4;
-	class ALaserGenerator* LaserGenerator2_1;
-	class ALaserGenerator* LaserGenerator2_2;
-	class ALaserGenerator* LaserGenerator2_3;
-	class ALaserGenerator* LaserGenerator2_4;
-
-
 
 
 //
