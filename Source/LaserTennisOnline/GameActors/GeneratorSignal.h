@@ -23,7 +23,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void SetPath(TArray<FVector2D> NavigationPath, int nPlayer, int nGenerator);
+	UFUNCTION(NetMulticast, Reliable)
+	void SetPath(const TArray<FVector2D>& NavigationPath, int nPlayer, int nGenerator);
 
 	void SetCentralGenerator(class ACentralGenerator* Generator);
 

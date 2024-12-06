@@ -27,8 +27,6 @@ ACentralGenerator::ACentralGenerator()
 	Spawn2->SetupAttachment(RootComponent);
 	Spawn3->SetupAttachment(RootComponent);
 	Spawn4->SetupAttachment(RootComponent);
-
-
 }
 
 // Called when the game starts or when spawned
@@ -48,9 +46,12 @@ void ACentralGenerator::Tick(float DeltaTime)
 void ACentralGenerator::BroadCastSignalArrived(int nPlayer, int nGenerator)
 {
 	// Check if the delegate has any listeners
-    if (OnSignalArrived.IsBound())
-    {
-        OnSignalArrived.Broadcast(nPlayer, nGenerator); // Trigger the delegate
+    if (GetLocalRole() == ROLE_Authority)
+	{
+		if (OnSignalArrived.IsBound())
+		{
+			OnSignalArrived.Broadcast(nPlayer, nGenerator); // Trigger the delegate
+		}
 	}
 }
 
@@ -109,16 +110,18 @@ void ACentralGenerator::SendSignal(int nPlayer, int nGenerator)
 
 void ACentralGenerator::SendSignal(const TArray<FVector2D>& SignalPath, int nPlayer, int nGenerator)
 {
-	
-	AGeneratorSignal* GeneratorSignal = Cast<AGeneratorSignal>(GetWorld()->SpawnActor<AActor>(
-		SignalClass,SignalSpawnLocation,GetActorRotation()));
-
-
-
-	if (GeneratorSignal)
+	if (GetLocalRole() == ROLE_Authority)
 	{
-		GeneratorSignal->SetPath(SignalPath, nPlayer, nGenerator);
+		AGeneratorSignal* GeneratorSignal = Cast<AGeneratorSignal>(GetWorld()->SpawnActor<AActor>(
+			SignalClass,SignalSpawnLocation,GetActorRotation()));
 
-		GeneratorSignal->SetCentralGenerator(this);
+
+
+		if (GeneratorSignal)
+		{
+			GeneratorSignal->SetPath(SignalPath, nPlayer, nGenerator);
+
+			GeneratorSignal->SetCentralGenerator(this);
+		}
 	}
 }

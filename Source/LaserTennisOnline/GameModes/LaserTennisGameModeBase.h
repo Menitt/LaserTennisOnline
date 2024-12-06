@@ -46,9 +46,9 @@ private:
 	ACentralGenerator* CentralGenerator;
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<ACharacter> ClassPlayer1;
+	TSubclassOf<AActor> ClassPlayer1;
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<ACharacter> ClassPlayer2;
+	TSubclassOf<AActor> ClassPlayer2;
 	bool bIsPlayer1 = true;
 	class ABasePlayer* Player1;
 	class ABasePlayer* Player2;
@@ -83,7 +83,7 @@ public:
 
 	int GetNumberPlatformsByKey(const TArray<int>& PlatformsMap, int key) const;
 
-	void SpawnLaserRequest(FName PlayerTag);
+	void SpawnLaserRequest(int PlayerID);
 
 	void GameOver();
 

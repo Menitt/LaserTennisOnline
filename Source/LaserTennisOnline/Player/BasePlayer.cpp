@@ -165,16 +165,6 @@ void ABasePlayer::pauseGame(const FInputActionValue& value)
 	{
 		InGameMenu->MenuSetup();
 	}
-
-	GameStartCountdown = CreateWidget<UBaseUserWidget>(GetWorld(),
-	GameStartCountdownClass);
-
-	if (GameStartCountdown)
-	{
-		GameStartCountdown->MenuSetup();
-	}
-
-
 }
 
 
@@ -220,13 +210,19 @@ void ABasePlayer::GameOver_Implementation(bool bWonGame)
 		HandleDestruction();
 
 		// Spawn Menu Widget
-		UGameOverWidget* GameOverWidget =CreateWidget<UGameOverWidget>(GetWorld(),
-		GameOverWidgetClass);
-
+		UGameOverWidget* GameOverWidget; 
+		if (bWonGame)
+		{
+			GameOverWidget = CreateWidget<UGameOverWidget>(GetWorld(),GameOverVictoryClass);
+		}
+		else
+		{
+			GameOverWidget = CreateWidget<UGameOverWidget>(GetWorld(),GameOverDefeatClass);
+		}
+		
 		if (GameOverWidget)
 		{
-			GameOverWidget->SetText(bWonGame);
-			GameOverWidget->AddToViewport();
+			GameOverWidget->MenuSetup();
 		}
 
 	}

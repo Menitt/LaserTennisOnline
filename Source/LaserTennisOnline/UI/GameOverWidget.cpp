@@ -5,10 +5,25 @@
 #include "Runtime/UMG/Public/Components/TextBlock.h"
 #include "Runtime/UMG/Public/Components/Button.h"
 #include "Kismet/GameplayStatics.h"
+#include "GameFramework/PlayerController.h"
+#include "MultiplayerSessionsSubsystem.h"
+#include "GameFramework/GameModeBase.h"
 
-void UGameOverWidget::NativeConstruct()
+
+
+void UGameOverWidget::MenuSetup()
 {
-	Super::NativeConstruct();
+	Super::MenuSetup();
+
+	UGameInstance* GameInstance = GetGameInstance();
+	if (GameInstance)
+	{
+		MultiplayerSessionsSubsystem = GameInstance->GetSubsystem<UMultiplayerSessionsSubsystem>();
+		if (MultiplayerSessionsSubsystem)
+		{
+			MultiplayerSessionsSubsystem->MultiplayerOnDestroySessionComplete.AddDynamic(this, &ThisClass::OnDestroySession);
+		}
+	}
 
 	if (MainMenuButton)
 	{
@@ -17,36 +32,39 @@ void UGameOverWidget::NativeConstruct()
 
 }
 
-void UGameOverWidget::SetText(bool bGameWon)
+
+void UGameOverWidget::OnDestroySession(bool bWasSuccessful)
 {
-
-	// ItemTitle can be nullptr if we haven't created it in the
-	// Blueprint subclass
-
-	if (GameOverText)
+	if (!bWasSuccessful)
 	{
-		FText Text = FText::FromString(TEXT("GameOver \n Defeat"));
-		FColor Color = FColor::Red;
-
-		if (bGameWon)
-		{
-			Text = FText::FromString(TEXT("GameOver \n Victory"));
-			Color = FColor::Green;
-		}
-
-		GameOverText->SetText(Text);
-		GameOverText->SetColorAndOpacity(Color);
+		MainMenuButton->SetIsEnabled(true);
+		return;
 	}
-	
+	UWorld* World = GetWorld();
+	if (World)
+	{
+		AGameModeBase* GameMode = World->GetAuthGameMode<AGameModeBase>();
+		if (GameMode)
+		{
+			GameMode->ReturnToMainMenuHost();
+		}
+		else
+		{
+			PlayerController = PlayerController == nullptr ? World->GetFirstPlayerController() : PlayerController;
+			if (PlayerController)
+			{
+				PlayerController->ClientReturnToMainMenuWithTextReason(FText());
+			}
+		}
+	}
 }
 
 
 void UGameOverWidget::MainMenuButtonClicked()
 {
-	if (MainMenuButton)
+	MainMenuButton->SetIsEnabled(false);
+	if (MultiplayerSessionsSubsystem)
 	{
-		MainMenuButton->SetIsEnabled(false);
+		MultiplayerSessionsSubsystem->DestroySession();
 	}
-
-	UGameplayStatics::OpenLevel(GetWorld(), MainMenuLevel);
 }

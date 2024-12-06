@@ -22,7 +22,6 @@ void UBaseUserWidget::MenuSetup()
 			PlayerController->SetShowMouseCursor(true);
 		}
 	}
-
 }
 
 bool UBaseUserWidget::Initialize()

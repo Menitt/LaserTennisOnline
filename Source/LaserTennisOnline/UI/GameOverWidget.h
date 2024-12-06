@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
+#include "BaseUserWidget.h"
 
 #include "GameOverWidget.generated.h"
 
@@ -11,17 +11,15 @@
  * 
  */
 UCLASS()
-class LASERTENNISONLINE_API UGameOverWidget : public UUserWidget
+class LASERTENNISONLINE_API UGameOverWidget : public UBaseUserWidget
 {
 	GENERATED_BODY()
 	
 
-protected:
-	virtual void NativeConstruct() override;
+public:
+	virtual void MenuSetup() override;
 
-	// Game Over Text
-	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
-	TObjectPtr<class UTextBlock> GameOverText;
+protected:
 
 	// Main Menu Button
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
@@ -30,14 +28,18 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	FName MainMenuLevel;
 
-public:
 
-	// Set Menu Text
-	void SetText(bool bGameWon);
+	UFUNCTION()
+	void OnDestroySession(bool bWasSuccessful);
 
+private:
 
 	UFUNCTION()
 	void MainMenuButtonClicked();
+
+private:
+	UPROPERTY()
+	class UMultiplayerSessionsSubsystem* MultiplayerSessionsSubsystem;
 
 
 };

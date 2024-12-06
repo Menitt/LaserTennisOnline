@@ -41,11 +41,13 @@ void ALaserTennisGameModeBase::SetupGame()
     if (TempArray.Num() > 0)
     {
         CentralGenerator = Cast<ACentralGenerator>(TempArray[0]);
+        CentralGenerator->OnSignalArrived.AddDynamic(this, &ThisClass::SpawnLaser);
     }
 
 
-}
 
+
+}
 
 void ALaserTennisGameModeBase::SetupTimer()
 {
@@ -63,13 +65,10 @@ void ALaserTennisGameModeBase::ManagePlatforms()
     AdjustPlatforms(ActiveLaserPlatforms2, laserPlatforms2);
 }
 
-
-
 void ALaserTennisGameModeBase::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 }
-
 
 void ALaserTennisGameModeBase::UpdateActivePlatformsList(TArray<int>& PlatformsMap, TArray<AActor*>& PlatformList)
 {
@@ -206,7 +205,6 @@ void ALaserTennisGameModeBase::PostLogin(APlayerController* NewPlayer)
         {
             NewPlayer->UnPossess();
             Pawn->Destroy();
-            UE_LOG(LogTemp, Warning, TEXT("Destroy Pawn"));
         }
 
         // Get the PlayerStart actors in the level
@@ -265,20 +263,10 @@ void ALaserTennisGameModeBase::BeginPlay()
 }
 
 
-void ALaserTennisGameModeBase::SpawnLaserRequest(FName PlayerTag)
+void ALaserTennisGameModeBase::SpawnLaserRequest(int PlayerID)
 {
 
     int RandInt = UKismetMathLibrary::RandomInteger(4) + 1;
-    int PlayerID;
-
-    if (PlayerTag == "1")
-    {
-        PlayerID = 2;
-    }
-    else 
-    {
-        PlayerID = 1;
-    }
 
     if (CentralGenerator)
     {

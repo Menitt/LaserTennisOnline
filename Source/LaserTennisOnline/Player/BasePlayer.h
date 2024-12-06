@@ -125,7 +125,12 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UBaseUserWidget> GameStartCountdownClass;
 
-	
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UBaseUserWidget> GameOverVictoryClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UBaseUserWidget> GameOverDefeatClass;
+
 	UBaseUserWidget* GameInputsWidget;
 	UBaseUserWidget* GameTutorialWidget;
 	UBaseUserWidget* GameStartCountdown;

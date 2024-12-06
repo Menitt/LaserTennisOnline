@@ -55,11 +55,6 @@ void ALaserActivationPlatform::BeginPlay()
 	
 	baseMesh->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 
-	if (Tags.Num() > 0) 
-	{
-		PlayerTag = Tags[0];
-	}
-
 }
 
 // Called every frame
@@ -139,55 +134,63 @@ AActor *OtherActor, UPrimitiveComponent *OtherComp, int32 OtherBodyIndex, bool b
 
 			// Deactivate
 			Deactivate();
-
 		}
 	}
 }
 
 void ALaserActivationPlatform::SendSpawnLaserRequest()
 {
-	if (GameMode)
+	if (GetLocalRole() == ROLE_Authority)
 	{
-		GameMode->SpawnLaserRequest(PlayerTag);
+		if (GameMode)
+		{
+			GameMode->SpawnLaserRequest(OtherPlayerID);
+		}
 	}
 }
 
-// void ALaserActivationPlatform::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-// {
-// 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-// 	DOREPLIFETIME(ALaserActivationPlatform, bShouldActivate);
-// 	DOREPLIFETIME(ALaserActivationPlatform, bShouldDeactivate);
-// 	DOREPLIFETIME(ALaserActivationPlatform, bIsReady);
-// 	DOREPLIFETIME(ALaserActivationPlatform, bIsPlayerReset);
-// 	DOREPLIFETIME(ALaserActivationPlatform, bIsResting);
-// }
-
-void ALaserActivationPlatform::Deactivate_Implementation()
+void ALaserActivationPlatform::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
-	if (bShouldActivate or bShouldDeactivate)
-	{
-		return;
-	}
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	bIsReady = false;
-	bShouldDeactivate = true;
-	bShouldActivate = false;
-	bIsResting = false;
+	DOREPLIFETIME(ALaserActivationPlatform, bShouldActivate);
+	DOREPLIFETIME(ALaserActivationPlatform, bShouldDeactivate);
+	DOREPLIFETIME(ALaserActivationPlatform, bIsReady);
+	DOREPLIFETIME(ALaserActivationPlatform, bIsPlayerReset);
+	DOREPLIFETIME(ALaserActivationPlatform, bIsResting);
+}
+
+void ALaserActivationPlatform::Deactivate()
+{
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		if (bShouldActivate or bShouldDeactivate)
+		{
+			return;
+		}
+
+		bIsReady = false;
+		bShouldDeactivate = true;
+		bShouldActivate = false;
+		bIsResting = false;
+	}
 
 }
 
-void ALaserActivationPlatform::Activate_Implementation()
+void ALaserActivationPlatform::Activate()
 {
-	if (bShouldActivate or bShouldDeactivate)
+	
+	if (GetLocalRole() == ROLE_Authority)
 	{
-		return;
+		if (bShouldActivate or bShouldDeactivate)
+		{
+			return;
+		}
+
+		bIsReady = false;
+		bShouldDeactivate = false;
+		bShouldActivate = true;
+		bIsResting = false;
 	}
-
-	bIsReady = false;
-	bShouldDeactivate = false;
-	bShouldActivate = true;
-	bIsResting = false;
-
 }
 

@@ -15,8 +15,8 @@ class LASERTENNISONLINE_API UBaseUserWidget : public UUserWidget
 	GENERATED_BODY()
 	
 public:
-	void MenuSetup();
-	void MenuTearDown();
+	virtual void MenuSetup();
+	virtual void MenuTearDown();
 
 
 protected:

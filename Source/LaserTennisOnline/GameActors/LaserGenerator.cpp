@@ -41,8 +41,7 @@ void ALaserGenerator::Tick(float DeltaTime)
 
 void ALaserGenerator::SpawnLaser_Implementation()
 {
-	UE_LOG(LogTemp, Display, TEXT("Inside Laser Generator->Spawning Laser!"));
-
+	
 	UWorld* World = GetWorld();
 	if (World)
 	{	
