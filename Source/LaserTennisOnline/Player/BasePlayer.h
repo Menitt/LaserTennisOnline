@@ -86,8 +86,8 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void CustomTakeDamage();
 
-	UFUNCTION(Client, Reliable)
-	void GameOver(bool bWonGame);
+	UFUNCTION(NetMulticast, Reliable)
+	void GameOver(bool bWonGame, APawn* DefaultPawn);
 
 	UPROPERTY(EditDefaultsOnly) UAnimMontage* TakeDamageMontage; // (Animation)
 	
@@ -101,7 +101,7 @@ public:
 	void OnTakeDamageMontageCompleted(UAnimMontage* AnimMontage, bool bInterrupted);
 
 
-	void HandleDestruction();
+	void HandleDestruction(APawn* DefaultPawn);
 
 
 

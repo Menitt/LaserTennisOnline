@@ -145,14 +145,6 @@ void ABasePlayer::jump(const FInputActionValue& value)
 		ACharacter::Jump();
 
 	}
-
-	if (GetNetMode() == NM_ListenServer and GEngine and GetLocalRole() == ROLE_Authority)
-	{
-		GEngine->AddOnScreenDebugMessage(12,2,FColor::Blue,"ABasePlayer->jump");
-	}
-
-
-
 } 
 
 void ABasePlayer::pauseGame(const FInputActionValue& value)
@@ -192,23 +184,15 @@ void ABasePlayer::CustomTakeDamage_Implementation()
 }
 
 
-void ABasePlayer::GameOver_Implementation(bool bWonGame)
+void ABasePlayer::GameOver_Implementation(bool bWonGame, APawn* DefaultPawn)
 {
+
 	if (IsLocallyControlled())
 	{
 		// Disable Input
 		APlayerController* PlayerController = Cast<APlayerController>(GetController());
 		this->DisableInput(PlayerController);
-		
-		// Show Mouse Cursor
-		if (PlayerController)
-		{
-			PlayerController->bShowMouseCursor = true;
-			PlayerController->SetInputMode(FInputModeUIOnly());
-		}
-
-		HandleDestruction();
-
+	
 		// Spawn Menu Widget
 		UGameOverWidget* GameOverWidget; 
 		if (bWonGame)
@@ -224,14 +208,19 @@ void ABasePlayer::GameOver_Implementation(bool bWonGame)
 		{
 			GameOverWidget->MenuSetup();
 		}
-
 	}
+
+	if (not bWonGame)
+	{
+		HandleDestruction(DefaultPawn);
+	}
+
 }
 
 
-void ABasePlayer::HandleDestruction()
+void ABasePlayer::HandleDestruction(APawn* DefaultPawn)
 {
-	Destroy();
+	GetMesh()->SetVisibility(false);
 }
 
 

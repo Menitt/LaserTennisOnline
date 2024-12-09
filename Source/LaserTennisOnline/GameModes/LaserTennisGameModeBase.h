@@ -54,6 +54,13 @@ private:
 	class ABasePlayer* Player2;
 
 
+	class APawn* DefaultPawn;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AActor> GameStartPanelClass;
+	class AGameStartPanel* GameStartPanel;
+
+
 //
 // Setup Function
 //
@@ -99,5 +106,6 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	FName MainMenuLevel;
+
 
 };

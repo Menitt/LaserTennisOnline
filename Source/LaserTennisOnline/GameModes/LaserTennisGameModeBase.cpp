@@ -9,6 +9,8 @@
 #include "Blueprint/UserWidget.h"
 #include "GameFramework/PlayerStart.h"
 #include "Math/UnrealMathUtility.h"
+#include "GameStartPanel.h"
+
 
 void ALaserTennisGameModeBase::SetupGame()
 {
@@ -28,20 +30,37 @@ void ALaserTennisGameModeBase::SetupGame()
     }
     
 
+    // Get Laser Platforms
     UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(),laserActivationPlatformClass,"1",
     laserPlatforms1);
     UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(),laserActivationPlatformClass,"2",
     laserPlatforms2);
 
-
     ActiveLaserPlatforms1.Init(1,laserPlatforms1.Num());
     ActiveLaserPlatforms2.Init(1,laserPlatforms2.Num());
 
+    // Get Central Generator
     UGameplayStatics::GetAllActorsOfClass(GetWorld(),CentralGeneratorClass,TempArray);
     if (TempArray.Num() > 0)
     {
         CentralGenerator = Cast<ACentralGenerator>(TempArray[0]);
         CentralGenerator->OnSignalArrived.AddDynamic(this, &ThisClass::SpawnLaser);
+    }
+
+
+    // Get Camera Actor
+    UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(),APawn::StaticClass(),"Default",TempArray);
+    if (TempArray.Num() > 0)
+    {
+        DefaultPawn = Cast<APawn>(TempArray[0]);
+    }
+
+
+    // Get Game Start Panel
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(),GameStartPanelClass,TempArray);
+    if (TempArray.Num() > 0)
+    {
+        GameStartPanel = Cast<AGameStartPanel>(TempArray[0]);
     }
 
 
@@ -296,7 +315,7 @@ void ALaserTennisGameModeBase::HandleMatchHasEnded()
         ABasePlayer* BasePlayer = Cast<ABasePlayer>(player);
         if (BasePlayer)
         {
-            BasePlayer->GameOver(BasePlayer->bIsAlive());
+            BasePlayer->GameOver(BasePlayer->bIsAlive(), DefaultPawn);
         }
     }
 
