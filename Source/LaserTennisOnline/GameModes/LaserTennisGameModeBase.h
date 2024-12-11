@@ -73,11 +73,16 @@ private:
 	UFUNCTION()
 	void SpawnLaser(int nPlayer, int nGenerator);
 
+
+	void InitiateGameStart();
 //
 // Gameplay
 //
 public:
-	
+
+	UFUNCTION()
+	void StartGame();
+
 	void ManagePlatforms();
 
 	void UpdateActivePlatformsList(TArray<int>& PlatformsMap, TArray<AActor*>& PlatformList);

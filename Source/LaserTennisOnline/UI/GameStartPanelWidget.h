@@ -20,16 +20,28 @@ private:
 	class UImage* Instructions;
 
 	UPROPERTY(meta = (BindWidget))
-	class UTextBox* GameStartCountDown;
+	class UEditableTextBox* GameStartCountdown;
 
-	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	bool bStartCountdown = false;
+	FTimerHandle TimerHandle;
+
+	int Counter = -1;
+	int Countdown = 5;
+
+	void UpdateCountdown();
+
+protected:
+	virtual void NativeConstruct() override;
+
 
 public:
 	void StartCountdown();
 
+	class AGameStartPanel* PanelOwner;
+
 private:
 	UFUNCTION(BlueprintCallable)
 	void StartGame();
+
+
 
 };

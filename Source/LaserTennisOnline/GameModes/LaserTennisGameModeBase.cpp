@@ -61,6 +61,10 @@ void ALaserTennisGameModeBase::SetupGame()
     if (TempArray.Num() > 0)
     {
         GameStartPanel = Cast<AGameStartPanel>(TempArray[0]);
+        if (GameStartPanel)
+        {
+            GameStartPanel->OnGameStarting.AddDynamic(this, &ThisClass::StartGame);
+        }
     }
 
 
@@ -348,4 +352,41 @@ void ALaserTennisGameModeBase::SpawnLaser(int nPlayer, int nGenerator)
             LaserGenerator->SpawnLaser();
         }
     }
+
+    InitiateGameStart();
 }
+
+void ALaserTennisGameModeBase::StartGame()
+{
+    if (Player1)
+    {
+        Player1->GameStart();
+    }
+    if (Player2)
+    {
+        Player2->GameStart();
+    }
+}
+
+void ALaserTennisGameModeBase::InitiateGameStart()
+{
+    if (GameStartPanel)
+    {
+        GameStartPanel->StartCountdown();
+    }
+    if (Player1)
+    {
+        Player1->GamePreStart();
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Pointer not valid"));
+    }
+    if (Player2)
+    {
+        Player2->GamePreStart();
+    }
+
+}
+
+

@@ -83,6 +83,13 @@ private:
 // Gameplay
 //
 public:
+
+	UFUNCTION(NetMulticast, Reliable)
+	void GamePreStart();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void GameStart();
+
 	UFUNCTION(NetMulticast, Reliable)
 	void CustomTakeDamage();
 

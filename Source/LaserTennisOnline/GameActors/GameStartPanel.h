@@ -6,6 +6,9 @@
 #include "GameFramework/Actor.h"
 #include "GameStartPanel.generated.h"
 
+// Declare a multicast delegate
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FSignalGameStartDelegate);
+
 UCLASS()
 class LASERTENNISONLINE_API AGameStartPanel : public AActor
 {
@@ -31,12 +34,19 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	class UWidgetComponent* GameStartWidget;
 
+	UPROPERTY(EditDefaultsOnly)
+	float Speed = 50;
+	FVector TargetLocation;
+	bool bShouldMove = false;
 
 public:
 
+	UFUNCTION(NetMulticast, Reliable)
 	void StartCountdown();
 
+	FSignalGameStartDelegate OnGameStarting;
 
+	void BroadcastGameStart();
 
 };
  

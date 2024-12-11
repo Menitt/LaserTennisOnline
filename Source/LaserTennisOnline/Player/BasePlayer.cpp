@@ -165,6 +165,27 @@ void ABasePlayer::pauseGame(const FInputActionValue& value)
 
 #pragma region Gameplay
 
+void ABasePlayer::GamePreStart_Implementation()
+{
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+
+	if (PlayerController)
+	{
+		this->DisableInput(PlayerController);
+	}
+}
+
+void ABasePlayer::GameStart_Implementation()
+{
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+
+	if (PlayerController)
+	{
+		this->EnableInput(PlayerController);
+	}
+}
+
+
 void ABasePlayer::CustomTakeDamage_Implementation()
 {
 
