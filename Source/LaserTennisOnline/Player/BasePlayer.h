@@ -12,6 +12,9 @@
 #include "BasePlayer.generated.h"
 
 
+// Declare a multicast delegate
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCustomTakeDamage, int, Health);
+
 UCLASS()
 class LASERTENNISONLINE_API ABasePlayer : public ACharacter
 {
@@ -107,9 +110,9 @@ public:
 	UFUNCTION()
 	void OnTakeDamageMontageCompleted(UAnimMontage* AnimMontage, bool bInterrupted);
 
-
 	void HandleDestruction(APawn* DefaultPawn);
 
+	FOnCustomTakeDamage OnCustomTakeDamage;
 
 
 //

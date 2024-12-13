@@ -10,7 +10,8 @@
 #include "GameFramework/PlayerStart.h"
 #include "Math/UnrealMathUtility.h"
 #include "GameStartPanel.h"
-
+#include "HealthPanel.h"
+#include "GameFramework/GameStateBase.h"
 
 void ALaserTennisGameModeBase::SetupGame()
 {
@@ -65,6 +66,18 @@ void ALaserTennisGameModeBase::SetupGame()
         {
             GameStartPanel->OnGameStarting.AddDynamic(this, &ThisClass::StartGame);
         }
+    }
+
+    // Get Health Panels
+    UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(),AHealthPanel::StaticClass(),"1",TempArray);
+    if (TempArray.Num() > 0)
+    {
+        HealthPanel1 = Cast<AHealthPanel>(TempArray[0]);
+    }
+    UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(),AHealthPanel::StaticClass(),"2",TempArray);
+    if (TempArray.Num() > 0)
+    {
+        HealthPanel2 = Cast<AHealthPanel>(TempArray[0]);
     }
 
 
@@ -271,7 +284,14 @@ void ALaserTennisGameModeBase::PostLogin(APlayerController* NewPlayer)
         bIsPlayer1 = false;
     }
 
-    
+    int32 NumberOfPlayers = GameState.Get()->PlayerArray.Num();
+	
+    if (NumberOfPlayers == 2)
+	{
+        FTimerHandle TimerHandleGameStart;
+    	// Set the timer to call MyFunction every 1 second, for 5 seconds
+        GetWorld()->GetTimerManager().SetTimer(TimerHandleGameStart, this, &ALaserTennisGameModeBase::InitiateGameStart,0.5,false);
+	}
 }
 
 
@@ -352,8 +372,6 @@ void ALaserTennisGameModeBase::SpawnLaser(int nPlayer, int nGenerator)
             LaserGenerator->SpawnLaser();
         }
     }
-
-    InitiateGameStart();
 }
 
 void ALaserTennisGameModeBase::StartGame()
@@ -374,17 +392,18 @@ void ALaserTennisGameModeBase::InitiateGameStart()
     {
         GameStartPanel->StartCountdown();
     }
-    if (Player1)
+    if (Player1 and HealthPanel1)
     {
         Player1->GamePreStart();
-    }
-    else
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Pointer not valid"));
+        Player1->OnCustomTakeDamage.AddDynamic(HealthPanel1, &AHealthPanel::UpdateWidgetHealth);
+
+        UE_LOG(LogTemp, Warning, TEXT("Boudning Health WIdget"));
+    
     }
     if (Player2)
     {
         Player2->GamePreStart();
+        Player2->OnCustomTakeDamage.AddDynamic(HealthPanel2, &AHealthPanel::UpdateWidgetHealth);
     }
 
 }

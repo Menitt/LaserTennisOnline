@@ -60,6 +60,9 @@ private:
 	TSubclassOf<AActor> GameStartPanelClass;
 	class AGameStartPanel* GameStartPanel;
 
+	class AHealthPanel* HealthPanel1;
+	class AHealthPanel* HealthPanel2;
+
 
 //
 // Setup Function

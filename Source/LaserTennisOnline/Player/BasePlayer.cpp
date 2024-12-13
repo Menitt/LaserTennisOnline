@@ -257,6 +257,17 @@ void ABasePlayer::OnTakeDamageMontageCompleted(UAnimMontage* AnimMontage, bool b
 			this->EnableInput(PlayerController);
 		}
 	}
+
+	if (OnCustomTakeDamage.IsBound())
+	{
+		OnCustomTakeDamage.Broadcast(GetPlayerHealth());
+		UE_LOG(LogTemp, Warning, TEXT("On Take Damage -> Boradcasting"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Not Bound"));
+	}
+
 }
 
 
@@ -308,6 +319,9 @@ void ABasePlayer::DisplayCountdown()
 		GameStartCountdown->MenuSetup();
 	}
 }
+
+
+
 
 
 
