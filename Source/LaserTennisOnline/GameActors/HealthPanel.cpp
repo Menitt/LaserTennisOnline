@@ -40,6 +40,8 @@ AHealthPanel::AHealthPanel()
 void AHealthPanel::BeginPlay()
 {
 	Super::BeginPlay();
+
+	TargetLocation = GetActorLocation() + FVector(0,0,zOffset);
 	
 }
 
@@ -48,13 +50,30 @@ void AHealthPanel::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (bShouldMove)
+    {
+        FVector NewLocation = UKismetMathLibrary::VInterpTo(GetActorLocation(), 
+            TargetLocation, DeltaTime, Speed/10);
+        SetActorLocation(NewLocation);
+    }
+
+	if ((GetActorLocation()-TargetLocation).Size() < 10)
+    {
+        bShouldMove = false;
+    }
+
 }
 
-void AHealthPanel::UpdateWidgetHealth(int PlayerHealth)
+void AHealthPanel::UpdateWidgetHealth_Implementation(int PlayerHealth)
 {
 	UUserWidget* UserWidget = HealthWidget->GetUserWidgetObject();
 	if (UHealthWidget* CustomWidget = Cast<UHealthWidget>(UserWidget))
 	{
 		CustomWidget->UpdateHealthDisplayed(PlayerHealth);
 	}
+}
+
+void AHealthPanel::Activate_Implementation()
+{
+	bShouldMove = true;
 }

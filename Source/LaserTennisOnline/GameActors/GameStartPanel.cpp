@@ -52,6 +52,11 @@ void AGameStartPanel::Tick(float DeltaTime)
         SetActorLocation(NewLocation);
     }
 
+    if ((GetActorLocation()-TargetLocation).Size() < 30)
+    {
+        Destroy();
+    }
+
 }
 
 void AGameStartPanel::StartCountdown_Implementation()

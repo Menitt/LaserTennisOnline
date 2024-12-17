@@ -33,12 +33,17 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	float Speed = 50;
+	UPROPERTY(EditDefaultsOnly)
+	float zOffset = 1000;
 	FVector TargetLocation;
 	bool bShouldMove = false;
 
 public:
-	UFUNCTION()
+	UFUNCTION(NetMulticast, Reliable)
 	void UpdateWidgetHealth(int PlayerHealth);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Activate();
 
 
 };

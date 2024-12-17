@@ -16,20 +16,6 @@
 void ALaserTennisGameModeBase::SetupGame()
 {
     TArray<AActor*> TempArray;
-    
-    // Get Players
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(),ClassPlayer1,TempArray);
-    if (TempArray.Num() > 0)
-    {
-        Player1 = Cast<ABasePlayer>(TempArray[0]);
-    }
-    
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(),ClassPlayer2,TempArray);
-    if (TempArray.Num() > 0)
-    {
-        Player2 = Cast<ABasePlayer>(TempArray[0]);
-    }
-    
 
     // Get Laser Platforms
     UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(),laserActivationPlatformClass,"1",
@@ -388,6 +374,21 @@ void ALaserTennisGameModeBase::StartGame()
 
 void ALaserTennisGameModeBase::InitiateGameStart()
 {
+    // Get Players
+    TArray<AActor*> TempArray;
+    
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(),ClassPlayer1,TempArray);
+    if (TempArray.Num()>0)
+    {
+        Player1 = Cast<ABasePlayer>(TempArray[0]);
+    }
+
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(),ClassPlayer2,TempArray);
+    if (TempArray.Num()>0)
+    {
+        Player2 = Cast<ABasePlayer>(TempArray[0]);
+    }
+
     if (GameStartPanel)
     {
         GameStartPanel->StartCountdown();
@@ -396,16 +397,24 @@ void ALaserTennisGameModeBase::InitiateGameStart()
     {
         Player1->GamePreStart();
         Player1->OnCustomTakeDamage.AddDynamic(HealthPanel1, &AHealthPanel::UpdateWidgetHealth);
-
-        UE_LOG(LogTemp, Warning, TEXT("Boudning Health WIdget"));
-    
+        HealthPanel1->Activate();
+        if (Player1->OnCustomTakeDamage.IsBound())
+        {
+            Player1->OnCustomTakeDamage.Broadcast(Player1->GetPlayerHealth());
+        }
     }
-    if (Player2)
+    if (Player2 and HealthPanel2)
     {
         Player2->GamePreStart();
         Player2->OnCustomTakeDamage.AddDynamic(HealthPanel2, &AHealthPanel::UpdateWidgetHealth);
-    }
+        HealthPanel2->Activate();
 
+        if (Player2->OnCustomTakeDamage.IsBound())
+        {
+            Player2->OnCustomTakeDamage.Broadcast(Player2->GetPlayerHealth());
+        }
+
+    }
 }
 
 
