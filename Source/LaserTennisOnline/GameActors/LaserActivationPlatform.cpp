@@ -12,6 +12,9 @@
 #include "Net/UnrealNetwork.h"
 #include "Engine/Engine.h"
 #include "DrawDebugHelpers.h"
+#include "Sound/SoundWave.h"
+
+
 
 // Sets default values
 ALaserActivationPlatform::ALaserActivationPlatform()
@@ -173,6 +176,19 @@ void ALaserActivationPlatform::Deactivate()
 		bShouldDeactivate = true;
 		bShouldActivate = false;
 		bIsResting = false;
+	}
+
+	USoundWave* Sound = LoadObject<USoundWave>(nullptr, TEXT("SoundWave'/Game/Assets/Sound/1871_button-click-38.1871_button-click-38'"));
+
+	if (Sound)
+    {
+        FVector SoundLocation = GetActorLocation(); // You can set a custom location
+        UGameplayStatics::PlaySoundAtLocation(this, Sound, SoundLocation);
+    }
+
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Audio file not found!"));
 	}
 
 }

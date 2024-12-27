@@ -45,8 +45,14 @@ void ALaserGenerator::SpawnLaser_Implementation()
 	UWorld* World = GetWorld();
 	if (World)
 	{	
-		World->SpawnActor<AActor>(LaserRayClass, LaserSpawnPoint->GetComponentLocation(), 
+		AActor* Laser = World->SpawnActor<AActor>(LaserRayClass, LaserSpawnPoint->GetComponentLocation(), 
 		LaserSpawnPoint->GetComponentRotation());
+
+		if (Tags.Num()>0 and Laser)
+		{
+			Laser->Tags.Add(this->Tags[0]);
+		}
+		
 	}
 
 }
