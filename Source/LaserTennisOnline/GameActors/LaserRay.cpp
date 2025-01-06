@@ -99,3 +99,26 @@ void ALaserRay::Destroyed()
 {
 
 }
+
+FVector ALaserRay::GetLaserBox() const
+{
+	if (CollisionComponent)
+	{
+		return CollisionComponent->GetScaledBoxExtent();
+	}
+	else
+	{
+		return FVector(0,0,0);
+	}
+}
+
+float ALaserRay::CalculateDistance(FVector Location) const 
+{
+	FTransform WorldTransform = this->GetActorTransform();
+
+	FVector LocalLocation = WorldTransform.InverseTransformVector(Location-this->GetActorLocation());
+
+	FVector LocationProjection = WorldTransform.TransformVector(FVector(0,LocalLocation.Y,0)) + GetActorLocation(); 
+
+	return (LocationProjection - Location).Size();
+}

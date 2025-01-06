@@ -21,10 +21,19 @@ protected:
 
 	virtual void BeginPlay() override;
 
+	virtual void Tick(float DeltaSeconds) override;
+
+	UPROPERTY(EditAnywhere)
+	float LaserDistanceTolerance = 0;
+
+	class UBlackboardComponent* BlackboardComp;
+
 
 private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
     class UBehaviorTree* BehaviorTree;
+
+	bool IsLaserNear() const;
 
 };

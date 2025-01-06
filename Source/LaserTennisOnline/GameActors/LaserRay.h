@@ -48,5 +48,9 @@ private:
 	UFUNCTION(Category="Projectile")
     void OnHitPlayer(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
+public:
+	FVector GetLaserBox() const;
+
+	float CalculateDistance(FVector Location) const;
 
 };

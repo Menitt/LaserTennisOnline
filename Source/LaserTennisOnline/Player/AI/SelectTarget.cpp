@@ -5,6 +5,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "LaserActivationPlatform.h"
 #include "Math/UnrealMathUtility.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 EBTNodeResult::Type USelectTarget::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {

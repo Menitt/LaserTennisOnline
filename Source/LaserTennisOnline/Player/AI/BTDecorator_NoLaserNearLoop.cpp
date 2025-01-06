@@ -5,19 +5,26 @@
 #include "Kismet/GameplayStatics.h"
 #include "LaserRay.h"
 #include "DrawDebugHelpers.h" 
-
+#include "AIController.h"
 
 
 UBTDecorator_NoLaserNearLoop::UBTDecorator_NoLaserNearLoop()
 {
-     bNotifyTick = true;
+    bNotifyTick = true;
 }
 
 bool UBTDecorator_NoLaserNearLoop::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const
 {
     Super::CalculateRawConditionValue(OwnerComp, NodeMemory);
 
-    AActor* AIPlayer = OwnerComp.GetOwner();
+    APawn* AIPlayer = nullptr;
+
+    AAIController* AIController = Cast<AAIController>(OwnerComp.GetAIOwner());
+    if (AIController)
+    {
+        // Return the controlled pawn (the AI player)
+        AIPlayer =  AIController->GetPawn();
+    }
 
     if (AIPlayer)
     {
@@ -25,10 +32,22 @@ bool UBTDecorator_NoLaserNearLoop::CalculateRawConditionValue(UBehaviorTreeCompo
 
         UGameplayStatics::GetAllActorsOfClass(GetWorld(), ALaserRay::StaticClass(), Lasers);
 
-        for(AActor* Laser : Lasers)
+        for (AActor* Laser : Lasers)
         {
-            float dist = (Laser->GetActorLocation() - AIPlayer->GetActorLocation()).Size();
-            if (dist < DistanceLaserTolerance)
+            // Get the world transform matrix
+            FTransform WorldTransform = Laser->GetActorTransform();
+            
+            FVector LocalPlayerLocation = WorldTransform.InverseTransformVector(AIPlayer->GetActorLocation()-Laser->GetActorLocation());
+
+            float Y_coordinate = LocalPlayerLocation.Y;
+
+            FVector PlayerProjection = WorldTransform.TransformVector(FVector(0,Y_coordinate,0)) + Laser->GetActorLocation();
+
+            float Distance = (PlayerProjection - AIPlayer->GetActorLocation()).Size();
+
+            UE_LOG(LogTemp, Warning, TEXT("Laser Distance: %f"), Distance);
+
+            if (Distance < DistanceLaserTolerance)
             {
                 return false;
             }
@@ -46,26 +65,34 @@ bool UBTDecorator_NoLaserNearLoop::CalculateRawConditionValue(UBehaviorTreeCompo
 void UBTDecorator_NoLaserNearLoop::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
     Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
+    
+    APawn* AIPlayer = nullptr;
 
-    UE_LOG(LogTemp, Warning, TEXT("TickNode inside decorator"));
+    AAIController* AIController = Cast<AAIController>(OwnerComp.GetAIOwner());
+    if (AIController)
+    {
+        // Return the controlled pawn (the AI player)
+        AIPlayer =  AIController->GetPawn();
+    }
 
     TArray<AActor*> Lasers;
-
-    AAIController* AIController = Cast<AAIController>(OwnerComp.GetOwner());
-
-    APawn* AIPlayer = nullptr;
-    
-    if(AIController)
-    {
-        AIPlayer = AIController->GetPawn();
-    }
 
     UGameplayStatics::GetAllActorsOfClass(GetWorld(), ALaserRay::StaticClass(), Lasers);
     if (AIPlayer)
     {
         for (AActor* Laser : Lasers)
         {
-            DrawDebugLine(GetWorld(), AIPlayer->GetActorLocation(), Laser->GetActorLocation(), 
+            
+            // Get the world transform matrix
+            FTransform WorldTransform = Laser->GetActorTransform();
+            
+            FVector LocalPlayerLocation = WorldTransform.InverseTransformVector(AIPlayer->GetActorLocation()-Laser->GetActorLocation());
+
+            float Y_coordinate = LocalPlayerLocation.Y;
+
+            FVector PlayerProjection = WorldTransform.TransformVector(FVector(0,Y_coordinate,0)) + Laser->GetActorLocation();
+
+            DrawDebugLine(GetWorld(), AIPlayer->GetActorLocation(), PlayerProjection, 
             FColor::Green, false, -1, 0, 5.);
         }
     }

@@ -3,16 +3,29 @@
 
 #include "BTTask_JumpLaser.h"
 #include "BasePlayer.h"
+#include "AIController.h"
+
+
+
+
 
 EBTNodeResult::Type UBTTask_JumpLaser::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
     Super::ExecuteTask(OwnerComp, NodeMemory);
 
-    ABasePlayer* AiPlayer = Cast<ABasePlayer>(OwnerComp.GetOwner());
+    ABasePlayer* AIPlayer = nullptr;
 
-    if (AiPlayer)
+    AAIController* AIController = Cast<AAIController>(OwnerComp.GetAIOwner());
+    if (AIController)
     {
-        AiPlayer->Jump();
+        // Return the controlled pawn (the AI player)
+        AIPlayer =  Cast<ABasePlayer>(AIController->GetPawn());
+    }
+    
+
+    if (AIPlayer)
+    {
+        AIPlayer->Jump();
 
         return EBTNodeResult::Succeeded;
     }
