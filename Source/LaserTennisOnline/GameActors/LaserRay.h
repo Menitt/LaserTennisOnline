@@ -53,4 +53,6 @@ public:
 
 	float CalculateDistance(FVector Location) const;
 
+	bool IsTargetAhead(FVector Location) const;
+
 };

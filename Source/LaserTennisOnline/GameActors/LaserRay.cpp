@@ -122,3 +122,12 @@ float ALaserRay::CalculateDistance(FVector Location) const
 
 	return (LocationProjection - Location).Size();
 }
+
+bool ALaserRay::IsTargetAhead(FVector Location) const
+{
+	FTransform WorldTransform = this->GetActorTransform();
+
+	FVector LocalLocation = WorldTransform.InverseTransformVector(Location-this->GetActorLocation());
+
+	return LocalLocation.X > 0;
+}

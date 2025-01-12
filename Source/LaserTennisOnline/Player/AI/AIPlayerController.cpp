@@ -58,7 +58,7 @@ bool AAIPlayerController::IsLaserNear() const
 
         APawn* AIPlayer = GetPawn();
 
-        if (LaserRay and AIPlayer)
+        if (LaserRay and AIPlayer and LaserRay->IsTargetAhead(AIPlayer->GetActorLocation()))
         {
             if (LaserRay->CalculateDistance(AIPlayer->GetActorLocation()) < LaserDistanceTolerance)
             {
