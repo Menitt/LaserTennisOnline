@@ -19,6 +19,7 @@ class LASERTENNISONLINE_API ALaserTennisGameModeBase : public AGameMode
 	GENERATED_BODY()
 
 
+protected:
 virtual void BeginPlay() override;
 
 virtual void PostLogin(APlayerController* NewPlayer) override;
@@ -28,7 +29,7 @@ virtual void Tick(float DeltaTime) override;
 //
 // Gameplay Actors Containers
 //
-private:
+protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
 	TSubclassOf<AActor> LaserGeneratorClass;
