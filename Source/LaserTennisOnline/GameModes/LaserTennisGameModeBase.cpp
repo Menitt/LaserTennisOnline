@@ -218,66 +218,66 @@ void ALaserTennisGameModeBase::PostLogin(APlayerController* NewPlayer)
     
     Super::PostLogin(NewPlayer);
 
-    if (HasAuthority())
-    {
+    // if (HasAuthority())
+    // {
         
-        APawn* Pawn = NewPlayer->GetPawn();
+    //     APawn* Pawn = NewPlayer->GetPawn();
         
-        if (Pawn)
-        {
-            NewPlayer->UnPossess();
-            Pawn->Destroy();
-        }
+    //     if (Pawn)
+    //     {
+    //         NewPlayer->UnPossess();
+    //         Pawn->Destroy();
+    //     }
 
-        // Get the PlayerStart actors in the level
-        TArray<AActor*> PlayerStarts;
-        if (bIsPlayer1)
-        {
-            UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), APlayerStart::StaticClass(), "1", PlayerStarts);
-        }
-        else
-        {
-            UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), APlayerStart::StaticClass(), "2", PlayerStarts);
-        }
+    //     // Get the PlayerStart actors in the level
+    //     TArray<AActor*> PlayerStarts;
+    //     if (bIsPlayer1)
+    //     {
+    //         UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), APlayerStart::StaticClass(), "1", PlayerStarts);
+    //     }
+    //     else
+    //     {
+    //         UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), APlayerStart::StaticClass(), "2", PlayerStarts);
+    //     }
         
-        // Randomly select a PlayerStart
-        if (PlayerStarts.Num() > 0)
-        {
+    //     // Randomly select a PlayerStart
+    //     if (PlayerStarts.Num() > 0)
+    //     {
             
-            APlayerStart* SelectedStart = Cast<APlayerStart>(PlayerStarts[0]);
+    //         APlayerStart* SelectedStart = Cast<APlayerStart>(PlayerStarts[0]);
             
-            if (SelectedStart)
-            {
-                // Spawn the player pawn at the selected start location
-                FVector SpawnLocation = SelectedStart->GetActorLocation();
-                FRotator SpawnRotation = SelectedStart->GetActorRotation();
+    //         if (SelectedStart)
+    //         {
+    //             // Spawn the player pawn at the selected start location
+    //             FVector SpawnLocation = SelectedStart->GetActorLocation();
+    //             FRotator SpawnRotation = SelectedStart->GetActorRotation();
 
-                if (bIsPlayer1)
-                {
-                    // Assuming you have a reference to your player pawn class
-                    ABasePlayer* NewPawn = GetWorld()->SpawnActor<ABasePlayer>(ClassPlayer1, SpawnLocation, SpawnRotation);
-                    NewPlayer->Possess(NewPawn);
-                }
-                else
-                {
-                    // Assuming you have a reference to your player pawn class
-                    ABasePlayer* NewPawn = GetWorld()->SpawnActor<ABasePlayer>(ClassPlayer2, SpawnLocation, SpawnRotation);
-                    NewPlayer->Possess(NewPawn);
-                }
-            }
-        }
+    //             if (bIsPlayer1)
+    //             {
+    //                 // Assuming you have a reference to your player pawn class
+    //                 ABasePlayer* NewPawn = GetWorld()->SpawnActor<ABasePlayer>(ClassPlayer1, SpawnLocation, SpawnRotation);
+    //                 NewPlayer->Possess(NewPawn);
+    //             }
+    //             else
+    //             {
+    //                 // Assuming you have a reference to your player pawn class
+    //                 ABasePlayer* NewPawn = GetWorld()->SpawnActor<ABasePlayer>(ClassPlayer2, SpawnLocation, SpawnRotation);
+    //                 NewPlayer->Possess(NewPawn);
+    //             }
+    //         }
+    //     }
 
-        bIsPlayer1 = false;
-    }
+    //     bIsPlayer1 = false;
+    // }
 
-    int32 NumberOfPlayers = GameState.Get()->PlayerArray.Num();
+    // int32 NumberOfPlayers = GameState.Get()->PlayerArray.Num();
 	
-    if (NumberOfPlayers == 2)
-	{
-        FTimerHandle TimerHandleGameStart;
-    	// Set the timer to call MyFunction every 1 second, for 5 seconds
-        GetWorld()->GetTimerManager().SetTimer(TimerHandleGameStart, this, &ALaserTennisGameModeBase::InitiateGameStart,0.5,false);
-	}
+    // if (NumberOfPlayers == 2)
+	// {
+    //     FTimerHandle TimerHandleGameStart;
+    // 	// Set the timer to call MyFunction every 1 second, for 5 seconds
+    //     GetWorld()->GetTimerManager().SetTimer(TimerHandleGameStart, this, &ALaserTennisGameModeBase::InitiateGameStart,0.5,false);
+	// }
 }
 
 

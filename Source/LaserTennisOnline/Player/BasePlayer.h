@@ -26,6 +26,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;TSharedPtr<class IOnlineSession, ESPMode::ThreadSafe> OnlineSessionInterface;
 
+	virtual void PossessedBy(AController* NewController) override;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -62,8 +64,9 @@ public:
 // 
 private:
 	// Input Map Context
-	UPROPERTY(EditDefaultsOnly, Category = "Controller", meta = (AllowPrivateAccess = "true"))
-	class UInputMappingContext* inputMapContext;
+	UPROPERTY(EditDefaultsOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	class UInputMappingContext* InputMapContext;
+	// Input Map Context
 	
 	// Input Actions
 	UPROPERTY(EditDefaultsOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
@@ -75,11 +78,12 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	class UInputAction* dodgeAction;
 	
-
+public:
 	// Input Binding Functions
 	void move(const FInputActionValue& value);
 	void jump(const FInputActionValue& value);
 	void pauseGame(const FInputActionValue& value);
+	void dodge(const FInputActionValue& value);
 
 
 //

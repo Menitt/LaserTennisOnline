@@ -5,9 +5,9 @@
 
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "Components/InputComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Components/InputComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "CustomCharacterMovementComponent.h"
@@ -59,15 +59,7 @@ Super(ObjectInitializer.SetDefaultSubobjectClass<UCustomCharacterMovementCompone
 void ABasePlayer::BeginPlay()
 {
 	Super::BeginPlay();
-	// Setting up Enhanced Input
-	if(APlayerController* playerController = Cast<APlayerController>(this->GetController())){
-		if(UEnhancedInputLocalPlayerSubsystem* subSystem =
-		ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>
-		(playerController->GetLocalPlayer())){
-			subSystem->AddMappingContext(this->inputMapContext, 0);
-		}
-	}
-
+	
 	// Let Character Movement Component handles Pawn rotation
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	bUseControllerRotationYaw = false;
@@ -85,6 +77,27 @@ void ABasePlayer::BeginPlay()
 
 
 }
+
+void ABasePlayer::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	APlayerController* PlayerController = Cast<APlayerController>(NewController);
+	
+	if (PlayerController)
+	{
+		UEnhancedInputLocalPlayerSubsystem* SubSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(
+			PlayerController->GetLocalPlayer());
+
+		if (SubSystem)
+		{
+			SubSystem->AddMappingContext(this->InputMapContext, 0);
+		}
+	}
+
+}
+
+
 
 #pragma endregion
 
@@ -159,6 +172,16 @@ void ABasePlayer::pauseGame(const FInputActionValue& value)
 	}
 }
 
+void ABasePlayer::dodge(const FInputActionValue& value)
+{
+	if (CustomCharacterMovementComponent)
+	{
+		CustomCharacterMovementComponent->DashPressed();
+	}
+}
+
+
+
 
 #pragma endregion
 
@@ -172,6 +195,7 @@ void ABasePlayer::GamePreStart_Implementation()
 	if (PlayerController)
 	{
 		this->DisableInput(PlayerController);
+		UE_LOG(LogTemp, Warning, TEXT("ABasePlayer->DisablingInputs"));
 	}
 }
 
