@@ -14,4 +14,20 @@ class LASERTENNISONLINE_API ASinglePlayer : public ALaserTennisGameModeBase
 {
 	GENERATED_BODY()
 	
+
+protected:
+
+	virtual void PostLogin(class APlayerController* NewPlayer) override;
+
+
+private:
+
+	class APlayerController* PlayerController;
+
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AActor> AIControllerClass;
+
+	class AAIPlayerController* AIPlayerController;
+
 };

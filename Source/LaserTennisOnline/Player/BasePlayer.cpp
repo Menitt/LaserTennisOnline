@@ -84,15 +84,11 @@ void ABasePlayer::PossessedBy(AController* NewController)
 
 	APlayerController* PlayerController = Cast<APlayerController>(NewController);
 	
-	if (PlayerController)
-	{
-		UEnhancedInputLocalPlayerSubsystem* SubSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(
-			PlayerController->GetLocalPlayer());
+	UE_LOG(LogTemp, Warning, TEXT("Possessed By"));
 
-		if (SubSystem)
-		{
-			SubSystem->AddMappingContext(this->InputMapContext, 0);
-		}
+	if (PlayerController and PlayerController->IsLocalController())
+	{
+		EnableEnhancedInputSystem(PlayerController);
 	}
 
 }
@@ -110,6 +106,21 @@ void ABasePlayer::Tick(float DeltaTime)
 
 
 #pragma region Input
+
+void ABasePlayer::EnableEnhancedInputSystem(APlayerController* PlayerController)
+{
+	UEnhancedInputLocalPlayerSubsystem* SubSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(
+	PlayerController->GetLocalPlayer());
+
+	if (SubSystem)
+	{
+		SubSystem->AddMappingContext(this->InputMapContext, 0);
+	}
+}
+	
+
+
+
 
 // Called to bind functionality to input
 void ABasePlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

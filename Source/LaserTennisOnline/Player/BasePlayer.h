@@ -85,6 +85,11 @@ public:
 	void pauseGame(const FInputActionValue& value);
 	void dodge(const FInputActionValue& value);
 
+public:
+
+	void EnableEnhancedInputSystem(class APlayerController* PlayerController);
+
+
 
 //
 // Gameplay
