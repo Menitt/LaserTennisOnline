@@ -18,25 +18,37 @@ class LASERTENNISONLINE_API UMainMenu : public UBaseUserWidget
 	class UButton* SinglePlayerButton;
 
 	UPROPERTY(meta = (BindWidget))
-	class UButton* MultiplayerButton;
+	class UButton* LocalMultiplayerButton;
+
+	UPROPERTY(meta = (BindWidget))
+	class UButton* OnlineMultiplayerButton;
 
 	UPROPERTY(meta = (BindWidget))
 	class UButton* QuitButton;
 
+public:
 	virtual void MenuSetup() override;
 
-	FString SinglePlayerGameMode = "Game/Modes/BP_SinglePlayer";
-	UPROPERTY(EditDefaultsOnly)
-	FString SinglePlayerLevelName;
+	virtual void NativeDestruct() override;
+
+private:
+	FString SinglePlayerGameMode = "/Game/GameModes/BP_SinglePlayer.BP_SinglePlayer_C";
+	FString LocalMultiplayerGameMode = "/Game/GameModes/BP_LocalMultiplayer.BP_LocalMultiplayer_C";
 	
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<UBaseUserWidget> MultiplayerWidgetClass;
+	FName GameLevelName;
+	
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UUserWidget> OnlineMultiplayerWidgetClass;
 
 	UFUNCTION()
 	void SinglePlayerButtonClicked();
 
 	UFUNCTION()
-	void MultiplayerButtonClicked();
+	void LocalMultiplayerButtonClicked();
+
+	UFUNCTION()
+	void OnlineMultiplayerButtonClicked();
 
 	UFUNCTION()
 	void QuitButtonClicked();

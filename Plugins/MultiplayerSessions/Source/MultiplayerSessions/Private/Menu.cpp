@@ -51,6 +51,8 @@ void UMenu::MenuSetup(int32 NumberOfPublicConnections, FString TypeOfMatch, FStr
 		MultiplayerSessionsSubsystem->MultiplayerOnDestroySessionComplete.AddDynamic(this, &ThisClass::OnDestroySession);
 		MultiplayerSessionsSubsystem->MultiplayerOnStartSessionComplete.AddDynamic(this, &ThisClass::OnStartSession);
 	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Menu MenuSetup"));
 }
 
 bool UMenu::Initialize()
@@ -68,14 +70,7 @@ bool UMenu::Initialize()
 	{
 		JoinButton->OnClicked.AddDynamic(this, &ThisClass::JoinButtonClicked);
 	}
-	if (QuitButton)
-	{
-		QuitButton->OnClicked.AddDynamic(this, &ThisClass::QuitButtonClicked);
-	}
-	if (TestButton)
-	{
-		TestButton->OnClicked.AddDynamic(this, &ThisClass::TestButtonClicked);
-	}
+
 	if (FriendsButton)
 	{
 		FriendsButton->OnClicked.AddDynamic(this, &ThisClass::FriendsButtonClicked);
@@ -86,7 +81,7 @@ bool UMenu::Initialize()
 
 void UMenu::NativeDestruct()
 {
-	MenuTearDown();
+	// MenuTearDown();
 	Super::NativeDestruct();
 }
 
@@ -204,26 +199,6 @@ void UMenu::JoinButtonClicked()
 	}
 }
 
-
-void UMenu::QuitButtonClicked()
-{
-	QuitButton->SetIsEnabled(false);
-
-	if (GEngine)
-    {
-        UKismetSystemLibrary::QuitGame(this, nullptr, EQuitPreference::Quit, false);
-    }
-}
-
-void UMenu::TestButtonClicked()
-{
-	TestButton->SetIsEnabled(false);
-
-	if (GEngine)
-    {	
-		UGameplayStatics::OpenLevel(GetWorld(), TestLevel);
-    }
-}
 
 void UMenu::FriendsButtonClicked()
 {

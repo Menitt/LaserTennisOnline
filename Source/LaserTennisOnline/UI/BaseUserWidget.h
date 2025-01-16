@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+
 #include "BaseUserWidget.generated.h"
 
 /**
@@ -15,6 +16,8 @@ class LASERTENNISONLINE_API UBaseUserWidget : public UUserWidget
 	GENERATED_BODY()
 	
 public:
+
+	UFUNCTION(BlueprintCallable)
 	virtual void MenuSetup();
 	virtual void MenuTearDown();
 

@@ -4,6 +4,7 @@
 #include "MainMenu.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/Button.h"
+#include "OnlineMultiplayerMenu.h"
 
 void UMainMenu::MenuSetup()
 {
@@ -14,9 +15,14 @@ void UMainMenu::MenuSetup()
         SinglePlayerButton->OnClicked.AddDynamic(this, &ThisClass::SinglePlayerButtonClicked);
     }
 
-    if (MultiplayerButton)
+    if (LocalMultiplayerButton)
     {
-        MultiplayerButton->OnClicked.AddDynamic(this, &ThisClass::MultiplayerButtonClicked);
+        LocalMultiplayerButton->OnClicked.AddDynamic(this, &ThisClass::LocalMultiplayerButtonClicked);
+    }
+
+    if (OnlineMultiplayerButton)
+    {
+        OnlineMultiplayerButton->OnClicked.AddDynamic(this, &ThisClass::OnlineMultiplayerButtonClicked);
     }
 
     if (QuitButton)
@@ -31,20 +37,36 @@ void UMainMenu::SinglePlayerButtonClicked()
 
     FString OptionsString = FString::Printf(TEXT("?game=%s"), *SinglePlayerGameMode);
     
-    UGameplayStatics::OpenLevel(this, *SinglePlayerLevelName, true, OptionsString);
+    UGameplayStatics::OpenLevel(this, GameLevelName, true, OptionsString);
 
     MenuTearDown();
 }
 
-void UMainMenu::MultiplayerButtonClicked()
+void UMainMenu::LocalMultiplayerButtonClicked()
 {
-    MultiplayerButton->SetIsEnabled(false);
-    
-    UBaseUserWidget* MultiplayerMenuWidget = CreateWidget<UBaseUserWidget>(GetWorld(), MultiplayerWidgetClass);
+    LocalMultiplayerButton->SetIsEnabled(false);
 
-    MultiplayerMenuWidget->MenuSetup();
+    FString OptionsString = FString::Printf(TEXT("?game=%s"), *LocalMultiplayerGameMode);
+    
+    UGameplayStatics::OpenLevel(this, GameLevelName, true, OptionsString);
 
     MenuTearDown();
+}
+
+
+void UMainMenu::OnlineMultiplayerButtonClicked()
+{
+    OnlineMultiplayerButton->SetIsEnabled(false);
+    
+    UOnlineMultiplayerMenu* OnlineMultiplayerMenuWidget = CreateWidget<UOnlineMultiplayerMenu>(GetWorld(), OnlineMultiplayerWidgetClass);
+
+    if (OnlineMultiplayerMenuWidget)
+    {
+        MenuTearDown();
+        OnlineMultiplayerMenuWidget->MenuSetup(4,"",GameLevelName.ToString());
+    }
+
+    
 }
 
 void UMainMenu::QuitButtonClicked()
@@ -55,4 +77,12 @@ void UMainMenu::QuitButtonClicked()
     {
         UKismetSystemLibrary::QuitGame(this, nullptr, EQuitPreference::Quit, false);
     }
+}
+
+
+void UMainMenu::NativeDestruct()
+{
+    Super::NativeDestruct();
+
+    UE_LOG(LogTemp, Warning, TEXT("Main Menu Destructor!"));
 }

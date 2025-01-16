@@ -40,19 +40,13 @@ protected:
 	void OnReadFriendsListComplete(int32 LocalUserNum, bool bWasSuccessful, const FString& ListName, const FString& ErrorStr);
 
 
-private:
+protected:
 
 	UPROPERTY(meta = (BindWidget))
 	class UButton* HostButton;
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* JoinButton;
-
-	UPROPERTY(meta = (BindWidget))
-	UButton* QuitButton;
-
-	UPROPERTY(meta = (BindWidget))
-	UButton* TestButton;
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* FriendsButton;
@@ -62,12 +56,6 @@ private:
 
 	UFUNCTION()
 	void JoinButtonClicked();
-
-	UFUNCTION()
-	void QuitButtonClicked();
-
-	UFUNCTION()
-	void TestButtonClicked();
 
 	UFUNCTION()
 	void FriendsButtonClicked();
@@ -80,7 +68,9 @@ private:
 	// The subsystem designed to handle all online session functionality
 	class UMultiplayerSessionsSubsystem* MultiplayerSessionsSubsystem;
 
+
 	int32 NumPublicConnections{4};
 	FString MatchType{TEXT("FreeForAll")};
 	FString PathToLobby{TEXT("")};
+
 };

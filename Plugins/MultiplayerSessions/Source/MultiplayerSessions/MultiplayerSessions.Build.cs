@@ -31,7 +31,8 @@ public class MultiplayerSessions : ModuleRules
 				"UMG",
 				"Slate",
 				"SlateCore",
-				"OnlineSubsystemUtils"
+				"OnlineSubsystemUtils",
+				"LaserTennisOnline"
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
