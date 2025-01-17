@@ -188,7 +188,7 @@ void ALaserActivationPlatform::Deactivate()
 
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Audio file not found!"));
+		// UE_LOG(LogTemp, Warning, TEXT("Audio file not found!"));
 	}
 
 }
@@ -209,4 +209,3 @@ void ALaserActivationPlatform::Activate()
 		bIsResting = false;
 	}
 }
-

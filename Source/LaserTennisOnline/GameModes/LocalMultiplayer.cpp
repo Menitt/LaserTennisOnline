@@ -9,7 +9,7 @@
 #include "Components/InputComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-
+#include "GameOverWidget.h"
 
 void ALocalMultiplayer::BeginPlay()
 {
@@ -35,13 +35,13 @@ void ALocalMultiplayer::BeginPlay()
 
     // Unpossess & Destroy default Pawns
 
-    PlayerController1 = GetWorld()->GetFirstPlayerController();
+    SharedPlayerController = GetWorld()->GetFirstPlayerController();
     PlayerController2 = UGameplayStatics::CreatePlayer(GetWorld(),1);
-    APawn* Pawn1 = PlayerController1->GetPawn();
+    APawn* Pawn1 = SharedPlayerController->GetPawn();
     APawn* Pawn2 = PlayerController2->GetPawn();
     if (Pawn1)
     {
-        PlayerController1->UnPossess();
+        SharedPlayerController->UnPossess();
         Pawn1->Destroy();
     }
     if (Pawn2)
@@ -67,9 +67,9 @@ void ALocalMultiplayer::BeginPlay()
 
     // Possess new Pawns
 
-    if (Player1 and PlayerController1)
+    if (Player1 and SharedPlayerController)
     {
-        PlayerController1->Possess(Player1);
+        SharedPlayerController->Possess(Player1);
     }
     if (Player2 and PlayerController2)
     {
@@ -84,9 +84,9 @@ void ALocalMultiplayer::BeginPlay()
     if (TempArray.Num() > 0)
     {
         ACameraActor* SharedCamera = Cast<ACameraActor>(TempArray[0]);
-        if (SharedCamera and PlayerController1 and PlayerController2)
+        if (SharedCamera and SharedPlayerController and PlayerController2)
         {
-            PlayerController1->SetViewTarget(SharedCamera);
+            SharedPlayerController->SetViewTarget(SharedCamera);
             PlayerController2->SetViewTarget(SharedCamera);
         }   
     }
@@ -94,15 +94,17 @@ void ALocalMultiplayer::BeginPlay()
     // Enable Inputs
     HandleInputAssignment();
 
+    StartCountdown();
+
 }
 
 
 void ALocalMultiplayer::HandleInputAssignment()
 {
-    if (Player1 and Player2 and PlayerController1)
+    if (Player1 and Player2 and SharedPlayerController)
     {
         UEnhancedInputLocalPlayerSubsystem* InputSubSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(
-		PlayerController1->GetLocalPlayer());
+		SharedPlayerController->GetLocalPlayer());
 
         if (InputSubSystem)
         {
@@ -125,13 +127,54 @@ void ALocalMultiplayer::HandleInputAssignment()
             
             InputComponent1->BindAction(PauseGameAction, ETriggerEvent::Triggered, Player1, &ABasePlayer::pauseGame);
         }
-
-        // if (InputComponent2)
-        // {
-        //     InputComponent2->BindAction(P2_MoveAction, ETriggerEvent::Triggered, Player2, &ABasePlayer::move);   
-        //     InputComponent2->BindAction(P2_JumpAction, ETriggerEvent::Triggered, Player2, &ABasePlayer::jump);  
-        //     InputComponent2->BindAction(P2_DodgeAction, ETriggerEvent::Triggered, Player2, &ABasePlayer::dodge);
-        // }
     
+    }
+}
+
+void ALocalMultiplayer::StartCountdown()
+{
+    Super::StartCountdown();
+
+    if (Player1)
+    {
+        Player1->StartCountdown(CountdownTime);
+    }
+
+}
+
+void ALocalMultiplayer::StartGame()
+{
+    Super::StartGame();
+
+    if (Player1)
+    {
+        Player1->StartGame();
+    }
+
+}
+
+void ALocalMultiplayer::HandleMatchHasEnded()
+{
+    if (Player1 and Player1->GameOverWidget)
+    {
+        Player1->GameOverWidget->RemoveFromParent();
+    }
+    if (Player2 and Player2->GameOverWidget)
+    {
+        Player2->GameOverWidget->RemoveFromParent();
+    }
+    
+    UGameOverWidget* NewGameOverWidget;
+    if (Player1 and Player1->bIsAlive())
+    {
+        NewGameOverWidget = CreateWidget<UGameOverWidget>(GetWorld(), Player1WinnerWidgetClass);
+    }
+    else
+    {
+        NewGameOverWidget = CreateWidget<UGameOverWidget>(GetWorld(), Player2WinnerWidgetClass);
+    }
+    if (NewGameOverWidget)
+    {
+        NewGameOverWidget->MenuSetup();
     }
 }

@@ -6,11 +6,14 @@
 #include "BasePlayer.h"
 #include "GameFramework/PlayerStart.h"
 #include "OnlineMultiplayerController.h"
+#include "GameFramework/GameStateBase.h"
 
 void AOnlineMultiplayer::PostLogin(APlayerController* NewPlayer)
 {
 
     Super::PostLogin(NewPlayer);
+
+    PlayerCount++;
 
     // Destroy Default Player Pawn
     APawn* Pawn = NewPlayer->GetPawn();
@@ -24,7 +27,7 @@ void AOnlineMultiplayer::PostLogin(APlayerController* NewPlayer)
     // Assing Player1 to Server    
     if (NewPlayer->IsLocalController())
     {
-        
+        PlayerController1 = NewPlayer;
         // Find Player 1 Start
         UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), APlayerStart::StaticClass(), "1", TempArray);
         AActor* PlayerStart1 = nullptr;
@@ -45,7 +48,8 @@ void AOnlineMultiplayer::PostLogin(APlayerController* NewPlayer)
     // Assign Player 2 to Client
     else
     {
-        // Find Player 1 Start
+        PlayerController2 = NewPlayer;
+        // Find Player 2 Start
         UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), APlayerStart::StaticClass(), "2", TempArray);
         AActor* PlayerStart2 = nullptr;
         if (TempArray.Num() > 0)
@@ -62,5 +66,41 @@ void AOnlineMultiplayer::PostLogin(APlayerController* NewPlayer)
             NewPlayer->Possess(Player2);
             
         }
-    }   
+    }  
+
+    if (PlayerCount==2)
+    {
+        DelayedStartCountdown();
+    }
+
+}
+
+void AOnlineMultiplayer::StartCountdown()
+{
+    Super::StartCountdown();
+
+    if (Player1)
+    {
+        Player1->StartCountdown(CountdownTime);
+    }
+    if (Player2)
+    {
+        Player2->StartCountdown(CountdownTime);
+    }
+
+}
+
+void AOnlineMultiplayer::StartGame()
+{
+    Super::StartGame();
+
+    if (Player1)
+    {
+        Player1->StartGame();
+    }
+    if (Player2)
+    {
+        Player2->StartGame();
+    }
+
 }

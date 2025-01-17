@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "LaserTennisGameModeBase.h"
+#include "Blueprint/UserWidget.h"
+
 #include "LocalMultiplayer.generated.h"
 
 /**
@@ -27,7 +29,7 @@ protected:
 
 	void HandleInputAssignment();
 
-	class APlayerController* PlayerController1;
+	class APlayerController* SharedPlayerController;
 	class APlayerController* PlayerController2;
 
 	// Players Input Actions
@@ -48,6 +50,19 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Players", meta = (AllowPrivateAccess = "true"))
 	class UInputAction* PauseGameAction;
 
+protected:
 
+	virtual void StartCountdown() override;
 
+	virtual void HandleMatchHasEnded() override;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UUserWidget> Player1WinnerWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UUserWidget> Player2WinnerWidgetClass;
+
+public:
+
+	virtual void StartGame() override;
 };

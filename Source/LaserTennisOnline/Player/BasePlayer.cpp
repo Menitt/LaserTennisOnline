@@ -18,7 +18,12 @@
 #include "GameOverWidget.h"
 #include "InGameMenu.h"
 #include "BaseUserWidget.h"
+#include "CountDownWidget.h"
+#include "LaserTennisGameModeBase.h"
+#include "Kismet/GameplayStatics.h"
+#include "AIController.h"
 // #include "OnlineSubsystem.h"
+
 
 #pragma region Constructor & Initialization
 
@@ -83,8 +88,6 @@ void ABasePlayer::PossessedBy(AController* NewController)
 	Super::PossessedBy(NewController);
 
 	APlayerController* PlayerController = Cast<APlayerController>(NewController);
-	
-	UE_LOG(LogTemp, Warning, TEXT("Possessed By"));
 
 	if (PlayerController and PlayerController->IsLocalController())
 	{
@@ -199,22 +202,39 @@ void ABasePlayer::dodge(const FInputActionValue& value)
 
 #pragma region Gameplay
 
-void ABasePlayer::GamePreStart_Implementation()
+void ABasePlayer::StartCountdown_Implementation(int Timer)
 {
-	APlayerController* PlayerController = Cast<APlayerController>(GetController());
 
-	if (PlayerController)
+	if (IsLocallyControlled())
 	{
-		this->DisableInput(PlayerController);
-		UE_LOG(LogTemp, Warning, TEXT("ABasePlayer->DisablingInputs"));
+		APlayerController* PlayerController = Cast<APlayerController>(GetController());
+		DisableInput(PlayerController);
+		UCountDownWidget* CountdownWidget = CreateWidget<UCountDownWidget>(GetWorld(),CountdownWidgetClass);
+
+		if (CountdownWidget)
+		{
+			CountdownWidget->MenuSetup();
+			CountdownWidget->StartCountdown(Timer);
+			// If Actor is on the server, bind end of count down to Game mode start
+			if (GetLocalRole() == ROLE_Authority)
+			{
+				ALaserTennisGameModeBase* GameMode = Cast<ALaserTennisGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
+				if (GameMode)
+				{
+					CountdownWidget->OnCountdownComplete.AddDynamic(GameMode,&ALaserTennisGameModeBase::StartGame);
+				}
+			}
+
+		}
 	}
+
 }
 
-void ABasePlayer::GameStart_Implementation()
+void ABasePlayer::StartGame_Implementation()
 {
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
 
-	if (PlayerController)
+	if (PlayerController and IsLocallyControlled())
 	{
 		this->EnableInput(PlayerController);
 	}
@@ -240,17 +260,15 @@ void ABasePlayer::CustomTakeDamage_Implementation()
 }
 
 
-void ABasePlayer::GameOver_Implementation(bool bWonGame, APawn* DefaultPawn)
+void ABasePlayer::GameOver_Implementation(bool bWonGame)
 {
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
 
-	if (IsLocallyControlled())
+	if (PlayerController and PlayerController->IsLocalController())
 	{
-		// Disable Input
-		APlayerController* PlayerController = Cast<APlayerController>(GetController());
 		this->DisableInput(PlayerController);
 	
 		// Spawn Menu Widget
-		UGameOverWidget* GameOverWidget; 
 		if (bWonGame)
 		{
 			GameOverWidget = CreateWidget<UGameOverWidget>(GetWorld(),GameOverVictoryClass);
@@ -268,15 +286,23 @@ void ABasePlayer::GameOver_Implementation(bool bWonGame, APawn* DefaultPawn)
 
 	if (not bWonGame)
 	{
-		HandleDestruction(DefaultPawn);
+		HandleDestruction();
 	}
 
 }
 
 
-void ABasePlayer::HandleDestruction(APawn* DefaultPawn)
+void ABasePlayer::HandleDestruction()
 {
 	GetMesh()->SetVisibility(false);
+
+	// Destroy Pawn if AI controlled
+	AAIController* AIController = Cast<AAIController>(GetController());
+
+	if (AIController)
+	{
+		Destroy();
+	}
 }
 
 
@@ -354,7 +380,6 @@ void ABasePlayer::DisplayCountdown()
 		GameStartCountdown->MenuSetup();
 	}
 }
-
 
 
 

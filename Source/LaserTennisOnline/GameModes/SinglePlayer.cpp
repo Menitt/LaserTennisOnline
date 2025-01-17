@@ -68,5 +68,37 @@ void ASinglePlayer::PostLogin(APlayerController* NewPlayer)
         AIPlayerController->Possess(Player2);
     }
 
+    // Initiate Countdown
+    StartCountdown();
+
 }
 
+
+void ASinglePlayer::StartCountdown()
+{
+    Super::StartCountdown();
+
+    if (Player1)
+    {
+        Player1->StartCountdown(CountdownTime);
+    }
+
+}
+
+void ASinglePlayer::StartGame()
+{
+    Super::StartGame();
+
+    if (Player1)
+    {
+        Player1->StartGame();
+    }
+
+    if (AIPlayerController)
+    {
+        AIPlayerController->StartGame();
+    }
+}
+
+
+ 

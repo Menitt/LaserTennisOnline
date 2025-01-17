@@ -16,6 +16,14 @@ class LASERTENNISONLINE_API AOnlineMultiplayer : public ALaserTennisGameModeBase
 
 	virtual void PostLogin(class APlayerController* NewPlayer) override;
 
+	virtual void StartCountdown() override;
 
+public:
+	virtual void StartGame() override;
+
+private:
+
+	class APlayerController* PlayerController1;
+	class APlayerController* PlayerController2;
 
 };

@@ -89,24 +89,16 @@ public:
 
 	void EnableEnhancedInputSystem(class APlayerController* PlayerController);
 
-
-
 //
 // Gameplay
 //
 public:
 
 	UFUNCTION(NetMulticast, Reliable)
-	void GamePreStart();
-
-	UFUNCTION(NetMulticast, Reliable)
-	void GameStart();
-
-	UFUNCTION(NetMulticast, Reliable)
 	void CustomTakeDamage();
 
 	UFUNCTION(NetMulticast, Reliable)
-	void GameOver(bool bWonGame, APawn* DefaultPawn);
+	void GameOver(bool bWonGame);
 
 	UPROPERTY(EditDefaultsOnly) UAnimMontage* TakeDamageMontage; // (Animation)
 	
@@ -119,11 +111,16 @@ public:
 	UFUNCTION()
 	void OnTakeDamageMontageCompleted(UAnimMontage* AnimMontage, bool bInterrupted);
 
-	void HandleDestruction(APawn* DefaultPawn);
+	void HandleDestruction();
 
 	FOnCustomTakeDamage OnCustomTakeDamage;
 
 
+	UFUNCTION(NetMulticast, Reliable)
+	void StartCountdown(int Timer);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void StartGame();
 //
 // UI
 //
@@ -150,6 +147,11 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UBaseUserWidget> GameOverDefeatClass;
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UBaseUserWidget> CountdownWidgetClass;
+
+public:
+	class UGameOverWidget* GameOverWidget;
 	UBaseUserWidget* GameInputsWidget;
 	UBaseUserWidget* GameTutorialWidget;
 	UBaseUserWidget* GameStartCountdown;
@@ -160,8 +162,6 @@ public:
 	void DisplayCountdown();
 
 	void RemoveLobbyWidgets();
-
-
 
 	// IOnlineSessionPtr OnlineSessionInterface2;
 

@@ -17,6 +17,7 @@ class LASERTENNISONLINE_API AAIPlayerController : public AAIController
 	GENERATED_BODY()
 
 
+
 protected:
 
 	virtual void BeginPlay() override;
@@ -35,5 +36,10 @@ private:
     class UBehaviorTree* BehaviorTree;
 
 	bool IsLaserNear() const;
+
+public:
+
+	void StartGame();
+
 
 };

@@ -13,7 +13,11 @@ UCLASS()
 class LASERTENNISONLINE_API ASinglePlayer : public ALaserTennisGameModeBase
 {
 	GENERATED_BODY()
-	
+
+public:
+
+	virtual void StartGame() override;
+
 
 protected:
 
@@ -30,4 +34,5 @@ private:
 
 	class AAIPlayerController* AIPlayerController;
 
+	virtual void StartCountdown() override;
 };

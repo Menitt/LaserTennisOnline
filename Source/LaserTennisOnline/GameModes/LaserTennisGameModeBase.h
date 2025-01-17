@@ -64,6 +64,7 @@ protected:
 	class AHealthPanel* HealthPanel1;
 	class AHealthPanel* HealthPanel2;
 
+	int PlayerCount = 0;
 
 //
 // Setup Function
@@ -77,15 +78,15 @@ private:
 	UFUNCTION()
 	void SpawnLaser(int nPlayer, int nGenerator);
 
-
-	void InitiateGameStart();
+protected:
+	virtual void StartCountdown();
 //
 // Gameplay
 //
 public:
 
 	UFUNCTION()
-	void StartGame();
+	virtual void StartGame();
 
 	void ManagePlatforms();
 
@@ -103,7 +104,9 @@ public:
 
 	void GameOver();
 
-	virtual void HandleMatchHasEnded();
+	virtual void HandleMatchHasEnded() override;
+
+	void DelayedStartCountdown();
 
 	UPROPERTY(EditDefaultsOnly)
 	int nActivePlatforms;
@@ -115,6 +118,10 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	FName MainMenuLevel;
+
+protected:
+	UPROPERTY(EditDefaultsOnly)
+	int CountdownTime = 3;
 
 
 };

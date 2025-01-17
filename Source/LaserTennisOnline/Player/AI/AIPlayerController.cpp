@@ -13,17 +13,17 @@ void AAIPlayerController::BeginPlay()
 {
     Super::BeginPlay();
 
-    if (BehaviorTree)
-    {
-        RunBehaviorTree(BehaviorTree);
-    }
+    // if (BehaviorTree)
+    // {
+    //     RunBehaviorTree(BehaviorTree);
+    // }
 
-    BlackboardComp = GetBlackboardComponent();
+    // BlackboardComp = GetBlackboardComponent();
 
-    if (BlackboardComp)
-    {
-        BlackboardComp->SetValueAsVector("TestTarget", FVector(-29812.506619,109.306837,672.245747));
-    }
+    // if (BlackboardComp)
+    // {
+    //     BlackboardComp->SetValueAsVector("TestTarget", FVector(-29812.506619,109.306837,672.245747));
+    // }
 
 }
 
@@ -32,14 +32,14 @@ void AAIPlayerController::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
 
-    if (IsLaserNear() and BlackboardComp)
-    {
-        BlackboardComp->SetValueAsBool("LaserAlert",true);
-    }
-    else
-    {
-        BlackboardComp->ClearValue("LaserAlert");
-    }
+    // if (IsLaserNear() and BlackboardComp)
+    // {
+    //     BlackboardComp->SetValueAsBool("LaserAlert",true);
+    // }
+    // else if (BlackboardComp)
+    // {
+    //     BlackboardComp->ClearValue("LaserAlert");
+    // }
 }
 
 
@@ -69,4 +69,12 @@ bool AAIPlayerController::IsLaserNear() const
 
     return Cond;
 
+}
+
+void AAIPlayerController::StartGame()
+{
+    if (BehaviorTree)
+    {
+        RunBehaviorTree(BehaviorTree);
+    }
 }
