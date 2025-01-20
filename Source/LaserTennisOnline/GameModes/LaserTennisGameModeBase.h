@@ -54,9 +54,6 @@ protected:
 	class ABasePlayer* Player1;
 	class ABasePlayer* Player2;
 
-
-	class APawn* DefaultPawn;
-
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AActor> GameStartPanelClass;
 	class AGameStartPanel* GameStartPanel;
@@ -100,6 +97,8 @@ public:
 
 	int GetNumberPlatformsByKey(const TArray<int>& PlatformsMap, int key) const;
 
+	void UpdateHealthPanel();
+	
 	void SpawnLaserRequest(int PlayerID);
 
 	void GameOver();
@@ -109,7 +108,7 @@ public:
 	void DelayedStartCountdown();
 
 	UPROPERTY(EditDefaultsOnly)
-	int nActivePlatforms;
+	int nActivePlatforms= 5;
 
 //
 // UI

@@ -6,12 +6,16 @@
 
 void UHealthWidget::UpdateHealthDisplayed(int Health)
 {
-    FText Text = FText::FromString("Health Points: " + FString::FromInt(Health));
-
-    if (PlayerHealth)
+    if (Text)
     {
-        PlayerHealth->SetText(Text);
+        Text->SetText(FText::FromString(TextToDisplay + FString::FromInt(Health)));
     }
+}
 
-    UE_LOG(LogTemp, Warning, TEXT("Setting Text"));
+void UHealthWidget::InitializeText(const FString& InitialText, int PlayerHealth)
+{
+    
+    TextToDisplay = InitialText;
+    
+    UpdateHealthDisplayed(PlayerHealth);
 }

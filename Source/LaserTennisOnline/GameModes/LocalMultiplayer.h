@@ -20,6 +20,8 @@ protected:
 
 	virtual void BeginPlay() override;
 
+	virtual void PostLogin(class APlayerController* NewPlayer) override;
+
 //
 // INPUT
 //
@@ -28,9 +30,6 @@ protected:
 	class UInputMappingContext* LocalMultiplayer_InputMapContext;
 
 	void HandleInputAssignment();
-
-	class APlayerController* SharedPlayerController;
-	class APlayerController* PlayerController2;
 
 	// Players Input Actions
 	UPROPERTY(EditDefaultsOnly, Category = "Players", meta = (AllowPrivateAccess = "true"))
@@ -49,6 +48,12 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Players", meta = (AllowPrivateAccess = "true"))
 	class UInputAction* PauseGameAction;
+
+
+	class APlayerController* SharedPlayerController;
+	class APlayerController* PlayerController1;
+	class APlayerController* PlayerController2;
+	class ABasePlayer* SharedInputPawn;
 
 protected:
 

@@ -34,7 +34,8 @@ public:
 private:
 	FString SinglePlayerGameMode = "/Game/GameModes/BP_SinglePlayer.BP_SinglePlayer_C";
 	FString LocalMultiplayerGameMode = "/Game/GameModes/BP_LocalMultiplayer.BP_LocalMultiplayer_C";
-	
+	FString PathToLobby{TEXT("/Game/Maps/GameMapOnline")};
+
 	UPROPERTY(EditDefaultsOnly)
 	FName GameLevelName;
 	

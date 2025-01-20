@@ -161,6 +161,7 @@ void ABasePlayer::move(const FInputActionValue &value)
 
 void ABasePlayer::jump(const FInputActionValue& value)
 {
+	
 	bool jumpNow = value.Get<bool>();
 	if(jumpNow) 
 	{
@@ -211,6 +212,7 @@ void ABasePlayer::StartCountdown_Implementation(int Timer)
 		DisableInput(PlayerController);
 		UCountDownWidget* CountdownWidget = CreateWidget<UCountDownWidget>(GetWorld(),CountdownWidgetClass);
 
+		// Spawn Countdown Widget
 		if (CountdownWidget)
 		{
 			CountdownWidget->MenuSetup();
@@ -226,6 +228,7 @@ void ABasePlayer::StartCountdown_Implementation(int Timer)
 			}
 
 		}
+
 	}
 
 }
@@ -251,12 +254,21 @@ void ABasePlayer::CustomTakeDamage_Implementation()
 		this->DisableInput(PlayerController);
 	}
 
-
 	// Animation
 	this->PlayAnimMontage(TakeDamageMontage);
 	
 	// Update Health
 	HealthComponent->TakeDamage();
+
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		ALaserTennisGameModeBase* GameMode = Cast<ALaserTennisGameModeBase>(GetWorld()->GetAuthGameMode());
+		if (GameMode)
+		{
+			GameMode->UpdateHealthPanel();
+		}
+	}
+
 }
 
 

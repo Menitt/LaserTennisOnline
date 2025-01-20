@@ -64,6 +64,7 @@ void UInGameMenu::OnDestroySession(bool bWasSuccessful)
 	if (!bWasSuccessful)
 	{
 		MainMenuButton->SetIsEnabled(true);
+		UE_LOG(LogTemp, Warning, TEXT("Can't destroy session"));
 		return;
 	}
 	UWorld* World = GetWorld();

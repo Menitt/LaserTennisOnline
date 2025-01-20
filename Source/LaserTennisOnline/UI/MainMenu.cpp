@@ -63,7 +63,7 @@ void UMainMenu::OnlineMultiplayerButtonClicked()
     if (OnlineMultiplayerMenuWidget)
     {
         MenuTearDown();
-        OnlineMultiplayerMenuWidget->MenuSetup(4,"",GameLevelName.ToString());
+        OnlineMultiplayerMenuWidget->MenuSetup(4,"",PathToLobby);
     }
 
     

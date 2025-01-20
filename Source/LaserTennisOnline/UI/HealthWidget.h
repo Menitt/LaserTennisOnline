@@ -16,11 +16,13 @@ class LASERTENNISONLINE_API UHealthWidget : public UUserWidget
 	
 private:
 	UPROPERTY(meta = (BindWidget))
-	class UEditableTextBox* PlayerHealth;
+	class UEditableTextBox* Text;
 
-	
+	FString TextToDisplay;
+
 public:
 	void UpdateHealthDisplayed(int Health);
 
+	void InitializeText(const FString& InitialText, int PlayerHealth);
 
 };

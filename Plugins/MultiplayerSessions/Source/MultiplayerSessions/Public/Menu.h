@@ -71,6 +71,7 @@ protected:
 
 	int32 NumPublicConnections{4};
 	FString MatchType{TEXT("FreeForAll")};
-	FString PathToLobby{TEXT("")};
+	UPROPERTY(EditDefaultsOnly)
+	FString PathToLobby{TEXT("/Game/Maps/GameMapOnline")};
 
 };

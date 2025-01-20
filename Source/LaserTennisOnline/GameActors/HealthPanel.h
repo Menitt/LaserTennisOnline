@@ -31,19 +31,24 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	class UWidgetComponent* HealthWidget;
 
-	UPROPERTY(EditDefaultsOnly)
-	float Speed = 50;
-	UPROPERTY(EditDefaultsOnly)
-	float zOffset = 1000;
+	UPROPERTY(EditAnywhere)
 	FVector TargetLocation;
+
 	bool bShouldMove = false;
+	float TimeToPosition = 3.f;
+
+	float DistanceToLocation = 100;
+
 
 public:
 	UFUNCTION(NetMulticast, Reliable)
 	void UpdateWidgetHealth(int PlayerHealth);
 
 	UFUNCTION(NetMulticast, Reliable)
-	void Activate();
+	void InitializeWidgetText(const FString& InitialText, int PlayerHealth);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Activate(float Period);
 
 
 };

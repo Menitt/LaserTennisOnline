@@ -14,9 +14,6 @@ AHealthPanel::AHealthPanel()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
     bReplicates = true;
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
@@ -32,7 +29,7 @@ AHealthPanel::AHealthPanel()
     if (WidgetClassFinder.Succeeded())
     {
         HealthWidget->SetWidgetClass(WidgetClassFinder.Class);
-    }
+	}
 
 }
 
@@ -41,8 +38,8 @@ void AHealthPanel::BeginPlay()
 {
 	Super::BeginPlay();
 
-	TargetLocation = GetActorLocation() + FVector(0,0,zOffset);
-	
+	DistanceToLocation = (TargetLocation - GetActorLocation()).Size();
+
 }
 
 // Called every frame
@@ -52,8 +49,7 @@ void AHealthPanel::Tick(float DeltaTime)
 
 	if (bShouldMove)
     {
-        FVector NewLocation = UKismetMathLibrary::VInterpTo(GetActorLocation(), 
-            TargetLocation, DeltaTime, Speed/10);
+        FVector NewLocation = UKismetMathLibrary::VInterpTo(GetActorLocation(), TargetLocation, DeltaTime, (DistanceToLocation/TimeToPosition)/100);
         SetActorLocation(NewLocation);
     }
 
@@ -73,7 +69,22 @@ void AHealthPanel::UpdateWidgetHealth_Implementation(int PlayerHealth)
 	}
 }
 
-void AHealthPanel::Activate_Implementation()
+void AHealthPanel::InitializeWidgetText_Implementation(const FString& InitialText, int PlayerHealth)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Initiale Panel Text"));
+	UUserWidget* UserWidget = HealthWidget->GetUserWidgetObject();
+	if (UHealthWidget* CustomWidget = Cast<UHealthWidget>(UserWidget))
+	{
+		CustomWidget->InitializeText(InitialText, PlayerHealth);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Null widget!"));
+	}
+}
+
+void AHealthPanel::Activate_Implementation(float Period)
+{
+	TimeToPosition = Period;
 	bShouldMove = true;
 }

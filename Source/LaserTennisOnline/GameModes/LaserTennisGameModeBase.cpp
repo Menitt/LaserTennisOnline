@@ -35,26 +35,6 @@ void ALaserTennisGameModeBase::SetupGame()
         CentralGenerator->OnSignalArrived.AddDynamic(this, &ThisClass::SpawnLaser);
     }
 
-
-    // Get Camera Actor
-    UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(),APawn::StaticClass(),"Default",TempArray);
-    if (TempArray.Num() > 0)
-    {
-        DefaultPawn = Cast<APawn>(TempArray[0]);
-    }
-
-
-    // Get Game Start Panel
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(),GameStartPanelClass,TempArray);
-    if (TempArray.Num() > 0)
-    {
-        GameStartPanel = Cast<AGameStartPanel>(TempArray[0]);
-        if (GameStartPanel)
-        {
-            GameStartPanel->OnGameStarting.AddDynamic(this, &ThisClass::StartGame);
-        }
-    }
-
     // Get Health Panels
     UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(),AHealthPanel::StaticClass(),"1",TempArray);
     if (TempArray.Num() > 0)
@@ -72,7 +52,6 @@ void ALaserTennisGameModeBase::SetupGame()
 
 void ALaserTennisGameModeBase::SetupTimer()
 {
-    // Set the timer to call MyFunction every 1 second, for 5 seconds
     GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ALaserTennisGameModeBase::ManagePlatforms, 0.5f, true, 5.f);
 }
 
@@ -157,7 +136,8 @@ void ALaserTennisGameModeBase::ActivatePlatform(TArray<int>& PlatformsMap, TArra
             ALaserActivationPlatform* Platform = Cast<ALaserActivationPlatform>(Actor);
             if (Platform)
             {
-                Platform->Activate();        
+                Platform->Activate(); 
+                PlatformsMap[i] = 2;       
             }
             // PlatformsMap[i] = 2;
 
@@ -185,10 +165,9 @@ void ALaserTennisGameModeBase::DeactivatePlatform(TArray<int>& PlatformsMap, TAr
             ALaserActivationPlatform* Platform = Cast<ALaserActivationPlatform>(Actor);
             if (Platform)
             {
-                Platform->Deactivate();        
+                Platform->Deactivate();
+                PlatformsMap[i] = -2;        
             }
-            // PlatformsMap[i] = -2;
-
             return;
         }        
     }
@@ -218,13 +197,7 @@ void ALaserTennisGameModeBase::PostLogin(APlayerController* NewPlayer)
 void ALaserTennisGameModeBase::BeginPlay()
 {
     Super::BeginPlay();
-
-    SetupGame();
-
-    SetupTimer();
-
 }
-
 
 void ALaserTennisGameModeBase::SpawnLaserRequest(int PlayerID)
 {
@@ -289,14 +262,41 @@ void ALaserTennisGameModeBase::SpawnLaser(int nPlayer, int nGenerator)
 
 void ALaserTennisGameModeBase::StartGame()
 {
-    UE_LOG(LogTemp, Warning, TEXT("Game Mode: Start Game!"));
+    SetupTimer();
+
+    UpdateHealthPanel();
+
 }
 
 void ALaserTennisGameModeBase::StartCountdown()
 {
-    // Place holder
-}
+    SetupGame();
+    
+    UpdateActivePlatformsList(ActiveLaserPlatforms1, laserPlatforms1);
+    UpdateActivePlatformsList(ActiveLaserPlatforms2, laserPlatforms2);
+    
+    int nAdjust1 = laserPlatforms1.Num() - nActivePlatforms;
+    int nAdjust2 = laserPlatforms2.Num() - nActivePlatforms;
 
+    for (int i=0; i<nAdjust1; ++i)
+    {
+        DeactivatePlatform(ActiveLaserPlatforms1, laserPlatforms1);
+    }
+    for (int i=0; i<nAdjust2; ++i)
+    {
+        DeactivatePlatform(ActiveLaserPlatforms2, laserPlatforms2);
+    }
+
+    if (HealthPanel1)
+    {
+        HealthPanel1->Activate(CountdownTime);
+    }
+    if (HealthPanel2)
+    {
+        HealthPanel2->Activate(CountdownTime);
+    }
+
+}
 
 void ALaserTennisGameModeBase::DelayedStartCountdown()
 {
@@ -304,4 +304,20 @@ void ALaserTennisGameModeBase::DelayedStartCountdown()
     // Set the timer to call MyFunction every 1 second, for 5 seconds
     FTimerHandle NewTimerHandle;
     GetWorld()->GetTimerManager().SetTimer(NewTimerHandle, this, &ALaserTennisGameModeBase::StartCountdown, 0.5f, false);
+}
+
+
+void ALaserTennisGameModeBase::UpdateHealthPanel()
+{
+
+    UE_LOG(LogTemp, Warning, TEXT("Updating Health"));
+    // Update Health Widgets
+    if (HealthPanel1 and Player1)
+    {
+       HealthPanel1->UpdateWidgetHealth(Player1->GetPlayerHealth()); 
+    }
+    if (HealthPanel2 and Player2)
+    {
+       HealthPanel2->UpdateWidgetHealth(Player2->GetPlayerHealth()); 
+    }
 }
