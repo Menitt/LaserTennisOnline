@@ -23,6 +23,7 @@ void AOnlineMultiplayerController::BeginPlay()
         if (Player)
         {
             PlayerPawn->EnableEnhancedInputSystem(this);
+            UE_LOG(LogTemp, Warning, TEXT("Enabling Input from Online Multiplayer Controller"));
         }
     }
 }

@@ -39,6 +39,8 @@ private:
 
 	// UPROPERTY(meta = (BindWidget))
 	// class UButton* QuitButton;
+	UPROPERTY(EditDefaultsOnly)
+	FName MainMenuLevel;
 
 	UFUNCTION()
 	void ResumeButtonClicked();

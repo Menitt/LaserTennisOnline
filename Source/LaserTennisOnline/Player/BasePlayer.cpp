@@ -86,7 +86,6 @@ void ABasePlayer::BeginPlay()
 void ABasePlayer::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
-
 	APlayerController* PlayerController = Cast<APlayerController>(NewController);
 
 	if (PlayerController and PlayerController->IsLocalController())
@@ -94,6 +93,7 @@ void ABasePlayer::PossessedBy(AController* NewController)
 		EnableEnhancedInputSystem(PlayerController);
 	}
 
+	EnableInput(PlayerController);
 }
 
 

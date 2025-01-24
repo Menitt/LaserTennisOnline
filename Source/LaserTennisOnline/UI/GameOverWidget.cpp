@@ -8,6 +8,9 @@
 #include "GameFramework/PlayerController.h"
 #include "MultiplayerSessionsSubsystem.h"
 #include "GameFramework/GameModeBase.h"
+#include "LaserTennisGameModeBase.h"
+#include "OnlineMultiplayer.h"
+#include "LocalMultiplayer.h"
 
 
 
@@ -39,7 +42,7 @@ void UGameOverWidget::OnDestroySession(bool bWasSuccessful)
 	{
 		MainMenuButton->SetIsEnabled(true);
 		return;
-	}
+	} 
 	UWorld* World = GetWorld();
 	if (World)
 	{
@@ -63,8 +66,21 @@ void UGameOverWidget::OnDestroySession(bool bWasSuccessful)
 void UGameOverWidget::MainMenuButtonClicked()
 {
 	MainMenuButton->SetIsEnabled(false);
-	if (MultiplayerSessionsSubsystem)
+	AGameModeBase* GameMode = GetWorld()->GetAuthGameMode<AGameModeBase>();
+	AOnlineMultiplayer* OnlineMultGameMode = Cast<AOnlineMultiplayer>(GameMode);
+	ALocalMultiplayer* LocalMultGameMode = Cast<ALocalMultiplayer>(GameMode);
+
+	if (MultiplayerSessionsSubsystem and OnlineMultGameMode)
 	{
 		MultiplayerSessionsSubsystem->DestroySession();
 	}
+	else if (LocalMultGameMode)
+	{
+		LocalMultGameMode->ReturnToMainMenuHost();
+	}
+	else if (GameMode)
+	{
+		GameMode->ReturnToMainMenuHost();
+	}
+
 }

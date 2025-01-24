@@ -24,6 +24,8 @@ void ALocalMultiplayer::BeginPlay()
 {
     Super::BeginPlay();
 
+    UE_LOG(LogTemp, Warning, TEXT("Local Multiplayer Begin Play()! "));
+
     // Store first player controller
     SharedPlayerController = GetWorld()->GetFirstPlayerController();
     // Create Player Controllers
@@ -206,4 +208,47 @@ void ALocalMultiplayer::HandleMatchHasEnded()
     {
         NewGameOverWidget->MenuSetup();
     }
+}
+
+
+void ALocalMultiplayer::RemovePlayers()
+{
+    
+    if (PlayerController1)
+    {
+        Logout(PlayerController1);
+        RemovePlayerControllerFromPlayerCount(PlayerController1);
+        PlayerController1->UnPossess();
+        PlayerController1->Destroy();
+    }
+    if (PlayerController2)
+    {
+        Logout(PlayerController2);
+        RemovePlayerControllerFromPlayerCount(PlayerController2);
+        PlayerController2->UnPossess();
+        PlayerController2->Destroy();
+    }
+
+}
+
+void ALocalMultiplayer::ReturnToMainMenuHost()
+{  
+    
+    // Remove Local Players
+    ULocalPlayer* LocalPlayer1 = GetGameInstance()->GetLocalPlayerByIndex(1);
+    ULocalPlayer* LocalPlayer2 = GetGameInstance()->GetLocalPlayerByIndex(2);
+    if (LocalPlayer1)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Removing player1"));
+        GetGameInstance()->RemoveLocalPlayer(LocalPlayer1);
+    }
+    if (LocalPlayer2)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Removing players2"));
+        GetGameInstance()->RemoveLocalPlayer(LocalPlayer2);
+    }
+    
+    Super::ReturnToMainMenuHost();
+
+    
 }

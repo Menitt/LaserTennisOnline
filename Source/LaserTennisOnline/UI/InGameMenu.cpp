@@ -6,7 +6,9 @@
 #include "Components/Button.h"
 #include "MultiplayerSessionsSubsystem.h"
 #include "GameFramework/GameModeBase.h"
-
+#include "OnlineMultiplayer.h"
+#include "Kismet/GameplayStatics.h"
+#include "LocalMultiplayer.h"
 
 
 void UInGameMenu::MenuSetup()
@@ -64,7 +66,6 @@ void UInGameMenu::OnDestroySession(bool bWasSuccessful)
 	if (!bWasSuccessful)
 	{
 		MainMenuButton->SetIsEnabled(true);
-		UE_LOG(LogTemp, Warning, TEXT("Can't destroy session"));
 		return;
 	}
 	UWorld* World = GetWorld();
@@ -107,9 +108,21 @@ void UInGameMenu::MenuTearDown()
 void UInGameMenu::MainMenuButtonClicked()
 {
 	MainMenuButton->SetIsEnabled(false);
-	if (MultiplayerSessionsSubsystem)
+	AGameModeBase* GameMode = GetWorld()->GetAuthGameMode<AGameModeBase>();
+	AOnlineMultiplayer* OnlineMultGameMode = Cast<AOnlineMultiplayer>(GameMode);
+	ALocalMultiplayer* LocalMultGameMode = Cast<ALocalMultiplayer>(GameMode);
+
+	if (MultiplayerSessionsSubsystem and OnlineMultGameMode)
 	{
 		MultiplayerSessionsSubsystem->DestroySession();
+	}
+	else if (LocalMultGameMode)
+	{
+		LocalMultGameMode->ReturnToMainMenuHost();
+	}
+	else if (GameMode)
+	{
+		GameMode->ReturnToMainMenuHost();
 	}
 }
 
@@ -117,3 +130,4 @@ void UInGameMenu::ResumeButtonClicked()
 {
     MenuTearDown();
 }
+

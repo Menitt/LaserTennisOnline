@@ -68,6 +68,9 @@ protected:
 	TSubclassOf<UUserWidget> Player2WinnerWidgetClass;
 
 public:
+	void RemovePlayers();
 
+
+	virtual void ReturnToMainMenuHost() override;
 	virtual void StartGame() override;
 };

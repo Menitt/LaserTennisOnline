@@ -26,7 +26,7 @@ protected:
 	TObjectPtr<class UButton> MainMenuButton;
 
 	UPROPERTY(EditDefaultsOnly)
-	FName MainMenuLevel;
+	FName MainMenuLevel = "/Game/Maps/MenuMap";
 
 
 	UFUNCTION()

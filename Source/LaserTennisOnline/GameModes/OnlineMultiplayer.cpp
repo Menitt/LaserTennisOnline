@@ -13,6 +13,8 @@ void AOnlineMultiplayer::PostLogin(APlayerController* NewPlayer)
 
     Super::PostLogin(NewPlayer);
 
+    UE_LOG(LogTemp, Warning, TEXT("Online Multiplayer: Player has logged in!"));
+
     PlayerCount++;
 
     // Destroy Default Player Pawn
@@ -41,7 +43,6 @@ void AOnlineMultiplayer::PostLogin(APlayerController* NewPlayer)
         {
             Player1 = GetWorld()->SpawnActor<ABasePlayer>(ClassPlayer1,PlayerStart1->GetActorLocation(), 
             PlayerStart1->GetActorRotation());
-            
             NewPlayer->Possess(Player1);
         }
     }
