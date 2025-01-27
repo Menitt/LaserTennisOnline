@@ -68,7 +68,7 @@ protected:
 //
 private:
 	void SetupGame();
-
+protected:
 	void SetupTimer();
 	FTimerHandle TimerHandle;
 

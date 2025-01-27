@@ -92,8 +92,6 @@ void ABasePlayer::PossessedBy(AController* NewController)
 	{
 		EnableEnhancedInputSystem(PlayerController);
 	}
-
-	EnableInput(PlayerController);
 }
 
 
@@ -129,6 +127,8 @@ void ABasePlayer::EnableEnhancedInputSystem(APlayerController* PlayerController)
 void ABasePlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	UE_LOG(LogTemp, Warning, TEXT("SetupPlayerInputComponent!"));
 
 	if(UEnhancedInputComponent* enhancedInputComponent = 
 	CastChecked<UEnhancedInputComponent>(PlayerInputComponent))

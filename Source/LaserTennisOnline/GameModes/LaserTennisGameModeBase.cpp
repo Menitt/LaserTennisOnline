@@ -52,7 +52,7 @@ void ALaserTennisGameModeBase::SetupGame()
 
 void ALaserTennisGameModeBase::SetupTimer()
 {
-    GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ALaserTennisGameModeBase::ManagePlatforms, 0.5f, true, 5.f);
+    GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ALaserTennisGameModeBase::ManagePlatforms, 0.5f, true);
 }
 
 void ALaserTennisGameModeBase::ManagePlatforms()
@@ -72,14 +72,11 @@ void ALaserTennisGameModeBase::Tick(float DeltaTime)
 
 void ALaserTennisGameModeBase::UpdateActivePlatformsList(TArray<int>& PlatformsMap, TArray<AActor*>& PlatformList)
 {
-
     int nPlatforms = PlatformsMap.Num();
-
     for (int i=0; i<nPlatforms; ++i)
     {
         AActor* Actor = PlatformList[i];
         ALaserActivationPlatform* Platform = Cast<ALaserActivationPlatform>(Actor);
-        PlatformsMap[i] = 0;
         if (Platform and Platform->IsPlatformActive())
         {
             PlatformsMap[i] = 1;
@@ -102,10 +99,9 @@ void ALaserTennisGameModeBase::UpdateActivePlatformsList(TArray<int>& PlatformsM
 
 void ALaserTennisGameModeBase::AdjustPlatforms(TArray<int>& PlatformsMap, TArray<AActor*>& PlatformList)
 {
-    
-    int nAdjust = nActivePlatforms - GetNumberPlatformsByKey(PlatformsMap,1) - GetNumberPlatformsByKey(PlatformsMap,2);
-    
+    int nActive = GetNumberPlatformsByKey(PlatformsMap,1) + GetNumberPlatformsByKey(PlatformsMap,2);
 
+    int nAdjust = nActivePlatforms - nActive;
     if (nAdjust > 0)
     {
         ActivatePlatform(PlatformsMap, PlatformList);
@@ -192,6 +188,8 @@ void ALaserTennisGameModeBase::PostLogin(APlayerController* NewPlayer)
     
     Super::PostLogin(NewPlayer);
 
+    SetupGame();
+
 }
 
 void ALaserTennisGameModeBase::BeginPlay()
@@ -270,22 +268,27 @@ void ALaserTennisGameModeBase::StartGame()
 
 void ALaserTennisGameModeBase::StartCountdown()
 {
-    SetupGame();
-    
-    UpdateActivePlatformsList(ActiveLaserPlatforms1, laserPlatforms1);
-    UpdateActivePlatformsList(ActiveLaserPlatforms2, laserPlatforms2);
-    
-    int nAdjust1 = laserPlatforms1.Num() - nActivePlatforms;
-    int nAdjust2 = laserPlatforms2.Num() - nActivePlatforms;
 
-    for (int i=0; i<nAdjust1; ++i)
+    UE_LOG(LogTemp, Warning, TEXT("Base Start Countdown!"));
+    
+    for (int i=0; i<laserPlatforms1.Num(); ++i)
     {
-        DeactivatePlatform(ActiveLaserPlatforms1, laserPlatforms1);
+        ManagePlatforms();
     }
-    for (int i=0; i<nAdjust2; ++i)
-    {
-        DeactivatePlatform(ActiveLaserPlatforms2, laserPlatforms2);
-    }
+    // UpdateActivePlatformsList(ActiveLaserPlatforms1, laserPlatforms1);
+    // UpdateActivePlatformsList(ActiveLaserPlatforms2, laserPlatforms2);
+    
+    // int nAdjust1 = laserPlatforms1.Num() - nActivePlatforms;
+    // int nAdjust2 = laserPlatforms2.Num() - nActivePlatforms;
+
+    // for (int i=0; i<nAdjust1; ++i)
+    // {
+    //     DeactivatePlatform(ActiveLaserPlatforms1, laserPlatforms1);
+    // }
+    // for (int i=0; i<nAdjust2; ++i)
+    // {
+    //     DeactivatePlatform(ActiveLaserPlatforms2, laserPlatforms2);
+    // }
 
     if (HealthPanel1)
     {

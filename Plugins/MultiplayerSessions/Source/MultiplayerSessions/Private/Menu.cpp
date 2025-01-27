@@ -51,8 +51,6 @@ void UMenu::MenuSetup(int32 NumberOfPublicConnections, FString TypeOfMatch, FStr
 		MultiplayerSessionsSubsystem->MultiplayerOnDestroySessionComplete.AddDynamic(this, &ThisClass::OnDestroySession);
 		MultiplayerSessionsSubsystem->MultiplayerOnStartSessionComplete.AddDynamic(this, &ThisClass::OnStartSession);
 	}
-
-	UE_LOG(LogTemp, Warning, TEXT("Menu MenuSetup"));
 }
 
 bool UMenu::Initialize()
@@ -101,9 +99,11 @@ void UMenu::OnCreateSession(bool bWasSuccessful)
 				-1,
 				15.f,
 				FColor::Green,
-				FString(TEXT("Successfully Created Session!"))
+				FString(TEXT("Successfully Created Session! Travelled to ")) + PathToLobby
 			);
 		}
+
+		// MenuTearDown();
 	
 	}
 	else

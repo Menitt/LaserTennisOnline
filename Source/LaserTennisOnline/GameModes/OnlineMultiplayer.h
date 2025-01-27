@@ -18,6 +18,8 @@ class LASERTENNISONLINE_API AOnlineMultiplayer : public ALaserTennisGameModeBase
 
 	virtual void StartCountdown() override;
 
+	virtual void BeginPlay() override;
+
 public:
 	virtual void StartGame() override;
 

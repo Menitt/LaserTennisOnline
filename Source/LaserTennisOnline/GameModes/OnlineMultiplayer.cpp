@@ -7,13 +7,12 @@
 #include "GameFramework/PlayerStart.h"
 #include "OnlineMultiplayerController.h"
 #include "GameFramework/GameStateBase.h"
+#include "LaserActivationPlatform.h"
 
 void AOnlineMultiplayer::PostLogin(APlayerController* NewPlayer)
 {
 
     Super::PostLogin(NewPlayer);
-
-    UE_LOG(LogTemp, Warning, TEXT("Online Multiplayer: Player has logged in!"));
 
     PlayerCount++;
 
@@ -76,8 +75,28 @@ void AOnlineMultiplayer::PostLogin(APlayerController* NewPlayer)
 
 }
 
+void AOnlineMultiplayer::BeginPlay()
+{
+    Super::BeginPlay();
+
+    SetupTimer();
+}
+
+
 void AOnlineMultiplayer::StartCountdown()
 {
+    UE_LOG(LogTemp, Warning, TEXT("Online Multiplayer: Start Countdown!"));
+    for (int i=0; i<laserPlatforms1.Num(); ++i)
+    {
+        ALaserActivationPlatform* Platform1 = Cast<ALaserActivationPlatform>(laserPlatforms1[i]);
+        ALaserActivationPlatform* Platform2 = Cast<ALaserActivationPlatform>(laserPlatforms2[i]);
+        if (Platform1 and Platform2)
+        {
+            Platform1->Activate();
+            Platform2->Activate();
+        }
+    }
+    
     Super::StartCountdown();
 
     if (Player1)

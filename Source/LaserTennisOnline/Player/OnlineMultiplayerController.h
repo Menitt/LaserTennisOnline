@@ -19,4 +19,11 @@ class LASERTENNISONLINE_API AOnlineMultiplayerController : public APlayerControl
 protected:
 	virtual void BeginPlay() override;
 
+	virtual ~AOnlineMultiplayerController() override;
+
+public:
+
+	// UFUNCTION(NetMulticast, Reliable)
+	// void EnableGameplayInput();
+
 };

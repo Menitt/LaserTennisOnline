@@ -12,19 +12,20 @@ AOnlineMultiplayerController::AOnlineMultiplayerController()
 }
 
 
+AOnlineMultiplayerController::~AOnlineMultiplayerController()
+{
+
+    UE_LOG(LogTemp, Warning, TEXT("Online Player Controller Destructor!"));
+}
+
 void AOnlineMultiplayerController::BeginPlay()
 {
     Super::BeginPlay();
 
     if (IsLocalController())
     {
-        ABasePlayer* PlayerPawn = Cast<ABasePlayer>(GetPawn());
-
-        if (Player)
-        {
-            PlayerPawn->EnableEnhancedInputSystem(this);
-            UE_LOG(LogTemp, Warning, TEXT("Enabling Input from Online Multiplayer Controller"));
-        }
+        FInputModeGameOnly InputMode;
+        SetInputMode(InputMode);
+        SetShowMouseCursor(false);
     }
 }
-

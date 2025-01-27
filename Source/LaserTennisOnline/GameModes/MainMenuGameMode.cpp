@@ -4,6 +4,14 @@
 #include "MainMenuGameMode.h"
 
 
+AMainMenuGameMode::AMainMenuGameMode()
+{
+    UE_LOG(LogTemp, Warning, TEXT("Main Menu Game Mode: Constructor!"));
+
+    bUseSeamlessTravel = true;
+}
+
+
 
 void AMainMenuGameMode::PostLogin(APlayerController* NewPlayer)
 {
@@ -16,6 +24,5 @@ void AMainMenuGameMode::PostLogin(APlayerController* NewPlayer)
         Super::PostLogin(NewPlayer);
         nPlayers++;
     }
-
     
 }
