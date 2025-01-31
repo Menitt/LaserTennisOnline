@@ -29,6 +29,9 @@ public:
 private:
 
 	UPROPERTY(EditDefaultsOnly)
+	float Speed = 400;
+
+	UPROPERTY(EditDefaultsOnly)
 	class USceneComponent* Mesh;
 
 	UPROPERTY(EditDefaultsOnly)

@@ -49,6 +49,8 @@ private:
 
 	FTimerHandle TimerHandle;
 
+	UPROPERTY(EditDefaultsOnly)
+	float SpawnTimeInterval = 2.5f;
 	void SpawnObject(); 
 
 	UFUNCTION()

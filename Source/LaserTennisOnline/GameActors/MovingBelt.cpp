@@ -40,7 +40,7 @@ void AMovingBelt::BeginPlay()
 	AMovingBeltObject* Object = Cast<AMovingBeltObject>(GetWorld()->SpawnActor<AActor>(MovingBeltObjectClass,
 	ObjectSpawnPoint->GetComponentLocation(),ObjectSpawnPoint->GetComponentRotation()));
 
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ThisClass::SpawnObject, 1.f, true);
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ThisClass::SpawnObject, SpawnTimeInterval, true);
 
 
 	// Enable overlap events

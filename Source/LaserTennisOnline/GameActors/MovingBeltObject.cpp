@@ -23,8 +23,8 @@ AMovingBeltObject::AMovingBeltObject()
 
 	MovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>("Movement Component");
 
-	MovementComponent->InitialSpeed = 900.0f;
-	MovementComponent->MaxSpeed = 900.0f;
+	MovementComponent->InitialSpeed = Speed;
+	MovementComponent->MaxSpeed = Speed;
 	MovementComponent->bRotationFollowsVelocity = true;
 	MovementComponent->ProjectileGravityScale = 0.0f;
 
@@ -36,7 +36,7 @@ AMovingBeltObject::AMovingBeltObject()
     BoxComponent->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);  // For dynamic world actors
     BoxComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 
-	BoxComponent->SetHiddenInGame(false);
+	// BoxComponent->SetHiddenInGame(false);
 
 }
 
@@ -45,7 +45,7 @@ void AMovingBeltObject::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	BoxComponent->SetHiddenInGame(false);
+	BoxComponent->SetHiddenInGame(true);
 }
 
 // Called every frame
