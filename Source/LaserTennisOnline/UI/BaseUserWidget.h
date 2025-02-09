@@ -28,7 +28,12 @@ protected:
 	virtual bool Initialize() override;
 
 
+// Sound
+protected:
+	UPROPERTY(EditDefaultsOnly)
+	FString ButtonSound;
 
+	void PlayButtonSound();
 
 
 };

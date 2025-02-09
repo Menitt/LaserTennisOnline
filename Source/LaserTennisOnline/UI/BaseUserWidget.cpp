@@ -3,6 +3,10 @@
 
 #include "BaseUserWidget.h"
 #include "GameFramework/PlayerController.h"
+#include "Kismet/GameplayStatics.h"
+#include "Sound/SoundWave.h"
+#include "UObject/UObjectGlobals.h"
+
 
 void UBaseUserWidget::MenuSetup()
 {
@@ -22,7 +26,6 @@ void UBaseUserWidget::MenuSetup()
 			PlayerController->SetInputMode(InputModeData);
 			PlayerController->SetShowMouseCursor(true);
 		
-			UE_LOG(LogTemp, Warning, TEXT("Bazse USer Widget Menu Setup"));
 		}
 	}
 }
@@ -51,4 +54,25 @@ void UBaseUserWidget::MenuTearDown()
 			PlayerController->SetShowMouseCursor(false);
 		}
 	}
+}
+
+
+void UBaseUserWidget::PlayButtonSound()
+{
+
+	if (PlayerController)
+    {	
+		APawn* PlayerPawn = PlayerController->GetPawn();
+		if (PlayerPawn)
+		{
+			USoundWave* Sound = LoadObject<USoundWave>(nullptr, *ButtonSound);
+
+			if (Sound)
+			{
+				FVector SoundLocation = PlayerPawn->GetActorLocation(); // You can set a custom location
+				UGameplayStatics::PlaySoundAtLocation(this, Sound, SoundLocation,1,1,0.13);
+			}
+		}
+		
+    }
 }

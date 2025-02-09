@@ -186,11 +186,6 @@ void ALaserActivationPlatform::Deactivate()
         UGameplayStatics::PlaySoundAtLocation(this, Sound, SoundLocation);
     }
 
-	else
-	{
-		// UE_LOG(LogTemp, Warning, TEXT("Audio file not found!"));
-	}
-
 }
 
 void ALaserActivationPlatform::Activate()
