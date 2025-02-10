@@ -34,12 +34,6 @@ ALaserRay::ALaserRay()
 	CollisionComponent->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block);
 	RootComponent = CollisionComponent;
 
-	if (GetLocalRole() == ROLE_Authority)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("ALaser Ray Contructor: Biding On Hit function"));
-		CollisionComponent->OnComponentHit.AddDynamic(this, &ThisClass::OnHitPlayer);
-	}
-
 	Mesh->SetupAttachment(RootComponent);
 
 	ProjectileComp->SetUpdatedComponent(CollisionComponent);
@@ -57,6 +51,11 @@ void ALaserRay::BeginPlay()
 	
 	FString HitSoundPath = SoundFolder + HitSoundFile + "." + HitSoundFile;
 	HitSound = LoadObject<USoundCue>(nullptr, *HitSoundPath);
+
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		CollisionComponent->OnComponentHit.AddDynamic(this, &ThisClass::OnHitPlayer);
+	}
 
 }
 
@@ -115,10 +114,9 @@ void ALaserRay::PlaySound_Implementation()
 	}
 }
 
-
 void ALaserRay::Destroyed()
 {
-	
+	Super::Destroyed();
 }
 
 FVector ALaserRay::GetLaserBox() const

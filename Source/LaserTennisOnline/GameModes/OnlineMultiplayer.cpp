@@ -14,8 +14,6 @@ void AOnlineMultiplayer::PostLogin(APlayerController* NewPlayer)
 
     Super::PostLogin(NewPlayer);
 
-    PlayerCount++;
-
     // Destroy Default Player Pawn
     APawn* Pawn = NewPlayer->GetPawn();
     if (Pawn)

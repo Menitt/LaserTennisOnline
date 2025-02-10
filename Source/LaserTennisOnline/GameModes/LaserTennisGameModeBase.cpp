@@ -187,8 +187,11 @@ void ALaserTennisGameModeBase::PostLogin(APlayerController* NewPlayer)
 {
     
     Super::PostLogin(NewPlayer);
-
-    SetupGame();
+    PlayerCount++;
+    if (PlayerCount == 1)
+    {
+        SetupGame();
+    }
 
 }
 
@@ -268,8 +271,6 @@ void ALaserTennisGameModeBase::StartGame()
 
 void ALaserTennisGameModeBase::StartCountdown()
 {
-
-    UE_LOG(LogTemp, Warning, TEXT("Base Start Countdown!"));
     
     for (int i=0; i<laserPlatforms1.Num(); ++i)
     {
