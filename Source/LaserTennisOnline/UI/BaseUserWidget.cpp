@@ -27,6 +27,7 @@ void UBaseUserWidget::MenuSetup()
 			PlayerController->SetShowMouseCursor(true);
 		
 		}
+		
 	}
 }
 
@@ -36,6 +37,11 @@ bool UBaseUserWidget::Initialize()
 	{
 		return false;
 	}
+
+	// Bind Sound File
+	FString SoundPath = SoundFolder + SoundFile + "." + SoundFile;
+	Sound = LoadObject<USoundWave>(nullptr, *SoundPath);
+
 	return true;
 }
 
@@ -57,22 +63,17 @@ void UBaseUserWidget::MenuTearDown()
 }
 
 
-void UBaseUserWidget::PlayButtonSound()
+void UBaseUserWidget::PlayUISound()
 {
 
 	if (PlayerController)
     {	
 		APawn* PlayerPawn = PlayerController->GetPawn();
-		if (PlayerPawn)
+		if (PlayerPawn and Sound)
 		{
-			USoundWave* Sound = LoadObject<USoundWave>(nullptr, *ButtonSound);
-
-			if (Sound)
-			{
-				FVector SoundLocation = PlayerPawn->GetActorLocation(); // You can set a custom location
-				UGameplayStatics::PlaySoundAtLocation(this, Sound, SoundLocation,1,1,0.13);
-			}
+			FVector SoundLocation = PlayerPawn->GetActorLocation(); // You can set a custom location
+			
+			UGameplayStatics::PlaySoundAtLocation(this, Sound, SoundLocation,ScaleVolume,ScalePitch,StartTime);
 		}
-		
     }
 }

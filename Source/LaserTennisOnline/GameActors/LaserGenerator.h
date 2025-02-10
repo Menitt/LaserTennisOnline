@@ -41,8 +41,24 @@ private:
 
 
 public:
-	UFUNCTION(Client,Reliable)
 	void SpawnLaser();
+
+
+// Sound
+protected:
+	UPROPERTY(EditDefaultsOnly, Category = "Sound")
+	FString SoundFile;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound")
+	float StartTime = 0.f;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound")
+	float ScaleVolume = 1.f;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound")
+	float ScalePitch = 1.f;
+
+	FString SoundFolder = "/Game/Assets/Audio/";
+	class USoundCue* Sound;
+	
+	UFUNCTION(NetMulticast, Reliable) void PlaySound();
 
 
 };

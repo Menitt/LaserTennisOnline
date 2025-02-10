@@ -94,4 +94,21 @@ private:
 	UPROPERTY(Replicated)
 	bool bIsResting = false;
 
+// Sound
+protected:
+	UPROPERTY(EditDefaultsOnly, Category = "Sound")
+	FString SoundFile;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound")
+	float StartTime = 0.f;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound")
+	float ScaleVolume = 1.f;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound")
+	float ScalePitch = 1.f;
+
+	FString SoundFolder = "/Game/Assets/Audio/";
+	class USoundCue* Sound;
+	void PlayUISound();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void PlaySoundEffect();
 };

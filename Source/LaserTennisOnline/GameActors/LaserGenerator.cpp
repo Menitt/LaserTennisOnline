@@ -6,6 +6,8 @@
 #include "Components/SceneComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "Engine/Engine.h"
+#include "Kismet/GameplayStatics.h"
+#include "Sound/SoundCue.h"
 
 
 // Sets default values
@@ -29,7 +31,10 @@ ALaserGenerator::ALaserGenerator()
 void ALaserGenerator::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	FString SoundPath = SoundFolder + SoundFile + "." + SoundFile;
+	Sound = LoadObject<USoundCue>(nullptr, *SoundPath);
+
 }
 
 // Called every frame
@@ -39,11 +44,11 @@ void ALaserGenerator::Tick(float DeltaTime)
 
 }
 
-void ALaserGenerator::SpawnLaser_Implementation()
+void ALaserGenerator::SpawnLaser()
 {
 	
 	UWorld* World = GetWorld();
-	if (World)
+	if (World and GetLocalRole() == ROLE_Authority)
 	{	
 		AActor* Laser = World->SpawnActor<AActor>(LaserRayClass, LaserSpawnPoint->GetComponentLocation(), 
 		LaserSpawnPoint->GetComponentRotation());
@@ -53,6 +58,16 @@ void ALaserGenerator::SpawnLaser_Implementation()
 			Laser->Tags.Add(this->Tags[0]);
 		}
 		
+		PlaySound();
+		
 	}
 
+}
+
+void ALaserGenerator::PlaySound_Implementation()
+{
+	if (Sound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this,Sound,GetActorLocation(),ScaleVolume,ScalePitch,StartTime);
+	}
 }

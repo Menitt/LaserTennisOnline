@@ -55,4 +55,17 @@ public:
 
 	bool IsTargetAhead(FVector Location) const;
 
+//Sound
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "Sound") FString HitSoundFile;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound") float ScaleVolume = 1.;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound") float ScalePitch = 1.;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound") float StartTime = 0.;
+
+	class USoundCue* HitSound;
+	FString SoundFolder = "/Game/Assets/Audio/";
+
+	UFUNCTION(NetMulticast, Reliable) void PlaySound();
+
+
 };

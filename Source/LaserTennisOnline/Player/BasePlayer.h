@@ -158,10 +158,8 @@ public:
 
 
 public:
-	void DisplayLobbyWidgets();
 	void DisplayCountdown();
 
-	void RemoveLobbyWidgets();
 
 	// IOnlineSessionPtr OnlineSessionInterface2;
 

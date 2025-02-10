@@ -6,6 +6,7 @@
 #include "MainMenu.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerController.h" 
+#include "Sound/SoundWave.h"
 
 
 bool UOnlineMultiplayerMenu::Initialize()
@@ -20,21 +21,22 @@ bool UOnlineMultiplayerMenu::Initialize()
         BackButton->OnClicked.AddDynamic(this, &ThisClass::BackButtonClicked);
     }
 
-	return true;
+    // Bind Sound File
+	FString SoundPath = SoundFolder + SoundFile + "." + SoundFile;
+	Sound = LoadObject<USoundWave>(nullptr, *SoundPath);
 
-    UE_LOG(LogTemp, Warning, TEXT("Online Menu Initialize"));
+    return true;
 }
 
 
 void UOnlineMultiplayerMenu::NativeDestruct()
 {
     Super::NativeDestruct();
-
-    UE_LOG(LogTemp, Warning, TEXT("Online Menu Custom Destructor!"));
 }
 
 void UOnlineMultiplayerMenu::BackButtonClicked()
 {
+    PlayUISound();
     BackButton->SetIsEnabled(false);
 
     UMainMenu* MainMenu = CreateWidget<UMainMenu>(this, MainMenuWidgetClass);
@@ -48,4 +50,37 @@ void UOnlineMultiplayerMenu::BackButtonClicked()
 
 }
 
+void UOnlineMultiplayerMenu::PlayUISound()
+{
 
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+    
+    if (PlayerController)
+    {	
+		APawn* PlayerPawn = PlayerController->GetPawn();
+		if (PlayerPawn and Sound)
+		{
+			FVector SoundLocation = PlayerPawn->GetActorLocation(); // You can set a custom location
+			
+			UGameplayStatics::PlaySoundAtLocation(this, Sound, SoundLocation,ScaleVolume,ScalePitch,StartTime);
+		}		
+    }
+}
+
+void UOnlineMultiplayerMenu::HostButtonClicked()
+{
+    PlayUISound();
+    Super::HostButtonClicked();
+}
+
+void UOnlineMultiplayerMenu::JoinButtonClicked()
+{
+    PlayUISound();
+    Super::JoinButtonClicked();
+}
+
+void UOnlineMultiplayerMenu::FriendsButtonClicked()
+{
+    PlayUISound();
+    Super::FriendsButtonClicked();
+}

@@ -7,6 +7,9 @@
 #include "Components/BoxComponent.h"
 #include "BasePlayer.h"
 #include "Engine/BlockingVolume.h"
+#include "Kismet/GameplayStatics.h"
+#include "Sound/SoundCue.h"
+#include "DrawDebugHelpers.h"
 
 // Sets default values
 ALaserRay::ALaserRay()
@@ -33,6 +36,7 @@ ALaserRay::ALaserRay()
 
 	if (GetLocalRole() == ROLE_Authority)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("ALaser Ray Contructor: Biding On Hit function"));
 		CollisionComponent->OnComponentHit.AddDynamic(this, &ThisClass::OnHitPlayer);
 	}
 
@@ -51,6 +55,9 @@ void ALaserRay::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	FString HitSoundPath = SoundFolder + HitSoundFile + "." + HitSoundFile;
+	HitSound = LoadObject<USoundCue>(nullptr, *HitSoundPath);
+
 }
 
 // Called every frame
@@ -73,7 +80,13 @@ void ALaserRay::OnHitPlayer(UPrimitiveComponent *HitComponent, AActor *OtherActo
 			if (Player)
 			{
 
+				UE_LOG(LogTemp, Warning, TEXT("Laser Ray: On Hit Player"));
+
+				DrawDebugSphere(GetWorld(), GetActorLocation(), 50, 20, FColor::Green, true);
+
 				Player->CustomTakeDamage();
+				
+				PlaySound();
 
 				Destroy();
 			}
@@ -94,10 +107,18 @@ void ALaserRay::OnHitPlayer(UPrimitiveComponent *HitComponent, AActor *OtherActo
 
 }
 
+void ALaserRay::PlaySound_Implementation()
+{
+	if (HitSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this,HitSound,GetActorLocation(),ScaleVolume,ScalePitch,StartTime);
+	}
+}
+
 
 void ALaserRay::Destroyed()
 {
-
+	
 }
 
 FVector ALaserRay::GetLaserBox() const

@@ -33,7 +33,7 @@ void UMainMenu::MenuSetup()
 
 void UMainMenu::SinglePlayerButtonClicked()
 {
-    PlayButtonSound();
+    PlayUISound();
     
     SinglePlayerButton->SetIsEnabled(false);
 
@@ -46,7 +46,7 @@ void UMainMenu::SinglePlayerButtonClicked()
 
 void UMainMenu::LocalMultiplayerButtonClicked()
 {
-    PlayButtonSound();
+    PlayUISound();
 
     LocalMultiplayerButton->SetIsEnabled(false);
 
@@ -60,7 +60,7 @@ void UMainMenu::LocalMultiplayerButtonClicked()
 
 void UMainMenu::OnlineMultiplayerButtonClicked()
 {
-    PlayButtonSound();
+    PlayUISound();
     OnlineMultiplayerButton->SetIsEnabled(false);
  
     UOnlineMultiplayerMenu* OnlineMultiplayerMenuWidget = CreateWidget<UOnlineMultiplayerMenu>(GetWorld(), OnlineMultiplayerWidgetClass);
@@ -77,7 +77,7 @@ void UMainMenu::OnlineMultiplayerButtonClicked()
 void UMainMenu::QuitButtonClicked()
 {
 
-    PlayButtonSound();
+    PlayUISound();
     QuitButton->SetIsEnabled(false);
 
 	if (GEngine)

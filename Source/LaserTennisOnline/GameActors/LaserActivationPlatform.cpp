@@ -12,7 +12,7 @@
 #include "Net/UnrealNetwork.h"
 #include "Engine/Engine.h"
 #include "DrawDebugHelpers.h"
-#include "Sound/SoundWave.h"
+#include "Sound/SoundCue.h"
 
 
 
@@ -57,6 +57,10 @@ void ALaserActivationPlatform::BeginPlay()
 	}
 	
 	baseMesh->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+
+	// Bind Sound File
+	FString SoundPath = SoundFolder + SoundFile + "." + SoundFile;
+	Sound = LoadObject<USoundCue>(nullptr, *SoundPath);
 
 }
 
@@ -135,6 +139,8 @@ AActor *OtherActor, UPrimitiveComponent *OtherComp, int32 OtherBodyIndex, bool b
 			// Send Spawn Laser Request
 			SendSpawnLaserRequest();
 
+			PlaySoundEffect();
+			
 			// Deactivate
 			Deactivate();
 		}
@@ -177,15 +183,6 @@ void ALaserActivationPlatform::Deactivate()
 		bShouldActivate = false;
 		bIsResting = false;
 	}
-
-	USoundWave* Sound = LoadObject<USoundWave>(nullptr, TEXT("SoundWave'/Game/Assets/Sound/1871_button-click-38.1871_button-click-38'"));
-
-	if (Sound)
-    {
-        FVector SoundLocation = GetActorLocation(); // You can set a custom location
-        UGameplayStatics::PlaySoundAtLocation(this, Sound, SoundLocation);
-    }
-
 }
 
 void ALaserActivationPlatform::Activate()
@@ -202,5 +199,13 @@ void ALaserActivationPlatform::Activate()
 		bShouldDeactivate = false;
 		bShouldActivate = true;
 		bIsResting = false;
+	}
+}
+
+void ALaserActivationPlatform::PlaySoundEffect_Implementation()
+{
+	if (Sound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, Sound, GetActorLocation(), ScaleVolume, ScalePitch, StartTime);
 	}
 }

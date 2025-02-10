@@ -42,6 +42,7 @@ private:
 
 	void BroadcastGameStart();
 	
-	
+	UPROPERTY(EditDefaultsOnly)
+	FString AudioFile;
 
 };

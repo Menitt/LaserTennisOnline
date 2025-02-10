@@ -30,4 +30,26 @@ private:
 	UFUNCTION()
 	void BackButtonClicked();
 
+	virtual void HostButtonClicked() override;
+
+	virtual void JoinButtonClicked() override;
+
+	virtual void FriendsButtonClicked() override;
+
+
+// Sound
+protected:
+	UPROPERTY(EditDefaultsOnly, Category = "Sound")
+	FString SoundFile;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound")
+	float StartTime = 0.f;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound")
+	float ScaleVolume = 1.f;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound")
+	float ScalePitch = 1.f;
+
+	FString SoundFolder = "/Game/Assets/Audio/UI/";
+	class USoundWave* Sound;
+	void PlayUISound();
+
 };

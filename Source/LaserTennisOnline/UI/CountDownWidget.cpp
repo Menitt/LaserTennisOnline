@@ -3,6 +3,11 @@
 
 #include "CountDownWidget.h"
 #include "Runtime/UMG/Public/Components/EditableTextBox.h"
+#include "Sound/SoundWave.h"
+#include "Kismet/GameplayStatics.h"
+#include "GameFramework/PlayerController.h"
+
+
 
 void UCountDownWidget::StartCountdown(int Time)
 {
@@ -14,6 +19,10 @@ void UCountDownWidget::StartCountdown(int Time)
     }
 
     Counter = Time;
+
+    PlayerController = GetWorld()->GetFirstPlayerController();
+
+    PlayUISound();
 }
 
 void UCountDownWidget::UpdateCountdown()

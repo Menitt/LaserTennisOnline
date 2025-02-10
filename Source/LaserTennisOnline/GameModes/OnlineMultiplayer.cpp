@@ -62,9 +62,7 @@ void AOnlineMultiplayer::PostLogin(APlayerController* NewPlayer)
         {
             Player2 = GetWorld()->SpawnActor<ABasePlayer>(ClassPlayer2,PlayerStart2->GetActorLocation(), 
             PlayerStart2->GetActorRotation());
-
             NewPlayer->Possess(Player2);
-            
         }
     }  
 

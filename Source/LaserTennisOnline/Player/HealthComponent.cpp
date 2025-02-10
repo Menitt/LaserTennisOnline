@@ -39,25 +39,13 @@ void UHealthComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 
 void UHealthComponent::TakeDamage()
 {
-	
 
 	if (Health <= 0)
 	{
 		return;
 	}
+	
 	Health -= 1;
-
-	// Update HUD
-	APlayerController* PlayerController = Cast<APlayerController>(PlayerOwner->GetController());
-	if (PlayerController)
-	{
-		ACustomHUD* GameHUD = Cast<ACustomHUD>(PlayerController->GetHUD());
-
-		if (GameHUD)
-		{
-			GameHUD->UpdatePlayerHealth(Health);
-		}
-	}
 
 	if (Health == 0)
 	{

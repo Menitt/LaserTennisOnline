@@ -312,8 +312,6 @@ void ALaserTennisGameModeBase::DelayedStartCountdown()
 
 void ALaserTennisGameModeBase::UpdateHealthPanel()
 {
-
-    UE_LOG(LogTemp, Warning, TEXT("Updating Health"));
     // Update Health Widgets
     if (HealthPanel1 and Player1)
     {

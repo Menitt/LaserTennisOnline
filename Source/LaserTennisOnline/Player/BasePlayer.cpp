@@ -22,7 +22,8 @@
 #include "LaserTennisGameModeBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "AIController.h"
-// #include "OnlineSubsystem.h"
+#include "DrawDebugHelpers.h"
+
 
 
 #pragma region Constructor & Initialization
@@ -128,8 +129,6 @@ void ABasePlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	UE_LOG(LogTemp, Warning, TEXT("SetupPlayerInputComponent!"));
-
 	if(UEnhancedInputComponent* enhancedInputComponent = 
 	CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
@@ -205,7 +204,6 @@ void ABasePlayer::dodge(const FInputActionValue& value)
 
 void ABasePlayer::StartCountdown_Implementation(int Timer)
 {
-
 	if (IsLocallyControlled())
 	{
 		APlayerController* PlayerController = Cast<APlayerController>(GetController());
@@ -239,6 +237,7 @@ void ABasePlayer::StartGame_Implementation()
 
 	if (PlayerController and IsLocallyControlled())
 	{
+		EnableEnhancedInputSystem(PlayerController);
 		this->EnableInput(PlayerController);
 	}
 }
@@ -257,11 +256,13 @@ void ABasePlayer::CustomTakeDamage_Implementation()
 	// Animation
 	this->PlayAnimMontage(TakeDamageMontage);
 	
-	// Update Health
-	HealthComponent->TakeDamage();
+	// UE_LOG(LogTemp, Warning, TEXT("Custom Take Damage: Server + Client"));
 
 	if (GetLocalRole() == ROLE_Authority)
 	{
+		// UE_LOG(LogTemp, Warning, TEXT("Custom Take Damage: Only Server"));
+		// Update Health
+		HealthComponent->TakeDamage();
 		ALaserTennisGameModeBase* GameMode = Cast<ALaserTennisGameModeBase>(GetWorld()->GetAuthGameMode());
 		if (GameMode)
 		{
@@ -331,15 +332,15 @@ void ABasePlayer::OnTakeDamageMontageCompleted(UAnimMontage* AnimMontage, bool b
 		}
 	}
 
-	if (OnCustomTakeDamage.IsBound())
-	{
-		OnCustomTakeDamage.Broadcast(GetPlayerHealth());
-		UE_LOG(LogTemp, Warning, TEXT("On Take Damage -> Boradcasting"));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Not Bound"));
-	}
+	// if (OnCustomTakeDamage.IsBound())
+	// {
+	// 	OnCustomTakeDamage.Broadcast(GetPlayerHealth());
+	// 	UE_LOG(LogTemp, Warning, TEXT("On Take Damage -> Boradcasting"));
+	// }
+	// else
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("Base Player OnTakeDamageMontageComplete:Not Bound"));
+	// }
 
 }
 
@@ -350,39 +351,6 @@ void ABasePlayer::OnTakeDamageMontageCompleted(UAnimMontage* AnimMontage, bool b
 #pragma region UI
 
 
-void ABasePlayer::DisplayLobbyWidgets()
-{
-	// Spawn Menu Widget
-	GameInputsWidget = CreateWidget<UBaseUserWidget>(GetWorld(),GameInputsWidgetClass);
-
-	if (GameInputsWidget)
-	{
-		GameInputsWidget->MenuSetup();
-	}
-
-	GameTutorialWidget = CreateWidget<UBaseUserWidget>(GetWorld(),GameTutorialWidgetClass);
-
-	if (GameTutorialWidget)
-	{
-		GameTutorialWidget->MenuSetup();
-	}
-
-
-}
-
-void ABasePlayer::RemoveLobbyWidgets()
-{
-	if (GameInputsWidget)
-	{
-		GameInputsWidget->MenuTearDown();
-	}
-	if (GameTutorialWidget)
-	{
-		GameTutorialWidget->MenuTearDown();
-	}
-
-}
-
 void ABasePlayer::DisplayCountdown()
 {
 	GameStartCountdown = CreateWidget<UBaseUserWidget>(GetWorld(),GameStartCountdownClass);
@@ -392,10 +360,6 @@ void ABasePlayer::DisplayCountdown()
 		GameStartCountdown->MenuSetup();
 	}
 }
-
-
-
-
 
 
 #pragma endregion

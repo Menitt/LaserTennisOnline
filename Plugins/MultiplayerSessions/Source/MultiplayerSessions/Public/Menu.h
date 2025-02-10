@@ -52,13 +52,13 @@ protected:
 	UButton* FriendsButton;
 
 	UFUNCTION()
-	void HostButtonClicked();
+	virtual void HostButtonClicked();
 
 	UFUNCTION()
-	void JoinButtonClicked();
+	virtual void JoinButtonClicked();
 
 	UFUNCTION()
-	void FriendsButtonClicked();
+	virtual void FriendsButtonClicked();
 
 	UPROPERTY(EditDefaultsOnly)
 	FName TestLevel;
