@@ -3,6 +3,9 @@
 
 #include "GeneratorSignal.h"
 #include "CentralGenerator.h"
+#include "Sound/SoundWave.h"
+#include "Kismet/GameplayStatics.h"
+#include "Components/AudioComponent.h"
 
 // Sets default values
 AGeneratorSignal::AGeneratorSignal()
@@ -12,12 +15,28 @@ AGeneratorSignal::AGeneratorSignal()
 
 	bReplicates = true;
 
+	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("Mesh Component");
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>("Audio Component");
+
+	RootComponent = MeshComponent;
+
+	AudioComponent->SetupAttachment(RootComponent);
+
 }
 
 // Called when the game starts or when spawned
 void AGeneratorSignal::BeginPlay()
 {
 	Super::BeginPlay();
+
+	FString SoundPath = SoundFolder + SoundFile + "." + SoundFile;
+	USoundWave* Sound = LoadObject<USoundWave>(nullptr, *SoundPath);  
+
+	if (AudioComponent and Sound)
+	{
+		AudioComponent->SetSound(Sound);
+		AudioComponent->Play();
+	}
 
 }
 
@@ -73,4 +92,14 @@ void AGeneratorSignal::SetPath_Implementation(const TArray<FVector2D>& Navigatio
 void AGeneratorSignal::SetCentralGenerator(ACentralGenerator* GeneratorPtr)
 {
 	CentralGenerator = GeneratorPtr;
+}
+
+void AGeneratorSignal::Destroyed()
+{
+	if (AudioComponent)
+	{
+		AudioComponent->Stop();
+	}
+	
+	Super::Destroyed();
 }

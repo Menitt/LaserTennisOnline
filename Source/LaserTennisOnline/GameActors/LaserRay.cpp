@@ -79,10 +79,6 @@ void ALaserRay::OnHitPlayer(UPrimitiveComponent *HitComponent, AActor *OtherActo
 			if (Player)
 			{
 
-				UE_LOG(LogTemp, Warning, TEXT("Laser Ray: On Hit Player"));
-
-				DrawDebugSphere(GetWorld(), GetActorLocation(), 50, 20, FColor::Green, true);
-
 				Player->CustomTakeDamage();
 				
 				PlaySound();
