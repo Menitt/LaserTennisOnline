@@ -23,6 +23,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "AIController.h"
 #include "DrawDebugHelpers.h"
+#include "Sound/SoundCue.h"
+#include "Components/AudioComponent.h"
 
 
 
@@ -57,7 +59,8 @@ Super(ObjectInitializer.SetDefaultSubobjectClass<UCustomCharacterMovementCompone
 
 	// Heath Component
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>("Health Component");
-
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>("Audio Component");
+	AudioComponent->SetupAttachment(RootComponent);
 
 }
 
@@ -81,6 +84,9 @@ void ABasePlayer::BeginPlay()
 		}
 	}
 
+	// Fetch Sound Asset
+	FString WalkSoundPath = SoundFolder + WalkSoundFile + "." + WalkSoundFile; 
+	WalkSound = LoadObject<USoundCue>(nullptr, *WalkSoundPath);
 
 }
 
@@ -104,6 +110,13 @@ void ABasePlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (not GetCharacterMovement()->IsFalling())
+	{
+		FVector Velocity = GetVelocity();
+		float Speed = Velocity.Size();
+
+	}
+
 }
 
 
@@ -120,9 +133,6 @@ void ABasePlayer::EnableEnhancedInputSystem(APlayerController* PlayerController)
 	}
 }
 	
-
-
-
 
 // Called to bind functionality to input
 void ABasePlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

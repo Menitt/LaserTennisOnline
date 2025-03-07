@@ -52,6 +52,9 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Health, meta = (AllowPrivateAccess = "true")) 
 	class UHealthComponent* HealthComponent;
 
+	UPROPERTY(EditDefaultsOnly)
+	class UAudioComponent* AudioComponent;
+
 //
 // Constructor
 //
@@ -121,6 +124,16 @@ public:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void StartGame();
+
+//
+// Sound
+// 
+private:
+	class USoundCue* WalkSound;
+	FString SoundFolder = "/Game/Assets/Audio";
+	UPROPERTY(EditDefaultsOnly) FString WalkSoundFile;
+
+
 //
 // UI
 //
