@@ -139,17 +139,9 @@ private:
 //
 
 private:
-	UPROPERTY(EditDefaultsOnly, Category = "UI")
-	TSubclassOf<UUserWidget> GameOverWidgetClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UUserWidget> InGameMenuWidgetClass;
-
-	UPROPERTY(EditDefaultsOnly, Category = "UI")
-	TSubclassOf<UBaseUserWidget> GameInputsWidgetClass;
-
-	UPROPERTY(EditDefaultsOnly, Category = "UI")
-	TSubclassOf<UBaseUserWidget> GameTutorialWidgetClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UBaseUserWidget> GameStartCountdownClass;
@@ -165,8 +157,6 @@ private:
 
 public:
 	class UGameOverWidget* GameOverWidget;
-	UBaseUserWidget* GameInputsWidget;
-	UBaseUserWidget* GameTutorialWidget;
 	UBaseUserWidget* GameStartCountdown;
 
 
