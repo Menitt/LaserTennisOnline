@@ -80,7 +80,7 @@ private:
 	class UInputAction* pauseGameAction;
 	UPROPERTY(EditDefaultsOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	class UInputAction* dodgeAction;
-	
+
 public:
 	// Input Binding Functions
 	void move(const FInputActionValue& value);
@@ -130,8 +130,14 @@ public:
 // 
 private:
 	class USoundCue* WalkSound;
-	FString SoundFolder = "/Game/Assets/Audio";
+	FString SoundFolder = "/Game/Assets/Audio/";
 	UPROPERTY(EditDefaultsOnly) FString WalkSoundFile;
+	UPROPERTY(EditDefaultsOnly) float WalkSoundConstantRate = 200;
+	void SetWalkSound(float Speed);
+	void PlayWalkSound();
+	FTimerHandle WalkSoundTimerHandle;
+	float WalkSpeed = 0;
+	bool bWalkSoundActive = false;
 
 
 //

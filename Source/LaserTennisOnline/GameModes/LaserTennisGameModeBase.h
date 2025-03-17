@@ -107,6 +107,9 @@ public:
 
 	void DelayedStartCountdown();
 
+	virtual void DisablePlayerInput(class ABasePlayer* Player);
+	virtual void EnablePlayerInput(class ABasePlayer* Player);
+
 	UPROPERTY(EditDefaultsOnly)
 	int nActivePlatforms= 5;
 

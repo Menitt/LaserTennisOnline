@@ -142,19 +142,19 @@ void ALocalMultiplayer::HandleInputAssignment()
     
     }
 
-    UEnhancedInputComponent* InputComponent1 = Cast<UEnhancedInputComponent>(SharedInputPawn->InputComponent);
+    SharedInputComponent = Cast<UEnhancedInputComponent>(SharedInputPawn->InputComponent);
 
-    if (InputComponent1)
+    if (SharedInputComponent)
     {
-        InputComponent1->BindAction(P1_MoveAction, ETriggerEvent::Triggered, Player1, &ABasePlayer::move);   
-        InputComponent1->BindAction(P1_JumpAction, ETriggerEvent::Started, Player1, &ABasePlayer::jump);  
-        InputComponent1->BindAction(P1_DodgeAction, ETriggerEvent::Started, Player1, &ABasePlayer::dodge);  
+        P1_MoveHandle = SharedInputComponent->BindAction(P1_MoveAction, ETriggerEvent::Triggered, Player1, &ABasePlayer::move).GetHandle();   
+        P1_JumpHandle = SharedInputComponent->BindAction(P1_JumpAction, ETriggerEvent::Started, Player1, &ABasePlayer::jump).GetHandle();  
+        P1_DodgeHandle = SharedInputComponent->BindAction(P1_DodgeAction, ETriggerEvent::Started, Player1, &ABasePlayer::dodge).GetHandle();  
 
-        InputComponent1->BindAction(P2_MoveAction, ETriggerEvent::Triggered, Player2, &ABasePlayer::move);   
-        InputComponent1->BindAction(P2_JumpAction, ETriggerEvent::Started, Player2, &ABasePlayer::jump);  
-        InputComponent1->BindAction(P2_DodgeAction, ETriggerEvent::Started, Player2, &ABasePlayer::dodge);
+        P2_MoveHandle = SharedInputComponent->BindAction(P2_MoveAction, ETriggerEvent::Triggered, Player2, &ABasePlayer::move).GetHandle();   
+        P2_JumpHandle = SharedInputComponent->BindAction(P2_JumpAction, ETriggerEvent::Started, Player2, &ABasePlayer::jump).GetHandle();  
+        P2_DodgeHandle = SharedInputComponent->BindAction(P2_DodgeAction, ETriggerEvent::Started, Player2, &ABasePlayer::dodge).GetHandle();
         
-        InputComponent1->BindAction(PauseGameAction, ETriggerEvent::Started, Player1, &ABasePlayer::pauseGame);
+        SharedInputComponent->BindAction(PauseGameAction, ETriggerEvent::Started, Player1, &ABasePlayer::pauseGame);
     }
 
 }
@@ -251,4 +251,42 @@ void ALocalMultiplayer::ReturnToMainMenuHost()
     Super::ReturnToMainMenuHost();
 
     
+}
+
+void ALocalMultiplayer::DisablePlayerInput(ABasePlayer* Player)
+{
+    if (SharedInputComponent)
+    {
+        if (Player == Player1)
+        {
+            SharedInputComponent->RemoveBindingByHandle(P1_MoveHandle);
+            SharedInputComponent->RemoveBindingByHandle(P1_JumpHandle);
+            SharedInputComponent->RemoveBindingByHandle(P1_DodgeHandle);
+        }
+        else if (Player == Player2)
+        {
+            SharedInputComponent->RemoveBindingByHandle(P2_MoveHandle);
+            SharedInputComponent->RemoveBindingByHandle(P2_JumpHandle);
+            SharedInputComponent->RemoveBindingByHandle(P2_DodgeHandle);
+        }
+    }
+}
+
+void ALocalMultiplayer::EnablePlayerInput(ABasePlayer* Player)
+{
+    if (SharedInputComponent)
+    {
+        if (Player == Player1)
+        {
+            P1_MoveHandle = SharedInputComponent->BindAction(P1_MoveAction, ETriggerEvent::Triggered, Player1, &ABasePlayer::move).GetHandle();   
+            P1_JumpHandle = SharedInputComponent->BindAction(P1_JumpAction, ETriggerEvent::Started, Player1, &ABasePlayer::jump).GetHandle();  
+            P1_DodgeHandle = SharedInputComponent->BindAction(P1_DodgeAction, ETriggerEvent::Started, Player1, &ABasePlayer::dodge).GetHandle();  
+        }
+        else if (Player == Player2)
+        {
+            P2_MoveHandle = SharedInputComponent->BindAction(P2_MoveAction, ETriggerEvent::Triggered, Player2, &ABasePlayer::move).GetHandle();   
+            P2_JumpHandle = SharedInputComponent->BindAction(P2_JumpAction, ETriggerEvent::Started, Player2, &ABasePlayer::jump).GetHandle();  
+            P2_DodgeHandle = SharedInputComponent->BindAction(P2_DodgeAction, ETriggerEvent::Started, Player2, &ABasePlayer::dodge).GetHandle();
+        }
+    }
 }

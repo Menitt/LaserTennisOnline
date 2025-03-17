@@ -323,3 +323,13 @@ void ALaserTennisGameModeBase::UpdateHealthPanel()
        HealthPanel2->UpdateWidgetHealth(Player2->GetPlayerHealth()); 
     }
 }
+
+void ALaserTennisGameModeBase::DisablePlayerInput(ABasePlayer* Player)
+{
+    // pass
+}
+
+void ALaserTennisGameModeBase::EnablePlayerInput(ABasePlayer* Player)
+{
+    // pass
+}

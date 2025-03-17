@@ -38,17 +38,24 @@ protected:
 	class UInputAction* P1_JumpAction;
 	UPROPERTY(EditDefaultsOnly, Category = "Players", meta = (AllowPrivateAccess = "true"))
 	class UInputAction* P1_DodgeAction;
-
+	uint32 P1_MoveHandle;
+	uint32 P1_JumpHandle;
+	uint32 P1_DodgeHandle;
+	
 	UPROPERTY(EditDefaultsOnly, Category = "Players", meta = (AllowPrivateAccess = "true"))
 	class UInputAction* P2_MoveAction;
 	UPROPERTY(EditDefaultsOnly, Category = "Players", meta = (AllowPrivateAccess = "true"))
 	class UInputAction* P2_JumpAction;
 	UPROPERTY(EditDefaultsOnly, Category = "Players", meta = (AllowPrivateAccess = "true"))
 	class UInputAction* P2_DodgeAction;
+	uint32 P2_MoveHandle;
+	uint32 P2_JumpHandle;
+	uint32 P2_DodgeHandle;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Players", meta = (AllowPrivateAccess = "true"))
 	class UInputAction* PauseGameAction;
 
+	class UEnhancedInputComponent* SharedInputComponent;
 
 	class APlayerController* SharedPlayerController;
 	class APlayerController* PlayerController1;
@@ -70,6 +77,8 @@ protected:
 public:
 	void RemovePlayers();
 
+	virtual void DisablePlayerInput(class ABasePlayer* Player) override;
+	virtual void EnablePlayerInput(class ABasePlayer* Player) override;
 
 	virtual void ReturnToMainMenuHost() override;
 	virtual void StartGame() override;

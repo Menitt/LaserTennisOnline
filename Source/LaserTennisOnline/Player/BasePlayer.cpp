@@ -25,7 +25,7 @@
 #include "DrawDebugHelpers.h"
 #include "Sound/SoundCue.h"
 #include "Components/AudioComponent.h"
-
+#include "TimerManager.h"
 
 
 #pragma region Constructor & Initialization
@@ -88,6 +88,12 @@ void ABasePlayer::BeginPlay()
 	FString WalkSoundPath = SoundFolder + WalkSoundFile + "." + WalkSoundFile; 
 	WalkSound = LoadObject<USoundCue>(nullptr, *WalkSoundPath);
 
+	if (AudioComponent and WalkSound)
+	{
+		AudioComponent->SetSound(WalkSound);
+	}
+
+
 }
 
 void ABasePlayer::PossessedBy(AController* NewController)
@@ -110,11 +116,17 @@ void ABasePlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (not GetCharacterMovement()->IsFalling())
-	{
-		FVector Velocity = GetVelocity();
-		float Speed = Velocity.Size();
+	FVector Velocity = GetVelocity();
+	float Speed = Velocity.Size();
 
+	if (bWalkSoundActive and (GetCharacterMovement()->IsFalling() or Speed < 0.00001))
+	{
+		SetWalkSound(0.00000000001);
+	}
+	else if (not bWalkSoundActive)
+	{
+		SetWalkSound(800);
+		bWalkSoundActive = true;
 	}
 
 }
@@ -205,8 +217,6 @@ void ABasePlayer::dodge(const FInputActionValue& value)
 }
 
 
-
-
 #pragma endregion
 
 
@@ -270,13 +280,14 @@ void ABasePlayer::CustomTakeDamage_Implementation()
 
 	if (GetLocalRole() == ROLE_Authority)
 	{
-		// UE_LOG(LogTemp, Warning, TEXT("Custom Take Damage: Only Server"));
+		ALaserTennisGameModeBase* GameMode = Cast<ALaserTennisGameModeBase>(GetWorld()->GetAuthGameMode());
 		// Update Health
 		HealthComponent->TakeDamage();
-		ALaserTennisGameModeBase* GameMode = Cast<ALaserTennisGameModeBase>(GetWorld()->GetAuthGameMode());
 		if (GameMode)
 		{
 			GameMode->UpdateHealthPanel();
+			// Disable inputs for local multiplayer gamemode
+			GameMode->DisablePlayerInput(this);
 		}
 	}
 
@@ -342,15 +353,15 @@ void ABasePlayer::OnTakeDamageMontageCompleted(UAnimMontage* AnimMontage, bool b
 		}
 	}
 
-	// if (OnCustomTakeDamage.IsBound())
-	// {
-	// 	OnCustomTakeDamage.Broadcast(GetPlayerHealth());
-	// 	UE_LOG(LogTemp, Warning, TEXT("On Take Damage -> Boradcasting"));
-	// }
-	// else
-	// {
-	// 	UE_LOG(LogTemp, Warning, TEXT("Base Player OnTakeDamageMontageComplete:Not Bound"));
-	// }
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		ALaserTennisGameModeBase* GameMode = Cast<ALaserTennisGameModeBase>(GetWorld()->GetAuthGameMode());
+		if (GameMode)
+		{
+			// Enable Input for local multiplayer Game Mode
+			GameMode->EnablePlayerInput(this);
+		}
+	}
 
 }
 
@@ -368,6 +379,33 @@ void ABasePlayer::DisplayCountdown()
 	if (GameStartCountdown)
 	{
 		GameStartCountdown->MenuSetup();
+	}
+}
+
+
+#pragma endregion
+
+
+#pragma region Sound
+
+void ABasePlayer::SetWalkSound(float Speed)
+{
+	// Clear previous timer
+	GetWorld()->GetTimerManager().ClearTimer(WalkSoundTimerHandle);
+	// Set new timer
+	float Ratio = WalkSoundConstantRate/Speed;
+	PlayWalkSound();
+	// PlayWalkSound();
+	GetWorld()->GetTimerManager().SetTimer(WalkSoundTimerHandle,this,&ThisClass::PlayWalkSound,Ratio,true);
+}
+
+void ABasePlayer::PlayWalkSound()
+{
+	if (AudioComponent)
+	{
+		AudioComponent->Stop();
+		AudioComponent->Play();
+		UE_LOG(LogTemp, Warning, TEXT("PlaWalkSound"));
 	}
 }
 
