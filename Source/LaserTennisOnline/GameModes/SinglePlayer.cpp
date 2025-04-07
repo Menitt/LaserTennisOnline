@@ -68,8 +68,10 @@ void ASinglePlayer::PostLogin(APlayerController* NewPlayer)
         AIPlayerController->Possess(Player2);
     }
 
-    // Initiate Countdown
-    StartCountdown();
+    // Delay Initiate Countdown
+    // StartCountdown();
+    FTimerHandle StartGameTimerHandle;
+    GetWorld()->GetTimerManager().SetTimer(StartGameTimerHandle, this, &ThisClass::StartCountdown, .5f, false);
 
 }
 

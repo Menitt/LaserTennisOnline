@@ -204,7 +204,7 @@ void ALaserActivationPlatform::Activate()
 
 void ALaserActivationPlatform::PlaySoundEffect_Implementation()
 {
-	if (Sound)
+	if (IsValid(Sound))
 	{
 		UGameplayStatics::PlaySoundAtLocation(this, Sound, GetActorLocation(), ScaleVolume, ScalePitch, StartTime);
 	}

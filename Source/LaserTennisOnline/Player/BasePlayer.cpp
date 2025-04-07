@@ -394,6 +394,7 @@ void ABasePlayer::SetWalkSound(float Speed)
 	GetWorld()->GetTimerManager().ClearTimer(WalkSoundTimerHandle);
 	// Set new timer
 	float Ratio = WalkSoundConstantRate/Speed;
+	
 	PlayWalkSound();
 	// PlayWalkSound();
 	GetWorld()->GetTimerManager().SetTimer(WalkSoundTimerHandle,this,&ThisClass::PlayWalkSound,Ratio,true);

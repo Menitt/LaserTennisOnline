@@ -35,7 +35,11 @@ void UMainMenu::SinglePlayerButtonClicked()
 {
     PlayUISound();
     
-    SinglePlayerButton->SetIsEnabled(false);
+    if (SinglePlayerButton)
+    {
+        SinglePlayerButton->SetIsEnabled(false);
+    }
+    
 
     FString OptionsString = FString::Printf(TEXT("?game=%s"), *SinglePlayerGameMode);
     
@@ -48,7 +52,11 @@ void UMainMenu::LocalMultiplayerButtonClicked()
 {
     PlayUISound();
 
-    LocalMultiplayerButton->SetIsEnabled(false);
+    if (LocalMultiplayerButton)
+    {
+        LocalMultiplayerButton->SetIsEnabled(false);
+    }
+    
 
     FString OptionsString = FString::Printf(TEXT("?game=%s"), *LocalMultiplayerGameMode);
     
@@ -61,8 +69,11 @@ void UMainMenu::LocalMultiplayerButtonClicked()
 void UMainMenu::OnlineMultiplayerButtonClicked()
 {
     PlayUISound();
-    OnlineMultiplayerButton->SetIsEnabled(false);
- 
+    if (OnlineMultiplayerButton)
+    {
+        OnlineMultiplayerButton->SetIsEnabled(false);
+    }
+
     UOnlineMultiplayerMenu* OnlineMultiplayerMenuWidget = CreateWidget<UOnlineMultiplayerMenu>(GetWorld(), OnlineMultiplayerWidgetClass);
 
     if (OnlineMultiplayerMenuWidget)
@@ -78,8 +89,11 @@ void UMainMenu::QuitButtonClicked()
 {
 
     PlayUISound();
-    QuitButton->SetIsEnabled(false);
-
+    if (QuitButton)
+    {
+        QuitButton->SetIsEnabled(false);
+    }
+    
 	if (GEngine)
     {
         UKismetSystemLibrary::QuitGame(this, nullptr, EQuitPreference::Quit, false);

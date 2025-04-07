@@ -11,18 +11,22 @@
 
 void UCountDownWidget::StartCountdown(int Time)
 {
-    GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ThisClass::UpdateCountdown, 1.0f, true);
+    UWorld* World = GetWorld();
+    if (World)
+    {
+        World->GetTimerManager().SetTimer(TimerHandle, this, &ThisClass::UpdateCountdown, 1.0f, true);
+        
+        if (CountdownText)
+        {       
+            CountdownText->SetText(FText::AsNumber(Time));
+        }
 
-    if (CountdownText)
-    {       
-        CountdownText->SetText(FText::AsNumber(Time));
+        Counter = Time;
+
+        PlayerController =  World->GetFirstPlayerController();
     }
-
-    Counter = Time;
-
-    PlayerController = GetWorld()->GetFirstPlayerController();
-
-    PlayUISound();
+    
+    // PlayUISound();
 }
 
 void UCountDownWidget::UpdateCountdown()

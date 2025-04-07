@@ -118,6 +118,9 @@ void ALocalMultiplayer::BeginPlay()
     // Enable Inputs
     HandleInputAssignment();
 
+    // FTimerHandle StartGameTimerHandle;
+    // GetWorld()->GetTimerManager().SetTimer(StartGameTimerHandle, this, &ThisClass::StartCountdown, .5f, false);
+
     StartCountdown();
 
 }
@@ -161,8 +164,6 @@ void ALocalMultiplayer::HandleInputAssignment()
 
 void ALocalMultiplayer::StartCountdown()
 {
-    UE_LOG(LogTemp, Warning, TEXT("Local Multiplayer: StartCountdown()"));
-
     Super::StartCountdown();
 
     if (SharedInputPawn)
@@ -175,7 +176,6 @@ void ALocalMultiplayer::StartCountdown()
 void ALocalMultiplayer::StartGame()
 {
     Super::StartGame();
-    UE_LOG(LogTemp, Warning, TEXT("Local Multiplayer: Start Game ()"));
 
     if (SharedInputPawn)
     {
