@@ -24,8 +24,6 @@ void ALocalMultiplayer::BeginPlay()
 {
     Super::BeginPlay();
 
-    UE_LOG(LogTemp, Warning, TEXT("Local Multiplayer Begin Play()! "));
-
     // Store first player controller
     SharedPlayerController = GetWorld()->GetFirstPlayerController();
     // Create Player Controllers
@@ -118,20 +116,22 @@ void ALocalMultiplayer::BeginPlay()
     // Enable Inputs
     HandleInputAssignment();
 
-    // FTimerHandle StartGameTimerHandle;
-    // GetWorld()->GetTimerManager().SetTimer(StartGameTimerHandle, this, &ThisClass::StartCountdown, .5f, false);
+    FTimerHandle StartGameTimerHandle;
+    GetWorld()->GetTimerManager().SetTimer(StartGameTimerHandle, this, &ThisClass::StartCountdown, .5f, false);
 
-    StartCountdown();
+    // StartCountdown();
 
 }
 
 
 void ALocalMultiplayer::HandleInputAssignment()
 {
+
+    if (GEngine)
+    {
+        GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Green, TEXT("LocalMultiplayer->HandleInputAssignment"));
+    }
     
-    UE_LOG(LogTemp, Warning, TEXT("Local Multiplayer: HandleInputAssignment()"));
-
-
     if (Player1 and Player2 and SharedInputPawn and SharedPlayerController)
     {
         UEnhancedInputLocalPlayerSubsystem* InputSubSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(

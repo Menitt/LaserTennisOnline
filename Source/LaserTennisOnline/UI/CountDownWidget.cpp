@@ -26,7 +26,7 @@ void UCountDownWidget::StartCountdown(int Time)
         PlayerController =  World->GetFirstPlayerController();
     }
     
-    // PlayUISound();
+    PlayUISound();
 }
 
 void UCountDownWidget::UpdateCountdown()

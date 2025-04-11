@@ -34,6 +34,13 @@ void UBaseUserWidget::MenuSetup()
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("UBaseUserWidget->MenuSetup"));
 	}
+
+	int32 UsedMemory = FPlatformMemory::GetStats().UsedPhysical;
+	FString DebugMessage = FString::Printf(TEXT("Audio Memory: %d"), UsedMemory);
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-2,15.f, FColor::Red, DebugMessage);
+	}
 }
 
 bool UBaseUserWidget::Initialize()
@@ -70,33 +77,18 @@ void UBaseUserWidget::MenuTearDown()
 
 void UBaseUserWidget::PlayUISound()
 {
-	UWorld* World = GetWorld();
-
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("UBaseUserWidget->PlayUISound"));
-	}
-
-	if (World)
-	{
-		APlayerController* CurrentPlayerController = World->GetFirstPlayerController();
-		
-		if (IsValid(CurrentPlayerController))
-		{	
-			APawn* PlayerPawn = CurrentPlayerController->GetPawn();
-			if (IsValid(PlayerPawn) and IsValid(Sound))
-			{
-				FVector SoundLocation = PlayerPawn->GetActorLocation(); // You can set a custom location
-				
-				// UGameplayStatics::PlaySoundAtLocation(World, Sound, SoundLocation,ScaleVolume,ScalePitch,0);
-				
-				if (GEngine)
-				{
-					GEngine->AddOnScreenDebugMessage(-2, 2.f, FColor::Red, TEXT("UBaseUserWidget->PlayUISound"));
-				}
-			}
-		}
-	}
+	APlayerController* CurrentPlayerController = GetWorld()->GetFirstPlayerController();
+    
+    if (CurrentPlayerController)
+    {	
+		APawn* PlayerPawn = CurrentPlayerController->GetPawn();
+		if (PlayerPawn and Sound)
+		{
+			FVector SoundLocation = PlayerPawn->GetActorLocation(); // You can set a custom location
+			
+			UGameplayStatics::PlaySoundAtLocation(this, Sound, SoundLocation,ScaleVolume,ScalePitch,StartTime);
+		}		
+    }
 
 
 }

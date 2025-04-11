@@ -69,6 +69,7 @@ void UMainMenu::LocalMultiplayerButtonClicked()
 void UMainMenu::OnlineMultiplayerButtonClicked()
 {
     PlayUISound();
+    
     if (OnlineMultiplayerButton)
     {
         OnlineMultiplayerButton->SetIsEnabled(false);
@@ -104,6 +105,4 @@ void UMainMenu::QuitButtonClicked()
 void UMainMenu::NativeDestruct()
 {
     Super::NativeDestruct();
-
-    UE_LOG(LogTemp, Warning, TEXT("Main Menu Destructor!"));
 }

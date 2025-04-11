@@ -85,6 +85,10 @@ void AHealthPanel::InitializeWidgetText_Implementation(const FString& InitialTex
 
 void AHealthPanel::Activate_Implementation(float Period)
 {
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Green, TEXT("HealthPanel->Activate"));
+	}	
 	TimeToPosition = Period;
 	bShouldMove = true;
 }

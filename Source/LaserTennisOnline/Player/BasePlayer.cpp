@@ -119,16 +119,6 @@ void ABasePlayer::Tick(float DeltaTime)
 	FVector Velocity = GetVelocity();
 	float Speed = Velocity.Size();
 
-	if (bWalkSoundActive and (GetCharacterMovement()->IsFalling() or Speed < 0.00001))
-	{
-		SetWalkSound(0.00000000001);
-	}
-	else if (not bWalkSoundActive)
-	{
-		SetWalkSound(800);
-		bWalkSoundActive = true;
-	}
-
 }
 
 
@@ -276,7 +266,6 @@ void ABasePlayer::CustomTakeDamage_Implementation()
 	// Animation
 	this->PlayAnimMontage(TakeDamageMontage);
 	
-	// UE_LOG(LogTemp, Warning, TEXT("Custom Take Damage: Server + Client"));
 
 	if (GetLocalRole() == ROLE_Authority)
 	{
@@ -406,7 +395,6 @@ void ABasePlayer::PlayWalkSound()
 	{
 		AudioComponent->Stop();
 		AudioComponent->Play();
-		UE_LOG(LogTemp, Warning, TEXT("PlaWalkSound"));
 	}
 }
 
