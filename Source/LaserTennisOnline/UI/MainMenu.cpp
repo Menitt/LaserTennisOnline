@@ -40,7 +40,19 @@ void UMainMenu::SinglePlayerButtonClicked()
         SinglePlayerButton->SetIsEnabled(false);
     }
     
+    FTimerHandle OpenLevelTimerHandle;
+    GetWorld()->GetTimerManager().SetTimer(OpenLevelTimerHandle, this, &ThisClass::OpenNewLevel, 5.f, false);
 
+    // FString OptionsString = FString::Printf(TEXT("?game=%s"), *SinglePlayerGameMode);
+    
+    // UGameplayStatics::OpenLevel(this, GameLevelName, true, OptionsString);
+
+    // MenuTearDown();
+
+}
+
+void UMainMenu::OpenNewLevel()
+{
     FString OptionsString = FString::Printf(TEXT("?game=%s"), *SinglePlayerGameMode);
     
     UGameplayStatics::OpenLevel(this, GameLevelName, true, OptionsString);
@@ -64,7 +76,6 @@ void UMainMenu::LocalMultiplayerButtonClicked()
 
     MenuTearDown();
 }
-
 
 void UMainMenu::OnlineMultiplayerButtonClicked()
 {

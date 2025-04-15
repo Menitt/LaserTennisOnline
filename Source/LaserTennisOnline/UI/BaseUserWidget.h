@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Sound/SoundWave.h"
 
 #include "BaseUserWidget.generated.h"
 
@@ -41,6 +42,10 @@ protected:
 
 	FString SoundFolder = "/Game/Assets/Audio/UI/";
 	class USoundWave* Sound;
+
+	UPROPERTY(EditDefaultsOnly)
+	USoundWave* UISound;
+
 	void PlayUISound();
 
 
