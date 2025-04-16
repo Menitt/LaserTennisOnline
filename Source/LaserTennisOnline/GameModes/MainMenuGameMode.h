@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameMode.h"
+#include "Blueprint/UserWidget.h"
+
 #include "MainMenuGameMode.generated.h"
 
 /**
@@ -19,6 +21,8 @@ class LASERTENNISONLINE_API AMainMenuGameMode : public AGameMode
 public:
 	AMainMenuGameMode();
 
-	int nPlayers = 0;
+private:
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UUserWidget> MainMenuWidgetClass;
 
 };

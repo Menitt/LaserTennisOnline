@@ -41,7 +41,7 @@ void UMainMenu::SinglePlayerButtonClicked()
     }
     
     FTimerHandle OpenLevelTimerHandle;
-    GetWorld()->GetTimerManager().SetTimer(OpenLevelTimerHandle, this, &ThisClass::OpenNewLevel, 5.f, false);
+    GetWorld()->GetTimerManager().SetTimer(OpenLevelTimerHandle, this, &ThisClass::OpenSinglePlayerLevel, .2f, false);
 
     // FString OptionsString = FString::Printf(TEXT("?game=%s"), *SinglePlayerGameMode);
     
@@ -51,13 +51,13 @@ void UMainMenu::SinglePlayerButtonClicked()
 
 }
 
-void UMainMenu::OpenNewLevel()
+void UMainMenu::OpenSinglePlayerLevel()
 {
+    MenuTearDown();
+    
     FString OptionsString = FString::Printf(TEXT("?game=%s"), *SinglePlayerGameMode);
     
-    UGameplayStatics::OpenLevel(this, GameLevelName, true, OptionsString);
-
-    MenuTearDown();
+    UGameplayStatics::OpenLevel(this, GameLevelName, true, OptionsString);    
 }
 
 void UMainMenu::LocalMultiplayerButtonClicked()
@@ -69,12 +69,18 @@ void UMainMenu::LocalMultiplayerButtonClicked()
         LocalMultiplayerButton->SetIsEnabled(false);
     }
     
+    FTimerHandle OpenLevelTimerHandle;
+    GetWorld()->GetTimerManager().SetTimer(OpenLevelTimerHandle, this, &ThisClass::OpenLocalMultiplayerLevel, .2f, false);
+
+}
+
+void UMainMenu::OpenLocalMultiplayerLevel()
+{
+    MenuTearDown();
 
     FString OptionsString = FString::Printf(TEXT("?game=%s"), *LocalMultiplayerGameMode);
     
     UGameplayStatics::OpenLevel(this, GameLevelName, true, OptionsString);
-
-    MenuTearDown();
 }
 
 void UMainMenu::OnlineMultiplayerButtonClicked()
@@ -115,5 +121,10 @@ void UMainMenu::QuitButtonClicked()
 
 void UMainMenu::NativeDestruct()
 {
+    if (GEngine)
+    {
+        GEngine->AddOnScreenDebugMessage(3, 2.f, FColor::Purple, TEXT("UMainMenu->NativeDestruct!"));
+    }
     Super::NativeDestruct();
+
 }

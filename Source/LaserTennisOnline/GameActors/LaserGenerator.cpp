@@ -66,8 +66,12 @@ void ALaserGenerator::SpawnLaser()
 
 void ALaserGenerator::PlaySound_Implementation()
 {
-	if (Sound)
+	if (Sound and Sound->IsValidLowLevel())
 	{
 		UGameplayStatics::PlaySoundAtLocation(this,Sound,GetActorLocation(),ScaleVolume,ScalePitch,StartTime);
+	}
+	else if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(1010, 2.f, FColor::Red, TEXT("ALaserGenerator->PlaySound: Could not play sound due to bad sound file"));
 	}
 }

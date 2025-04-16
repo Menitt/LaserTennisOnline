@@ -47,9 +47,10 @@ protected:
 	float ScaleVolume = 1.f;
 	UPROPERTY(EditDefaultsOnly, Category = "Sound")
 	float ScalePitch = 1.f;
-
+	
 	FString SoundFolder = "/Game/Assets/Audio/UI/";
-	class USoundWave* Sound;
+	
+	UPROPERTY() class USoundWave* Sound;
 	void PlayUISound();
 
 };

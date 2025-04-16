@@ -41,8 +41,5 @@ private:
 	FTimerHandle TimerHandle;
 
 	void BroadcastGameStart();
-	
-	UPROPERTY(EditDefaultsOnly)
-	FString AudioFile;
 
 };

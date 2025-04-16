@@ -106,7 +106,7 @@ protected:
 	float ScalePitch = 1.f;
 
 	FString SoundFolder = "/Game/Assets/Audio/";
-	class USoundCue* Sound;
+	UPROPERTY() class USoundCue* Sound;
 	void PlayUISound();
 
 	UFUNCTION(NetMulticast, Reliable)

@@ -45,7 +45,8 @@ private:
 	UFUNCTION()
 	void SinglePlayerButtonClicked();
 
-	void OpenNewLevel();
+	void OpenSinglePlayerLevel();
+	void OpenLocalMultiplayerLevel();
 
 	UFUNCTION()
 	void LocalMultiplayerButtonClicked();

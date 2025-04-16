@@ -29,11 +29,6 @@ void UBaseUserWidget::MenuSetup()
 		}
 		
 	}
-
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Green, TEXT("UBaseUserWidget->MenuSetup"));
-	}
 }
 
 bool UBaseUserWidget::Initialize()
@@ -43,18 +38,29 @@ bool UBaseUserWidget::Initialize()
 		return false;
 	}
 
-	// Bind Sound File
+	// Load Sound File
 	FString SoundPath = SoundFolder + SoundFile + "." + SoundFile;
 	Sound = LoadObject<USoundWave>(nullptr, *SoundPath);
 
-	if (Sound and GEngine)
+	if (Sound and Sound->IsValidLowLevel())
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Green, TEXT("UBaseUserWidget->Initialize, Sound is Loaded"));
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Green, TEXT("UBaseUserWidget->Initialize: Sound is loaded and valid!"));
+		}
+		
 	}
+	else
+	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("UBaseUserWidget->Initialize: Sound File is not valid!"));
+		}
+	}
+
 
 	return true;
 }
-
 
 void UBaseUserWidget::MenuTearDown()
 {
@@ -72,46 +78,21 @@ void UBaseUserWidget::MenuTearDown()
 	}
 }
 
-
 void UBaseUserWidget::PlayUISound()
 {
 	
 	UWorld* World = GetWorld();
+	bool ValidSound = World and Sound and Sound->IsValidLowLevel();
 
-	if (World)
-	{
-		if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Green, TEXT("UBaseUserWidget->PlayUISound, World is valid"));
-		}
-		
-		APlayerController* CurrentPlayerController = World->GetFirstPlayerController();
-    
-		if (CurrentPlayerController)
-		{	
-			APawn* PlayerPawn = CurrentPlayerController->GetPawn();
-			if (PlayerPawn and UISound)
-			{
-				
-				if (!Sound->IsValidLowLevel() || Sound->IsPendingKill())
-				{
-					GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("UBaseUserWidget->PlayUISound: Sound is invalid or pending kill!"));
-					return;
-				}
-				
-				FVector SoundLocation = PlayerPawn->GetActorLocation(); // You can set a custom location
-				
-				// UGameplayStatics::PlaySoundAtLocation(World, Sound, SoundLocation,ScaleVolume,ScalePitch,StartTime);
-				UGameplayStatics::PlaySound2D(PlayerPawn->GetWorld(), UISound, ScaleVolume, ScalePitch, StartTime);
-			}		
-		}
-
+	if (ValidSound)
+	{		
+		UGameplayStatics::PlaySound2D(World, Sound, ScaleVolume, ScalePitch, StartTime);
 	}
-	else
+	else if (World and Sound and !Sound->IsValidLowLevel())
 	{
 		if (GEngine)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("UBaseUserWidget->PlayUISound, World is not valid"));
+			GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("UBaseUserWidget->PlayUISound: Could not play Sound due to bad Sound File!"));
 		}
 	}
 	

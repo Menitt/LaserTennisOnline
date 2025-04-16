@@ -32,7 +32,7 @@ void AGeneratorSignal::BeginPlay()
 	FString SoundPath = SoundFolder + SoundFile + "." + SoundFile;
 	USoundWave* Sound = LoadObject<USoundWave>(nullptr, *SoundPath);  
 
-	if (AudioComponent and Sound)
+	if (AudioComponent and Sound and Sound->IsValidLowLevel())
 	{
 		AudioComponent->SetSound(Sound);
 		AudioComponent->Play();

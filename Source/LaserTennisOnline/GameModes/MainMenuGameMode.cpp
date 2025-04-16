@@ -2,27 +2,24 @@
 
 
 #include "MainMenuGameMode.h"
-
+#include "MainMenu.h"
 
 AMainMenuGameMode::AMainMenuGameMode()
 {
-    UE_LOG(LogTemp, Warning, TEXT("Main Menu Game Mode: Constructor!"));
-
     bUseSeamlessTravel = true;
 }
 
 
-
 void AMainMenuGameMode::PostLogin(APlayerController* NewPlayer)
 {
-    if (nPlayers > 0)
+    Super::PostLogin(NewPlayer);
+
+    // Create Main Menu Widget
+    UMainMenu* MainMenuWidget = CreateWidget<UMainMenu>(GetWorld(), MainMenuWidgetClass);
+
+    if (MainMenuWidget)
     {
-        NewPlayer->Destroy();
+        MainMenuWidget->MenuSetup();
     }
-    else
-    {
-        Super::PostLogin(NewPlayer);
-        nPlayers++;
-    }
-    
+
 }

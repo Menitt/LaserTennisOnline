@@ -314,11 +314,11 @@ void ALaserTennisGameModeBase::DelayedStartCountdown()
 void ALaserTennisGameModeBase::UpdateHealthPanel()
 {
     // Update Health Widgets
-    if (HealthPanel1 and Player1)
+    if (HealthPanel1 and HealthPanel1->IsValidLowLevel() and Player1 and Player1->IsValidLowLevel())
     {
        HealthPanel1->UpdateWidgetHealth(Player1->GetPlayerHealth()); 
     }
-    if (HealthPanel2 and Player2)
+    if (HealthPanel2 and HealthPanel2->IsValidLowLevel() and Player2 and Player2->IsValidLowLevel())
     {
        HealthPanel2->UpdateWidgetHealth(Player2->GetPlayerHealth()); 
     }

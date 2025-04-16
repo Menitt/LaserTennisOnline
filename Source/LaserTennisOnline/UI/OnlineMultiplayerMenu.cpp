@@ -52,19 +52,20 @@ void UOnlineMultiplayerMenu::BackButtonClicked()
 
 void UOnlineMultiplayerMenu::PlayUISound()
 {
+    UWorld* World = GetWorld();
+	bool ValidSound = World and Sound and Sound->IsValidLowLevel();
 
-	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-    
-    if (PlayerController)
-    {	
-		APawn* PlayerPawn = PlayerController->GetPawn();
-		if (PlayerPawn and Sound)
+	if (ValidSound)
+	{		
+		UGameplayStatics::PlaySound2D(World, Sound, ScaleVolume, ScalePitch, StartTime);
+	}
+	else
+	{
+		if (GEngine)
 		{
-			FVector SoundLocation = PlayerPawn->GetActorLocation(); // You can set a custom location
-			
-			UGameplayStatics::PlaySoundAtLocation(this, Sound, SoundLocation,ScaleVolume,ScalePitch,StartTime);
-		}		
-    }
+			GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("UOnlineMultiplayerMenu->PlayUISound: Could not play Sound due to bad Sound File!"));
+		}
+	}
 }
 
 void UOnlineMultiplayerMenu::HostButtonClicked()

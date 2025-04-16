@@ -104,9 +104,13 @@ void ALaserRay::OnHitPlayer(UPrimitiveComponent *HitComponent, AActor *OtherActo
 
 void ALaserRay::PlaySound_Implementation()
 {
-	if (HitSound)
+	if (HitSound and HitSound->IsValidLowLevel())
 	{
 		UGameplayStatics::PlaySoundAtLocation(this,HitSound,GetActorLocation(),ScaleVolume,ScalePitch,StartTime);
+	}
+	else if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(1010, 2.f, FColor::Red, TEXT("ALaserRay->PlaySound: Could not play sound due to bad sound file"));
 	}
 }
 

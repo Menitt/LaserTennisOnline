@@ -204,8 +204,12 @@ void ALaserActivationPlatform::Activate()
 
 void ALaserActivationPlatform::PlaySoundEffect_Implementation()
 {
-	if (IsValid(Sound))
+	if (Sound and Sound->IsValidLowLevel())
 	{
 		UGameplayStatics::PlaySoundAtLocation(this, Sound, GetActorLocation(), ScaleVolume, ScalePitch, StartTime);
+	}
+	else if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(1010, 2.f, FColor::Red, TEXT("LaserActivationPlatform->PlaySoundEffec: Could not play sound due to bad sound file"));
 	}
 }
