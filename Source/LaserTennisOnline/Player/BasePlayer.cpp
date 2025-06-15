@@ -48,20 +48,18 @@ Super(ObjectInitializer.SetDefaultSubobjectClass<UCustomCharacterMovementCompone
 	JumpMaxCount = 2;
 
 	// Camera Components
-	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
+	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("MyCameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
-	CameraBoom->TargetArmLength = 1600.0f;
-	CameraBoom->bUsePawnControlRotation = false;
+	
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
-	FollowCamera->bUsePawnControlRotation = false;
-
 
 	// Heath Component
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>("Health Component");
+	
+	// Audio Component
 	AudioComponent = CreateDefaultSubobject<UAudioComponent>("Audio Component");
 	AudioComponent->SetupAttachment(RootComponent);
-
 }
 
 // Called when the game starts or when spawned
@@ -92,7 +90,6 @@ void ABasePlayer::BeginPlay()
 	{
 		AudioComponent->SetSound(WalkSound);
 	}
-
 
 }
 

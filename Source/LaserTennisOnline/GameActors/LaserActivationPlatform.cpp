@@ -13,8 +13,8 @@
 #include "Engine/Engine.h"
 #include "DrawDebugHelpers.h"
 #include "Sound/SoundCue.h"
-
-
+#include "Components\SplineComponent.h"
+#include "Spark.h"
 
 // Sets default values
 ALaserActivationPlatform::ALaserActivationPlatform()
@@ -31,6 +31,10 @@ ALaserActivationPlatform::ALaserActivationPlatform()
 	baseMesh->SetupAttachment(RootComponent);
 	overlappingComp = CreateDefaultSubobject<UBoxComponent>("Overlapping Component");
 	overlappingComp->SetupAttachment(movingMesh);
+
+	// Spline Component
+	Spline = CreateDefaultSubobject<USplineComponent>("Spline");
+	Spline->SetupAttachment(RootComponent);
 
 }
 
@@ -151,11 +155,19 @@ void ALaserActivationPlatform::SendSpawnLaserRequest()
 {
 	if (GetLocalRole() == ROLE_Authority)
 	{
-		if (GameMode)
+		// if (GameMode)
+		// {
+		// 	GameMode->SpawnLaserRequest(OtherPlayerID);
+		// }
+		
+		// Testing
+		ASpark* Spark = GetWorld()->SpawnActor<ASpark>(SparkClass, GetActorLocation(), GetActorRotation());
+		if (Spark)
 		{
-			GameMode->SpawnLaserRequest(OtherPlayerID);
+			Spark->SetPlatformOwner(this);
 		}
-	}
+	
+	}	
 }
 
 void ALaserActivationPlatform::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

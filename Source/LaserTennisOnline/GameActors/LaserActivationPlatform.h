@@ -37,6 +37,10 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UBoxComponent* overlappingComp;
 
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class USplineComponent* Spline;
+
 //
 // Gameplay
 //
@@ -61,6 +65,11 @@ private:
 	// Game Mode Exists only on the Server
 	class ALaserTennisGameModeBase* GameMode;
 	void SendSpawnLaserRequest();
+
+
+	UPROPERTY(EditDefaultsOnly, Category = "Spline")
+	TSubclassOf<AActor> SparkClass;
+
 
 public:
 
