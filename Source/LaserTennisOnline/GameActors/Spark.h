@@ -21,8 +21,8 @@ protected:
 
 	// Mesh
 
-	UPROPERTY(EditDefaultsOnly)
-	class UStaticMeshComponent* Mesh;
+	// UPROPERTY(EditDefaultsOnly)
+	// class UStaticMeshComponent* Mesh;
 
 	// Timeline
 	UPROPERTY(EditAnywhere)

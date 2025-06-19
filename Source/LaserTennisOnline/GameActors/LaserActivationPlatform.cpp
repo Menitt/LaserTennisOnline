@@ -27,14 +27,14 @@ ALaserActivationPlatform::ALaserActivationPlatform()
 	// Components
 	baseMesh = CreateDefaultSubobject<UStaticMeshComponent>("Base Mesh");
 	movingMesh = CreateDefaultSubobject<UStaticMeshComponent>("Moving Mesh");
-	RootComponent = movingMesh;
-	baseMesh->SetupAttachment(RootComponent);
+	RootComponent = baseMesh;
+	movingMesh->SetupAttachment(baseMesh);
 	overlappingComp = CreateDefaultSubobject<UBoxComponent>("Overlapping Component");
 	overlappingComp->SetupAttachment(movingMesh);
 
 	// Spline Component
 	Spline = CreateDefaultSubobject<USplineComponent>("Spline");
-	Spline->SetupAttachment(RootComponent);
+	Spline->SetupAttachment(baseMesh);
 
 }
 
@@ -48,7 +48,7 @@ void ALaserActivationPlatform::BeginPlay()
 	// Run on all Clients
 	if (overlappingComp)
 	{
-		InitialLocation = GetActorLocation();
+		InitialLocation = movingMesh->GetComponentLocation();
 		RestingLocation = InitialLocation - DeactivationMovementOffset;
 		overlappingComp->OnComponentBeginOverlap.AddDynamic(this,&ThisClass::OnBeginOverlap);
 		overlappingComp->OnComponentEndOverlap.AddDynamic(this,&ThisClass::OnEndOverlap);
@@ -60,7 +60,7 @@ void ALaserActivationPlatform::BeginPlay()
 		GameMode = Cast<ALaserTennisGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
 	}
 	
-	baseMesh->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+	// baseMesh->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 
 	// Bind Sound File
 	FString SoundPath = SoundFolder + SoundFile + "." + SoundFile;
@@ -78,7 +78,7 @@ void ALaserActivationPlatform::Tick(float DeltaTime)
 	//
 	if (bShouldActivate)
 	{
-		SetActorLocation(FMath::VInterpConstantTo(GetActorLocation(),InitialLocation,
+		movingMesh->SetWorldLocation(FMath::VInterpConstantTo(movingMesh->GetComponentLocation(),InitialLocation,
 		DeltaTime,MovementSpeed));
 	}
 
@@ -87,19 +87,19 @@ void ALaserActivationPlatform::Tick(float DeltaTime)
 	//
 	if (bShouldDeactivate)
 	{
-		SetActorLocation(FMath::VInterpConstantTo(GetActorLocation(),RestingLocation,
+		movingMesh->SetWorldLocation(FMath::VInterpConstantTo(movingMesh->GetComponentLocation(),RestingLocation,
 		DeltaTime,MovementSpeed));
 	}
 
 	if (GetLocalRole() == ROLE_Authority)
 	{
-		if (GetActorLocation() == InitialLocation and bIsPlayerReset)
+		if (movingMesh->GetComponentLocation() == InitialLocation and bIsPlayerReset)
 		{
 			bIsReady = true;
 			bShouldActivate = false;
 		}
 		
-		if (GetActorLocation() == RestingLocation)
+		if (movingMesh->GetComponentLocation() == RestingLocation)
 		{
 			bShouldDeactivate = false;
 			bIsResting = true;
@@ -161,7 +161,7 @@ void ALaserActivationPlatform::SendSpawnLaserRequest()
 		// }
 		
 		// Testing
-		ASpark* Spark = GetWorld()->SpawnActor<ASpark>(SparkClass, GetActorLocation(), GetActorRotation());
+		ASpark* Spark = GetWorld()->SpawnActor<ASpark>(SparkClass, baseMesh->GetComponentLocation(), baseMesh->GetComponentRotation());
 		if (Spark)
 		{
 			Spark->SetPlatformOwner(this);

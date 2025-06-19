@@ -6,15 +6,13 @@
 #include "LaserActivationPlatform.h"
 #include "Components\TimelineComponent.h"
 #include "Components\SplineComponent.h"
+#include "DrawDebugHelpers.h"
 
 // Sets default values
 ASpark::ASpark()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
-	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
-	RootComponent = Mesh;
 
 	Timeline = CreateDefaultSubobject<UTimelineComponent>("Timeline");
 	
@@ -57,7 +55,7 @@ void ASpark::HandleProgress(float Value)
 		FVector NewLocation = PlatformOwner->Spline->GetLocationAtDistanceAlongSpline(DistanceAlongSpline, ESplineCoordinateSpace::World);
 		FRotator NewRotation = PlatformOwner->Spline->GetRotationAtDistanceAlongSpline(DistanceAlongSpline, ESplineCoordinateSpace::World);
 
-		Mesh->SetWorldLocationAndRotation(NewLocation, NewRotation);
+		this->SetActorLocationAndRotation(NewLocation, NewRotation);
 	}
 	
 	
@@ -74,6 +72,8 @@ void ASpark::OnTimelineFinished()
 void ASpark::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+    DrawDebugSphere(GetWorld(), GetActorLocation(), 50, 20, FColor::Red, false, -1);
 
 }
 
