@@ -6,6 +6,11 @@
 #include "GameFramework/Actor.h"
 #include "Spark.generated.h"
 
+
+
+// Declare a multicast delegate
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FSparkDelegate, int, Player, int, Side);
+
 UCLASS()
 class LASERTENNISONLINE_API ASpark : public AActor
 {
@@ -33,7 +38,10 @@ protected:
 	UCurveFloat* MovementCurve;
 
 	// Platform Reference
-	class ALaserActivationPlatform* PlatformOwner;
+	class USplineComponent* Spline;
+
+	int ActivePlayer;
+	int SpawnSide;
 
 	UPROPERTY(EditDefaultsOnly)
 	float Period = 5.;
@@ -42,7 +50,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void SetPlatformOwner(class ALaserActivationPlatform* Platform);
+	void SetSpawnSide(class USplineComponent* PlatformSpline, int Player, int Side);
+
+	FSparkDelegate OnSparkArrived;
 
 protected:
 

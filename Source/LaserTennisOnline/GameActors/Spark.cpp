@@ -3,7 +3,6 @@
 
 #include "Spark.h"
 #include "Components\StaticMeshComponent.h"
-#include "LaserActivationPlatform.h"
 #include "Components\TimelineComponent.h"
 #include "Components\SplineComponent.h"
 #include "DrawDebugHelpers.h"
@@ -47,13 +46,13 @@ void ASpark::BeginPlay()
 
 void ASpark::HandleProgress(float Value)
 {
-    if (PlatformOwner and PlatformOwner->Spline)
+    if (IsValid(Spline))
 	{
-		float SplineLength = PlatformOwner->Spline->GetSplineLength();
+		float SplineLength = Spline->GetSplineLength();
 		float DistanceAlongSpline = Value * SplineLength;
 
-		FVector NewLocation = PlatformOwner->Spline->GetLocationAtDistanceAlongSpline(DistanceAlongSpline, ESplineCoordinateSpace::World);
-		FRotator NewRotation = PlatformOwner->Spline->GetRotationAtDistanceAlongSpline(DistanceAlongSpline, ESplineCoordinateSpace::World);
+		FVector NewLocation = Spline->GetLocationAtDistanceAlongSpline(DistanceAlongSpline, ESplineCoordinateSpace::World);
+		FRotator NewRotation = Spline->GetRotationAtDistanceAlongSpline(DistanceAlongSpline, ESplineCoordinateSpace::World);
 
 		this->SetActorLocationAndRotation(NewLocation, NewRotation);
 	}
@@ -65,6 +64,15 @@ void ASpark::OnTimelineFinished()
 {
     // Optional: Restart, reverse, or trigger event
     UE_LOG(LogTemp, Log, TEXT("Spline movement finished."));
+
+    if (GetLocalRole() == ROLE_Authority)
+	{
+		if (OnSparkArrived.IsBound())
+		{
+			OnSparkArrived.Broadcast(ActivePlayer, SpawnSide); // Trigger the delegate
+		}
+	}
+
 }
 
 
@@ -78,7 +86,9 @@ void ASpark::Tick(float DeltaTime)
 }
 
 
-void ASpark::SetPlatformOwner(ALaserActivationPlatform* Platform)
+void ASpark::SetSpawnSide(USplineComponent* PlatformSpline, int Player, int Side)
 {
-	PlatformOwner = Platform;
+	Spline = PlatformSpline;
+    ActivePlayer = Player;
+    SpawnSide = Side;
 }

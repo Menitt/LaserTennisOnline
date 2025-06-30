@@ -15,6 +15,7 @@
 #include "Sound/SoundCue.h"
 #include "Components\SplineComponent.h"
 #include "Spark.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 ALaserActivationPlatform::ALaserActivationPlatform()
@@ -33,8 +34,14 @@ ALaserActivationPlatform::ALaserActivationPlatform()
 	overlappingComp->SetupAttachment(movingMesh);
 
 	// Spline Component
-	Spline = CreateDefaultSubobject<USplineComponent>("Spline");
-	Spline->SetupAttachment(baseMesh);
+	Spline_North = CreateDefaultSubobject<USplineComponent>("Spline North");
+	Spline_North->SetupAttachment(baseMesh);
+	Spline_South = CreateDefaultSubobject<USplineComponent>("Spline South");
+	Spline_South->SetupAttachment(baseMesh);
+	Spline_West = CreateDefaultSubobject<USplineComponent>("Spline West");
+	Spline_West->SetupAttachment(baseMesh);
+	Spline_East = CreateDefaultSubobject<USplineComponent>("Spline East");
+	Spline_East->SetupAttachment(baseMesh);
 
 }
 
@@ -155,18 +162,32 @@ void ALaserActivationPlatform::SendSpawnLaserRequest()
 {
 	if (GetLocalRole() == ROLE_Authority)
 	{
-		// if (GameMode)
-		// {
-		// 	GameMode->SpawnLaserRequest(OtherPlayerID);
-		// }
-		
-		// Testing
+		// Randomly Pick Laser Spawn Side
+		int RandInt = UKismetMathLibrary::RandomInteger(4) + 1;
+
+		// Spawn Spark Actor
 		ASpark* Spark = GetWorld()->SpawnActor<ASpark>(SparkClass, baseMesh->GetComponentLocation(), baseMesh->GetComponentRotation());
-		if (Spark)
+		if (IsValid(Spark))
 		{
-			Spark->SetPlatformOwner(this);
-		}
+			switch (RandInt)
+			{
+			case 1:
+				Spark->SetSpawnSide(Spline_North, ActivePlayer, RandInt);
+				break;
+			case 2:
+				Spark->SetSpawnSide(Spline_South, ActivePlayer, RandInt);
+				break;
+			case 3:
+				Spark->SetSpawnSide(Spline_West, ActivePlayer, RandInt);
+				break;
+			case 4:
+				Spark->SetSpawnSide(Spline_East, ActivePlayer, RandInt);
+				break;	
+			default:
+				break;
+			}
 	
+		}
 	}	
 }
 

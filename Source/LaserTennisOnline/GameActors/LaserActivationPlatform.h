@@ -39,7 +39,15 @@ private:
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class USplineComponent* Spline;
+	class USplineComponent* Spline_North;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class USplineComponent* Spline_South;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class USplineComponent* Spline_East;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class USplineComponent* Spline_West;
+
+
 
 //
 // Gameplay
@@ -58,7 +66,7 @@ private:
 	FVector DeactivationMovementOffset = FVector(0.,0.,100.);
 	
 	UPROPERTY(EditDefaultsOnly)
-	int OtherPlayerID;
+	int ActivePlayer;
 	UPROPERTY(EditDefaultsOnly)
 	float MovementSpeed = 100.f;
 
