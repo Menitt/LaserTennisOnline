@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+
+
 #include "LaserActivationPlatform.generated.h"
 
 UCLASS()
@@ -39,15 +41,7 @@ private:
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class USplineComponent* Spline_North;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class USplineComponent* Spline_South;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class USplineComponent* Spline_East;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class USplineComponent* Spline_West;
-
-
+	class USplineComponent* Spline;
 
 //
 // Gameplay
@@ -65,8 +59,8 @@ private:
 	FVector RestingLocation;
 	FVector DeactivationMovementOffset = FVector(0.,0.,100.);
 	
-	UPROPERTY(EditDefaultsOnly)
-	int ActivePlayer;
+	UPROPERTY(EditAnywhere)
+	int ActivePlayer = 1;
 	UPROPERTY(EditDefaultsOnly)
 	float MovementSpeed = 100.f;
 
@@ -78,6 +72,9 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Spline")
 	TSubclassOf<AActor> SparkClass;
 
+	class ALaserSpawnManager* LaserSpawnManager;
+
+	void FetchLaserSpawnManager();
 
 public:
 

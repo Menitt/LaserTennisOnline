@@ -63,14 +63,16 @@ void ASpark::HandleProgress(float Value)
 void ASpark::OnTimelineFinished()
 {
     // Optional: Restart, reverse, or trigger event
-    UE_LOG(LogTemp, Log, TEXT("Spline movement finished."));
+    
 
     if (GetLocalRole() == ROLE_Authority)
 	{
 		if (OnSparkArrived.IsBound())
 		{
-			OnSparkArrived.Broadcast(ActivePlayer, SpawnSide); // Trigger the delegate
-		}
+			OnSparkArrived.Broadcast(ActivePlayer); // Trigger the delegate
+		
+            UE_LOG(LogTemp, Warning, TEXT("ASpark: Broadcasting!."));
+        }
 	}
 
 }
@@ -86,9 +88,12 @@ void ASpark::Tick(float DeltaTime)
 }
 
 
-void ASpark::SetSpawnSide(USplineComponent* PlatformSpline, int Player, int Side)
+void ASpark::SetSpline(USplineComponent* PlatformSpline)
 {
 	Spline = PlatformSpline;
+}
+
+void ASpark::SetActivePlayer(int Player)
+{
     ActivePlayer = Player;
-    SpawnSide = Side;
 }

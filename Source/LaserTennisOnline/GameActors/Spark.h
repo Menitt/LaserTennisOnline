@@ -9,7 +9,7 @@
 
 
 // Declare a multicast delegate
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FSparkDelegate, int, Player, int, Side);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSparkDelegate, int, Player);
 
 UCLASS()
 class LASERTENNISONLINE_API ASpark : public AActor
@@ -41,7 +41,6 @@ protected:
 	class USplineComponent* Spline;
 
 	int ActivePlayer;
-	int SpawnSide;
 
 	UPROPERTY(EditDefaultsOnly)
 	float Period = 5.;
@@ -50,7 +49,10 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void SetSpawnSide(class USplineComponent* PlatformSpline, int Player, int Side);
+	void SetSpline(class USplineComponent* PlatformSpline);
+	void SetActivePlayer(int Player);
+	void SetSide(int Side);
+
 
 	FSparkDelegate OnSparkArrived;
 

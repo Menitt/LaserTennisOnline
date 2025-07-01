@@ -24,24 +24,10 @@ ALaserRay::ALaserRay()
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");	
 	ProjectileComp = CreateDefaultSubobject<UProjectileMovementComponent>("Projectile Component");
 	CollisionComponent = CreateDefaultSubobject<UBoxComponent>("Collision Component");
-
-	// Collision
-	CollisionComponent->SetCollisionProfileName("BlockAll");
-	CollisionComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	CollisionComponent->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
-
-    CollisionComponent->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
-	CollisionComponent->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block);
-	RootComponent = CollisionComponent;
-
-	Mesh->SetupAttachment(RootComponent);
-
-	ProjectileComp->SetUpdatedComponent(CollisionComponent);
-	ProjectileComp->InitialSpeed = 300.0f;
-	ProjectileComp->MaxSpeed = 300.0f;
-	ProjectileComp->bRotationFollowsVelocity = true;
-	ProjectileComp->ProjectileGravityScale = 0.0f;
-
+	
+	RootComponent = Mesh;
+	CollisionComponent->SetupAttachment(RootComponent);
+	ProjectileComp->UpdatedComponent = RootComponent;
 }
 
 // Called when the game starts or when spawned
@@ -56,7 +42,6 @@ void ALaserRay::BeginPlay()
 	{
 		CollisionComponent->OnComponentHit.AddDynamic(this, &ThisClass::OnHitPlayer);
 	}
-
 }
 
 // Called every frame

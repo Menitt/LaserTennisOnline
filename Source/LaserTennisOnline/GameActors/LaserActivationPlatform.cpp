@@ -16,6 +16,7 @@
 #include "Components\SplineComponent.h"
 #include "Spark.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "LaserSpawnManager.h"
 
 // Sets default values
 ALaserActivationPlatform::ALaserActivationPlatform()
@@ -34,14 +35,8 @@ ALaserActivationPlatform::ALaserActivationPlatform()
 	overlappingComp->SetupAttachment(movingMesh);
 
 	// Spline Component
-	Spline_North = CreateDefaultSubobject<USplineComponent>("Spline North");
-	Spline_North->SetupAttachment(baseMesh);
-	Spline_South = CreateDefaultSubobject<USplineComponent>("Spline South");
-	Spline_South->SetupAttachment(baseMesh);
-	Spline_West = CreateDefaultSubobject<USplineComponent>("Spline West");
-	Spline_West->SetupAttachment(baseMesh);
-	Spline_East = CreateDefaultSubobject<USplineComponent>("Spline East");
-	Spline_East->SetupAttachment(baseMesh);
+	Spline = CreateDefaultSubobject<USplineComponent>("Spline");
+	Spline->SetupAttachment(baseMesh);
 
 }
 
@@ -66,13 +61,25 @@ void ALaserActivationPlatform::BeginPlay()
 	{
 		GameMode = Cast<ALaserTennisGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
 	}
-	
-	// baseMesh->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+
+	// Try to Fetch LaserSpawnManager Reference (not reliable to be already initialized -> need redundancy)
+	FetchLaserSpawnManager();
 
 	// Bind Sound File
 	FString SoundPath = SoundFolder + SoundFile + "." + SoundFile;
 	Sound = LoadObject<USoundCue>(nullptr, *SoundPath);
 
+}
+
+void ALaserActivationPlatform::FetchLaserSpawnManager()
+{
+	TArray<AActor*> TempArray;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ALaserSpawnManager::StaticClass(), TempArray);
+
+	if (TempArray.Num() > 0)
+	{
+		LaserSpawnManager = Cast<ALaserSpawnManager>(TempArray[0]);
+	}
 }
 
 // Called every frame
@@ -162,29 +169,22 @@ void ALaserActivationPlatform::SendSpawnLaserRequest()
 {
 	if (GetLocalRole() == ROLE_Authority)
 	{
-		// Randomly Pick Laser Spawn Side
-		int RandInt = UKismetMathLibrary::RandomInteger(4) + 1;
-
 		// Spawn Spark Actor
 		ASpark* Spark = GetWorld()->SpawnActor<ASpark>(SparkClass, baseMesh->GetComponentLocation(), baseMesh->GetComponentRotation());
 		if (IsValid(Spark))
 		{
-			switch (RandInt)
+			
+			Spark->SetSpline(Spline);
+			Spark->SetActivePlayer(ActivePlayer);
+			
+			if (not IsValid(LaserSpawnManager))
 			{
-			case 1:
-				Spark->SetSpawnSide(Spline_North, ActivePlayer, RandInt);
-				break;
-			case 2:
-				Spark->SetSpawnSide(Spline_South, ActivePlayer, RandInt);
-				break;
-			case 3:
-				Spark->SetSpawnSide(Spline_West, ActivePlayer, RandInt);
-				break;
-			case 4:
-				Spark->SetSpawnSide(Spline_East, ActivePlayer, RandInt);
-				break;	
-			default:
-				break;
+				FetchLaserSpawnManager();
+			}
+			if (IsValid(LaserSpawnManager))
+			{
+				Spark->OnSparkArrived.AddDynamic(LaserSpawnManager, &ALaserSpawnManager::SpawnLaser);
+				UE_LOG(LogTemp, Warning, TEXT("ALaserActivationPlatform: Binding On Spark Arrived"));
 			}
 	
 		}
