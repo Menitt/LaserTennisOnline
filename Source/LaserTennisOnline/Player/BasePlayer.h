@@ -151,26 +151,16 @@ private:
 	TSubclassOf<UUserWidget> InGameMenuWidgetClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
-	TSubclassOf<UBaseUserWidget> GameStartCountdownClass;
-
-	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UBaseUserWidget> GameOverVictoryClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UBaseUserWidget> GameOverDefeatClass;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UBaseUserWidget> CountdownWidgetClass;
 
 public:
 	class UGameOverWidget* GameOverWidget;
 	UBaseUserWidget* GameStartCountdown;
-
-
-public:
-	void DisplayCountdown();
-
-
-	// IOnlineSessionPtr OnlineSessionInterface2;
 
 };

@@ -25,8 +25,8 @@ ALaserRay::ALaserRay()
 	ProjectileComp = CreateDefaultSubobject<UProjectileMovementComponent>("Projectile Component");
 	CollisionComponent = CreateDefaultSubobject<UBoxComponent>("Collision Component");
 	
-	RootComponent = Mesh;
-	CollisionComponent->SetupAttachment(RootComponent);
+	RootComponent = CollisionComponent;
+	Mesh->SetupAttachment(RootComponent);
 	ProjectileComp->UpdatedComponent = RootComponent;
 }
 
@@ -40,7 +40,8 @@ void ALaserRay::BeginPlay()
 
 	if (GetLocalRole() == ROLE_Authority)
 	{
-		CollisionComponent->OnComponentHit.AddDynamic(this, &ThisClass::OnHitPlayer);
+		CollisionComponent->OnComponentHit.AddDynamic(this, &ThisClass::OnHitObject);
+		CollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnBeginOverlapObject);
 	}
 }
 
@@ -51,18 +52,18 @@ void ALaserRay::Tick(float DeltaTime)
 
 }
 
-void ALaserRay::OnHitPlayer(UPrimitiveComponent *HitComponent, AActor *OtherActor, UPrimitiveComponent *OtherComp, FVector NormalImpulse, const FHitResult &Hit)
+void ALaserRay::OnHitObject(UPrimitiveComponent *HitComponent, AActor *OtherActor, UPrimitiveComponent *OtherComp, FVector NormalImpulse, const FHitResult &Hit)
 {
-
 	// Do nothing if not Server (~ let server decide)
 	if (GetLocalRole() == ROLE_Authority)
 	{
-		if (OtherActor && (OtherActor != this) && OtherComp)
+		if (IsValid(OtherActor) && (OtherActor != this) && IsValid(OtherComp))
 		{
 			ABasePlayer* Player = Cast<ABasePlayer>(OtherActor);
 
 			if (Player)
 			{
+				UE_LOG(LogTemp, Warning, TEXT("On Hit Object: Hit Player!"));
 
 				Player->CustomTakeDamage();
 				
@@ -73,19 +74,39 @@ void ALaserRay::OnHitPlayer(UPrimitiveComponent *HitComponent, AActor *OtherActo
 
 			else
 			{
-				ABlockingVolume* Volume = Cast<ABlockingVolume>(OtherActor);
-
-				if (Volume)
-				{
-					Destroy();
-				}
+				UE_LOG(LogTemp, Warning, TEXT("On Hit Object!"));
 			}	
 		}
 
-	
 	}
 
 }
+
+
+void ALaserRay::OnBeginOverlapObject(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		if (IsValid(OtherActor) and OtherActor != this and IsValid(OtherComp))
+		{
+			if (OtherComp->ComponentHasTag(*DespawnSide))
+			{
+				Destroy();
+			}
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
 
 void ALaserRay::PlaySound_Implementation()
 {

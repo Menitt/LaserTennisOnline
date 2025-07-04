@@ -217,6 +217,8 @@ void ABasePlayer::StartCountdown_Implementation(int Timer)
 		DisableInput(PlayerController);
 		UCountDownWidget* CountdownWidget = CreateWidget<UCountDownWidget>(GetWorld(),CountdownWidgetClass);
 
+		UE_LOG(LogTemp, Warning, TEXT("Base Player -> Start Countdown"));
+
 		// Spawn Countdown Widget
 		if (CountdownWidget)
 		{
@@ -349,23 +351,6 @@ void ABasePlayer::OnTakeDamageMontageCompleted(UAnimMontage* AnimMontage, bool b
 		}
 	}
 
-}
-
-
-#pragma endregion
-
-
-#pragma region UI
-
-
-void ABasePlayer::DisplayCountdown()
-{
-	GameStartCountdown = CreateWidget<UBaseUserWidget>(GetWorld(),GameStartCountdownClass);
-
-	if (GameStartCountdown)
-	{
-		GameStartCountdown->MenuSetup();
-	}
 }
 
 

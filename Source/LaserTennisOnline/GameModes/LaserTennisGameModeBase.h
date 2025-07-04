@@ -32,9 +32,6 @@ virtual void Tick(float DeltaTime) override;
 protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
-	TSubclassOf<AActor> LaserGeneratorClass;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Setup")
 	TSubclassOf<ALaserActivationPlatform> laserActivationPlatformClass;
 	TArray<AActor*> laserPlatforms1; 
 	TArray<AActor*> laserPlatforms2;
@@ -42,21 +39,10 @@ protected:
 	TArray<int> ActiveLaserPlatforms1; 
 	TArray<int> ActiveLaserPlatforms2;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Setup")
-	TSubclassOf<ACentralGenerator> CentralGeneratorClass;
-	ACentralGenerator* CentralGenerator;
-
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<AActor> ClassPlayer1;
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<AActor> ClassPlayer2;
-	bool bIsPlayer1 = true;
+	UPROPERTY(EditDefaultsOnly) TSubclassOf<AActor> ClassPlayer1;
+	UPROPERTY(EditDefaultsOnly) TSubclassOf<AActor> ClassPlayer2;
 	class ABasePlayer* Player1;
 	class ABasePlayer* Player2;
-
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<AActor> GameStartPanelClass;
-	class AGameStartPanel* GameStartPanel;
 
 	class AHealthPanel* HealthPanel1;
 	class AHealthPanel* HealthPanel2;
@@ -66,17 +52,16 @@ protected:
 //
 // Setup Function
 //
-private:
-	void SetupGame();
 protected:
+
+	void SetupGame();
+
 	void SetupTimer();
+
+	virtual void StartCountdown();
+
 	FTimerHandle TimerHandle;
 
-	UFUNCTION()
-	void SpawnLaser(int nPlayer, int nGenerator);
-
-protected:
-	virtual void StartCountdown();
 //
 // Gameplay
 //
@@ -98,8 +83,6 @@ public:
 	int GetNumberPlatformsByKey(const TArray<int>& PlatformsMap, int key) const;
 
 	void UpdateHealthPanel();
-	
-	void SpawnLaserRequest(int PlayerID);
 
 	void GameOver();
 

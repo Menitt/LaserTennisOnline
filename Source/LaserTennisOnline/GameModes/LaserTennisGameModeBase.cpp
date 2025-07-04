@@ -27,14 +27,6 @@ void ALaserTennisGameModeBase::SetupGame()
     ActiveLaserPlatforms1.Init(1,laserPlatforms1.Num());
     ActiveLaserPlatforms2.Init(1,laserPlatforms2.Num());
 
-    // Get Central Generator
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(),CentralGeneratorClass,TempArray);
-    if (TempArray.Num() > 0)
-    {
-        CentralGenerator = Cast<ACentralGenerator>(TempArray[0]);
-        CentralGenerator->OnSignalArrived.AddDynamic(this, &ThisClass::SpawnLaser);
-    }
-
     // Get Health Panels
     UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(),AHealthPanel::StaticClass(),"1",TempArray);
     if (TempArray.Num() > 0)
@@ -200,18 +192,6 @@ void ALaserTennisGameModeBase::BeginPlay()
     Super::BeginPlay();
 }
 
-void ALaserTennisGameModeBase::SpawnLaserRequest(int PlayerID)
-{
-
-    int RandInt = UKismetMathLibrary::RandomInteger(4) + 1;
-
-    if (CentralGenerator)
-    {
-        CentralGenerator->SendSignal(PlayerID, RandInt);
-    }
-
-}
-
 void ALaserTennisGameModeBase::GameOver()
 {
     EndMatch();
@@ -240,33 +220,11 @@ void ALaserTennisGameModeBase::ReturnToMainMenuHost()
     Super::ReturnToMainMenuHost();
 }
 
-void ALaserTennisGameModeBase::SpawnLaser(int nPlayer, int nGenerator)
-{
-    
-    FString String1 = FString::FromInt(nPlayer);
-    FString String2 = FString::FromInt(nGenerator);
-
-    FName LookupTag(*(String1 + String2));
-    
-    TArray<AActor*> TempArray;
-
-    UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(),LaserGeneratorClass,LookupTag,TempArray);
-    if (TempArray.Num() > 0)
-    {
-        ALaserGenerator* LaserGenerator = Cast<ALaserGenerator>(TempArray[0]);
-        if (LaserGenerator)
-        {
-            LaserGenerator->SpawnLaser();
-        }
-    }
-}
-
 void ALaserTennisGameModeBase::StartGame()
 {
     SetupTimer();
 
     UpdateHealthPanel();
-
 }
 
 void ALaserTennisGameModeBase::StartCountdown()
@@ -276,29 +234,15 @@ void ALaserTennisGameModeBase::StartCountdown()
     {
         ManagePlatforms();
     }
-    // UpdateActivePlatformsList(ActiveLaserPlatforms1, laserPlatforms1);
-    // UpdateActivePlatformsList(ActiveLaserPlatforms2, laserPlatforms2);
-    
-    // int nAdjust1 = laserPlatforms1.Num() - nActivePlatforms;
-    // int nAdjust2 = laserPlatforms2.Num() - nActivePlatforms;
 
-    // for (int i=0; i<nAdjust1; ++i)
+    // if (HealthPanel1)
     // {
-    //     DeactivatePlatform(ActiveLaserPlatforms1, laserPlatforms1);
+    //     HealthPanel1->Activate(CountdownTime);
     // }
-    // for (int i=0; i<nAdjust2; ++i)
+    // if (HealthPanel2)
     // {
-    //     DeactivatePlatform(ActiveLaserPlatforms2, laserPlatforms2);
+    //     HealthPanel2->Activate(CountdownTime);
     // }
-
-    if (HealthPanel1)
-    {
-        HealthPanel1->Activate(CountdownTime);
-    }
-    if (HealthPanel2)
-    {
-        HealthPanel2->Activate(CountdownTime);
-    }
 
 }
 

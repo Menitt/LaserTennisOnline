@@ -70,8 +70,8 @@ void ASpark::OnTimelineFinished()
 		if (OnSparkArrived.IsBound())
 		{
 			OnSparkArrived.Broadcast(ActivePlayer); // Trigger the delegate
-		
-            UE_LOG(LogTemp, Warning, TEXT("ASpark: Broadcasting!."));
+            
+            Destroy();
         }
 	}
 
@@ -82,9 +82,6 @@ void ASpark::OnTimelineFinished()
 void ASpark::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-    DrawDebugSphere(GetWorld(), GetActorLocation(), 50, 20, FColor::Red, false, -1);
-
 }
 
 

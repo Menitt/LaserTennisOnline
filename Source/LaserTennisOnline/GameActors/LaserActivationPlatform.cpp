@@ -184,7 +184,6 @@ void ALaserActivationPlatform::SendSpawnLaserRequest()
 			if (IsValid(LaserSpawnManager))
 			{
 				Spark->OnSparkArrived.AddDynamic(LaserSpawnManager, &ALaserSpawnManager::SpawnLaser);
-				UE_LOG(LogTemp, Warning, TEXT("ALaserActivationPlatform: Binding On Spark Arrived"));
 			}
 	
 		}

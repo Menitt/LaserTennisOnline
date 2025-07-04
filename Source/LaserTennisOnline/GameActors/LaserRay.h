@@ -45,15 +45,20 @@ private:
 // Gameplay
 //
 // Bind to OnComponentHit delegate.
-	UFUNCTION(Category="Projectile")
-    void OnHitPlayer(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+	UFUNCTION()
+    void OnHitObject(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
+	UFUNCTION()
+	void OnBeginOverlapObject(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,bool bFromSweep, const FHitResult& SweepResult);
+
 
 public:
 	FVector GetLaserBox() const;
-
 	float CalculateDistance(FVector Location) const;
-
 	bool IsTargetAhead(FVector Location) const;
+
+	int EnemyPlayer;
+	FString DespawnSide;
 
 //Sound
 private:

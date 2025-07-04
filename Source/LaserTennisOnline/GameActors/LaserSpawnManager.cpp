@@ -94,40 +94,50 @@ void ALaserSpawnManager::Tick(float DeltaTime)
 
 }
 
-void ALaserSpawnManager::SpawnLaser(int Player)
+void ALaserSpawnManager::SpawnLaser(int ActivePlayer)
 {
 	
 	int Side = FMath::RandRange(1, 4);
-	
-	int SpawnLocationID = Player*10 + Side;
+
+	int SpawnLocationID = ActivePlayer*10 + Side;
 	
 	USceneComponent* LaserSpawnComponent = nullptr;
+	
+	FString DespawnSideTag;
 
 	switch (SpawnLocationID)
 	{
 	case 11:
 		LaserSpawnComponent = LaserSpawnLocation_2_North;
+		DespawnSideTag = "South";
 		break;
 	case 12:
 		LaserSpawnComponent = LaserSpawnLocation_2_South;
+		DespawnSideTag = "North";
 		break;
 	case 13:
 		LaserSpawnComponent = LaserSpawnLocation_2_West;
+		DespawnSideTag = "East";
 		break;
 	case 14:
 		LaserSpawnComponent = LaserSpawnLocation_2_East;
+		DespawnSideTag = "West";
 		break;
 	case 21:
 		LaserSpawnComponent = LaserSpawnLocation_1_North;
+		DespawnSideTag = "South";
 		break;
 	case 22:
 		LaserSpawnComponent = LaserSpawnLocation_1_South;
+		DespawnSideTag = "North";
 		break;
 	case 23:
 		LaserSpawnComponent = LaserSpawnLocation_1_West;
+		DespawnSideTag = "East";
 		break;
 	case 24:
 		LaserSpawnComponent = LaserSpawnLocation_1_East;
+		DespawnSideTag = "West";
 		break;
 	default:
 		break;
@@ -139,16 +149,21 @@ void ALaserSpawnManager::SpawnLaser(int Player)
 		FRotator SpawnRotation = LaserSpawnComponent->GetComponentRotation();
 		
 		// ALaserRay* Laser = GetWorld()->SpawnActor<ALaserRay>(LaserClass, SpawnLocation, SpawnRotation);
-		AActor* Laser = GetWorld()->SpawnActor<AActor>(LaserClass, SpawnLocation, SpawnRotation);
-
-		UE_LOG(LogTemp, Warning, TEXT("Spawning Laser, LaserSpawnLocation: %d"), SpawnLocationID);
-		UE_LOG(LogTemp, Warning, TEXT("Component Rotation: %s"), *SpawnRotation.ToString());
-		UE_LOG(LogTemp, Warning, TEXT("Actor Rotation: %s"), *Laser->GetActorRotation().ToString());
+		ALaserRay* Laser = GetWorld()->SpawnActor<ALaserRay>(LaserClass, SpawnLocation, SpawnRotation);
 
 		if (IsValid(Laser))
 		{
-			FString PlayerTag = FString::FromInt(Player);
+			FString PlayerTag = FString::FromInt(ActivePlayer);
 			Laser->Tags.Add(*PlayerTag);
+			Laser->DespawnSide = DespawnSideTag;
+			if (ActivePlayer == 1)
+			{
+				Laser->EnemyPlayer = 2;
+			}
+			else
+			{
+				Laser->EnemyPlayer = 1;
+			}
 		}
 	}
 }
