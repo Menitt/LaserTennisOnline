@@ -33,7 +33,7 @@ void ASpark::BeginPlay()
         Timeline->AddInterpFloat(MovementCurve, TimelineProgress);
         Timeline->SetTimelineFinishedFunc(TimelineFinished);
         Timeline->SetLooping(false);
-		Timeline->SetPlayRate(1.0f / Period);
+		// Timeline->SetPlayRate(1.0f / Period);
         Timeline->PlayFromStart();
     }
     else
@@ -46,10 +46,14 @@ void ASpark::BeginPlay()
 
 void ASpark::HandleProgress(float Value)
 {
-    if (IsValid(Spline))
+    if (IsValid(Spline) and IsValid(Timeline))
 	{
 		float SplineLength = Spline->GetSplineLength();
 		float DistanceAlongSpline = Value * SplineLength;
+
+        // Set Period for timeline
+        float Period = SplineLength / Speed / 100;
+        Timeline->SetPlayRate(1.0f / Period);
 
 		FVector NewLocation = Spline->GetLocationAtDistanceAlongSpline(DistanceAlongSpline, ESplineCoordinateSpace::World);
 		FRotator NewRotation = Spline->GetRotationAtDistanceAlongSpline(DistanceAlongSpline, ESplineCoordinateSpace::World);

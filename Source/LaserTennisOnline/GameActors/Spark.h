@@ -43,7 +43,7 @@ protected:
 	int ActivePlayer;
 
 	UPROPERTY(EditDefaultsOnly)
-	float Period = 5.;
+	float Speed = 5.;
 
 public:	
 	// Called every frame

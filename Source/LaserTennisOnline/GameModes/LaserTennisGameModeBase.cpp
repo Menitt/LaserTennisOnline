@@ -49,7 +49,7 @@ void ALaserTennisGameModeBase::SetupTimer()
 
 void ALaserTennisGameModeBase::ManagePlatforms()
 {
-
+    
     UpdateActivePlatformsList(ActiveLaserPlatforms1, laserPlatforms1);
     UpdateActivePlatformsList(ActiveLaserPlatforms2, laserPlatforms2);
 
@@ -235,14 +235,14 @@ void ALaserTennisGameModeBase::StartCountdown()
         ManagePlatforms();
     }
 
-    // if (HealthPanel1)
-    // {
-    //     HealthPanel1->Activate(CountdownTime);
-    // }
-    // if (HealthPanel2)
-    // {
-    //     HealthPanel2->Activate(CountdownTime);
-    // }
+    if (HealthPanel1)
+    {
+        HealthPanel1->Activate(CountdownTime);
+    }
+    if (HealthPanel2)
+    {
+        HealthPanel2->Activate(CountdownTime);
+    }
 
 }
 

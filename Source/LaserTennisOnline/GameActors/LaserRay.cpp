@@ -10,6 +10,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"
 #include "DrawDebugHelpers.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 
 // Sets default values
 ALaserRay::ALaserRay()
@@ -27,6 +29,7 @@ ALaserRay::ALaserRay()
 	
 	RootComponent = CollisionComponent;
 	Mesh->SetupAttachment(RootComponent);
+	
 	ProjectileComp->UpdatedComponent = RootComponent;
 }
 
@@ -43,7 +46,69 @@ void ALaserRay::BeginPlay()
 		CollisionComponent->OnComponentHit.AddDynamic(this, &ThisClass::OnHitObject);
 		CollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnBeginOverlapObject);
 	}
+
+
+	// LaserSpawnVFX
+	UNiagaraComponent* LaserSpawnNiagara = UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+	GetWorld(),
+	LaserSpawnVFXTemplate,
+	GetActorLocation(),
+	GetActorRotation(),
+	FVector(1.f),
+	true, // auto destroy
+	true, // auto activate
+	ENCPoolMethod::AutoRelease
+	);
+
+	// Bind StartLaser to OnFinished
+	if (IsValid(LaserSpawnNiagara))
+	{
+		LaserSpawnNiagara->OnSystemFinished.AddDynamic(this, &ALaserRay::ActivateLaser);
+	
+		// Set Speed to 0
+		if (IsValid(ProjectileComp))
+		{
+			ProjectileComp->InitialSpeed = 0;
+		}
+		
+		// Set Mesh Invisible
+		if (IsValid(Mesh))
+		{
+			Mesh->SetVisibility(false);
+		}
+	}
 }
+
+
+void ALaserRay::ActivateLaser(UNiagaraComponent* FinishedSystem)
+{
+	// Set Mesh back to visible
+	if(IsValid(Mesh))
+	{
+		Mesh->SetVisibility(true);
+	}
+
+	// Start Moving
+	if (IsValid(ProjectileComp))
+	{
+		ProjectileComp->MaxSpeed = 400;
+		ProjectileComp->Velocity *= 400;
+	}
+
+	// Spawn Laser Mesh VFX
+	UNiagaraFunctionLibrary::SpawnSystemAttached(
+    LaserMeshVFXTemplate,                  // UNiagaraSystem*
+    Mesh,
+	NAME_None,                       // USceneComponent* to attach to                 // Optional socket name
+    FVector::ZeroVector,                 // Relative location
+    FRotator::ZeroRotator,              // Relative rotation
+    EAttachLocation::SnapToTarget,       // How to align
+    true                                 // AutoDestroy
+);
+
+
+}
+
 
 // Called every frame
 void ALaserRay::Tick(float DeltaTime)
@@ -96,16 +161,6 @@ void ALaserRay::OnBeginOverlapObject(UPrimitiveComponent* OverlappedComp, AActor
 		}
 	}
 }
-
-
-
-
-
-
-
-
-
-
 
 
 void ALaserRay::PlaySound_Implementation()

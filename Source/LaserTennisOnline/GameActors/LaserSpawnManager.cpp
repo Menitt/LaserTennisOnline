@@ -17,20 +17,21 @@ ALaserSpawnManager::ALaserSpawnManager()
 	RootComponent = Mesh;
 
 	// Create Components
-	LaserSpawnLocation_1_North = CreateDefaultSubobject<USceneComponent>("Spawn Location 1 North");
+
 	LaserSpawnLocation_1_South = CreateDefaultSubobject<USceneComponent>("Spawn Location 1 South");
 	LaserSpawnLocation_1_West = CreateDefaultSubobject<USceneComponent>("Spawn Location 1 West");
 	LaserSpawnLocation_1_East = CreateDefaultSubobject<USceneComponent>("Spawn Location 1 East");
+	LaserSpawnLocation_1_North = CreateDefaultSubobject<USceneComponent>("Spawn Location 1 North");
 
 	LaserSpawnLocation_2_North = CreateDefaultSubobject<USceneComponent>("Spawn Location 2 North");
 	LaserSpawnLocation_2_South = CreateDefaultSubobject<USceneComponent>("Spawn Location 2 South");
 	LaserSpawnLocation_2_West = CreateDefaultSubobject<USceneComponent>("Spawn Location 2 West");
 	LaserSpawnLocation_2_East = CreateDefaultSubobject<USceneComponent>("Spawn Location 2 East");
 
-	LaserSpawnLocation_1_North->SetupAttachment(RootComponent);
 	LaserSpawnLocation_1_South->SetupAttachment(RootComponent);
 	LaserSpawnLocation_1_West->SetupAttachment(RootComponent);
 	LaserSpawnLocation_1_East->SetupAttachment(RootComponent);
+	LaserSpawnLocation_1_North->SetupAttachment(RootComponent);
 	LaserSpawnLocation_2_North->SetupAttachment(RootComponent);
 	LaserSpawnLocation_2_South->SetupAttachment(RootComponent);
 	LaserSpawnLocation_2_West->SetupAttachment(RootComponent);
@@ -44,46 +45,50 @@ void ALaserSpawnManager::BeginPlay()
 	Super::BeginPlay();
 	
 	// Set Relative Location of LaserSpawnLocationComponents
-	float X_West = X_North - X_Offset;
-	float X_East = X_North + X_Offset;
+	float Y_East = Y_West;
+	float X_South = X_North;
 	
 	FVector LocationNorth1 = FVector(X_North, Y_North, Z);
-	FVector LocationSouth1 = FVector(X_North, -Y_North, Z);
-	FVector LocationWest1 = FVector(X_West, 0., Z);
-	FVector LocationEast1 = FVector(X_East, 0., Z);
+	FVector LocationSouth1 = FVector(X_South, Y_South, Z);
+	FVector LocationWest1 = FVector(X_West, Y_West, Z);
+	FVector LocationEast1 = FVector(X_East, Y_East, Z);
 	FVector LocationNorth2 = FVector(-X_North, Y_North, Z);
-	FVector LocationSouth2 = FVector(-X_North, -Y_North, Z);
-	FVector LocationWest2 = FVector(-X_East, 0., Z);
-	FVector LocationEast2 = FVector(-X_West, 0., Z);
+	FVector LocationSouth2 = FVector(-X_South, Y_South, Z);
+	FVector LocationWest2 = FVector(-X_East, Y_West, Z);
+	FVector LocationEast2 = FVector(-X_West, Y_East, Z);
 
 	FRotator RotationNorth = FRotator(0., 90.,0.);
 	FRotator RotationSouth = FRotator(0., -90.,0.);
 	FRotator RotationWest = FRotator(0., 0., 0.);
 	FRotator RotationEast = FRotator(0., 180., 0.);
 
-	LaserSpawnLocation_1_North->SetRelativeLocation(LocationNorth1);
+	LaserSpawnLocation_1_North->SetWorldLocation(LocationNorth1);
 	LaserSpawnLocation_1_North->SetRelativeRotation(RotationNorth);
 
-	LaserSpawnLocation_1_South->SetRelativeLocation(LocationSouth1);
+	LaserSpawnLocation_1_South->SetWorldLocation(LocationSouth1);
 	LaserSpawnLocation_1_South->SetRelativeRotation(RotationSouth);
 
-	LaserSpawnLocation_1_West->SetRelativeLocation(LocationWest1);
+	LaserSpawnLocation_1_West->SetWorldLocation(LocationWest1);
 	LaserSpawnLocation_1_North->SetRelativeRotation(RotationWest);
 
-	LaserSpawnLocation_1_East->SetRelativeLocation(LocationEast1);
+	LaserSpawnLocation_1_East->SetWorldLocation(LocationEast1);
 	LaserSpawnLocation_1_East->SetRelativeRotation(RotationEast);
 
-	LaserSpawnLocation_2_North->SetRelativeLocation(LocationNorth2);
+	LaserSpawnLocation_2_North->SetWorldLocation(LocationNorth2);
 	LaserSpawnLocation_2_North->SetRelativeRotation(RotationNorth);
 
-	LaserSpawnLocation_2_South->SetRelativeLocation(LocationSouth2);
+	LaserSpawnLocation_2_South->SetWorldLocation(LocationSouth2);
 	LaserSpawnLocation_2_South->SetRelativeRotation(RotationSouth);
 
-	LaserSpawnLocation_2_West->SetRelativeLocation(LocationWest2);
+	LaserSpawnLocation_2_West->SetWorldLocation(LocationWest2);
 	LaserSpawnLocation_2_West->SetRelativeRotation(RotationWest);
 
-	LaserSpawnLocation_2_East->SetRelativeLocation(LocationEast2);
+	LaserSpawnLocation_2_East->SetWorldLocation(LocationEast2);
 	LaserSpawnLocation_2_East->SetRelativeRotation(RotationEast);
+
+	LaserSpawnLocation_1_North->SetWorldLocation(LocationNorth1);
+	LaserSpawnLocation_1_North->SetRelativeRotation(RotationNorth);
+
 
 }
 

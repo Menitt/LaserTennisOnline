@@ -47,14 +47,14 @@ protected:
 	UPROPERTY(EditAnywhere)
 	class USceneComponent* LaserSpawnLocation_2_East;
 
-	UPROPERTY(EditDefaultsOnly)
-	float X_North;
-	UPROPERTY(EditDefaultsOnly)
-	float X_Offset;
-	UPROPERTY(EditDefaultsOnly)
-	float Y_North;
-	UPROPERTY(EditDefaultsOnly)
-	float Z;
+
+	float X_East = -150.;
+	float X_West = -2018.;
+	float Y_West = 8.;
+	float X_North = -1095.5;
+	float Y_North = -1000.;
+	float Y_South = 1010.;
+	float Z = 40.;
 
 	// Laser Ray Class
 	UPROPERTY(EditDefaultsOnly)

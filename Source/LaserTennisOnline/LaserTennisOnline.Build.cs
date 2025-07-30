@@ -10,7 +10,7 @@ public class LaserTennisOnline : ModuleRules
 	
 		PrivateIncludePaths.AddRange(new string [] {"LaserTennisOnline\\GameActors", "LaserTennisOnline\\GameModes", "LaserTennisOnline\\Player", "LaserTennisOnline\\UI", "LaserTennisOnline\\Player\\AI"});
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput","UMG", "MultiplayerSessions", "OnlineSubsystem", "OnlineSubsystemSteam","AIModule"});
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput","UMG", "MultiplayerSessions", "OnlineSubsystem", "OnlineSubsystemSteam","AIModule", "Niagara"});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

@@ -73,4 +73,14 @@ private:
 	UFUNCTION(NetMulticast, Reliable) void PlaySound();
 
 
+// VFX
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "VFX") class UNiagaraSystem* LaserSpawnVFXTemplate;
+	UPROPERTY(EditDefaultsOnly, Category = "VFX") class UNiagaraSystem* LaserMeshVFXTemplate;
+
+
+	UFUNCTION()
+	void ActivateLaser(class UNiagaraComponent* FinishedSystem);
+
+
 };
