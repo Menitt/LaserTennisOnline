@@ -47,6 +47,8 @@ protected:
 	class AHealthPanel* HealthPanel1;
 	class AHealthPanel* HealthPanel2;
 
+	class AMegaScreen* MegaScreen;
+
 	int PlayerCount = 0;
 
 //

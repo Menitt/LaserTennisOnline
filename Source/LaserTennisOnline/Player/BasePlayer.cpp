@@ -26,6 +26,9 @@
 #include "Sound/SoundCue.h"
 #include "Components/AudioComponent.h"
 #include "TimerManager.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
+
 
 
 #pragma region Constructor & Initialization
@@ -60,6 +63,9 @@ Super(ObjectInitializer.SetDefaultSubobjectClass<UCustomCharacterMovementCompone
 	// Audio Component
 	AudioComponent = CreateDefaultSubobject<UAudioComponent>("Audio Component");
 	AudioComponent->SetupAttachment(RootComponent);
+
+	// Niagara Component
+	FireVFX = CreateDefaultSubobject<UNiagaraComponent>("Niagara Comp");
 }
 
 // Called when the game starts or when spawned
@@ -213,28 +219,27 @@ void ABasePlayer::StartCountdown_Implementation(int Timer)
 {
 	if (IsLocallyControlled())
 	{
+		// Disable Inputs
 		APlayerController* PlayerController = Cast<APlayerController>(GetController());
 		DisableInput(PlayerController);
-		UCountDownWidget* CountdownWidget = CreateWidget<UCountDownWidget>(GetWorld(),CountdownWidgetClass);
+		
+		// // Spawn Countdown Widget -> Logic moved to MegaScreen class
+		// UCountDownWidget* CountdownWidget = CreateWidget<UCountDownWidget>(GetWorld(),CountdownWidgetClass);
+		// if (CountdownWidget)
+		// {
+		// 	CountdownWidget->MenuSetup();
+		// 	CountdownWidget->StartCountdown(Timer);
+		// 	// If Actor is on the server, bind end of count down to Game mode start
+		// 	if (GetLocalRole() == ROLE_Authority)
+		// 	{
+		// 		ALaserTennisGameModeBase* GameMode = Cast<ALaserTennisGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
+		// 		if (GameMode)
+		// 		{
+		// 			CountdownWidget->OnCountdownComplete.AddDynamic(GameMode,&ALaserTennisGameModeBase::StartGame);
+		// 		}
+		// 	}
 
-		UE_LOG(LogTemp, Warning, TEXT("Base Player -> Start Countdown"));
-
-		// Spawn Countdown Widget
-		if (CountdownWidget)
-		{
-			CountdownWidget->MenuSetup();
-			CountdownWidget->StartCountdown(Timer);
-			// If Actor is on the server, bind end of count down to Game mode start
-			if (GetLocalRole() == ROLE_Authority)
-			{
-				ALaserTennisGameModeBase* GameMode = Cast<ALaserTennisGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
-				if (GameMode)
-				{
-					CountdownWidget->OnCountdownComplete.AddDynamic(GameMode,&ALaserTennisGameModeBase::StartGame);
-				}
-			}
-
-		}
+		// }
 
 	}
 
@@ -265,6 +270,8 @@ void ABasePlayer::CustomTakeDamage_Implementation()
 	// Animation
 	this->PlayAnimMontage(TakeDamageMontage);
 	
+	// VFX
+	this->SpawnFireEffect();
 
 	if (GetLocalRole() == ROLE_Authority)
 	{
@@ -285,11 +292,12 @@ void ABasePlayer::CustomTakeDamage_Implementation()
 void ABasePlayer::GameOver_Implementation(bool bWonGame)
 {
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	UE_LOG(LogTemp, Warning, TEXT("Inside BasePlayer->GameOver"));
 
 	if (PlayerController and PlayerController->IsLocalController())
 	{
 		this->DisableInput(PlayerController);
-	
+		
 		// Spawn Menu Widget
 		if (bWonGame)
 		{
@@ -316,7 +324,29 @@ void ABasePlayer::GameOver_Implementation(bool bWonGame)
 
 void ABasePlayer::HandleDestruction()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Handle Player Destruction"));
+	// Spawn Explosion Effect
+	UNiagaraFunctionLibrary::SpawnSystemAttached(
+    ExplosionVFXTemplate,                  // UNiagaraSystem*
+    GetMesh(),
+	FName("Spine"),                       // USceneComponent* to attach to                 // Optional socket name
+    FVector::ZeroVector,                 // Relative location
+    FRotator::ZeroRotator,              // Relative rotation
+    EAttachLocation::SnapToTarget,       // How to align
+    true); 
+
+	// Hide Mesh
 	GetMesh()->SetVisibility(false);
+
+	// Stop Emitters
+	if (IsValid(FireVFX))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Changing Spawn Rates"));
+		float Zero = 0.0f;
+		FireVFX->SetVariableFloat(FName("SpawnRateFire"), Zero);
+		FireVFX->SetVariableFloat(FName("SpawnRateSmoke"), Zero);
+		FireVFX->SetVariableFloat(FName("SpawnRateSparks"), Zero);
+	}
 
 	// Destroy Pawn if AI controlled
 	AAIController* AIController = Cast<AAIController>(GetController());
@@ -357,27 +387,65 @@ void ABasePlayer::OnTakeDamageMontageCompleted(UAnimMontage* AnimMontage, bool b
 #pragma endregion
 
 
-#pragma region Sound
+#pragma region VFX
 
-void ABasePlayer::SetWalkSound(float Speed)
+void ABasePlayer::SpawnFireEffect()
 {
-	// Clear previous timer
-	GetWorld()->GetTimerManager().ClearTimer(WalkSoundTimerHandle);
-	// Set new timer
-	float Ratio = WalkSoundConstantRate/Speed;
-	
-	PlayWalkSound();
-	// PlayWalkSound();
-	GetWorld()->GetTimerManager().SetTimer(WalkSoundTimerHandle,this,&ThisClass::PlayWalkSound,Ratio,true);
-}
+	// Update Damage Counter
+	DamageCounter += 1;
 
-void ABasePlayer::PlayWalkSound()
-{
-	if (AudioComponent)
+	// Spawn Niagara System
+	FireVFX = UNiagaraFunctionLibrary::SpawnSystemAttached(
+    FireVFXTemplate,                  // UNiagaraSystem*
+    GetMesh(),
+	FName("Spine2"),                       // USceneComponent* to attach to                 // Optional socket name
+    FVector::ZeroVector,                 // Relative location
+    FRotator::ZeroRotator,              // Relative rotation
+    EAttachLocation::SnapToTarget,       // How to align
+    true);                                 // AutoDestroy
+
+	if (IsValid(FireVFX))
 	{
-		AudioComponent->Stop();
-		AudioComponent->Play();
+		FireVFX->Activate();
 	}
+
+	// Update Dynamic parameters
+	switch (DamageCounter)
+	{
+	case 1:
+		FireSpawnRate = 0;
+		SmokeSpawnRate = 20;
+		SparksSpawnRate = 0;
+		break;
+	
+	case 2:
+		FireSpawnRate = 0;
+		SmokeSpawnRate = 30;
+		SparksSpawnRate = 40;
+		break;
+	
+	case 3:
+		FireSpawnRate = 45;
+		SmokeSpawnRate = 30;
+		SparksSpawnRate = 75;
+		break;
+	
+	case 4:
+		FireSpawnRate = 75;
+		SmokeSpawnRate = 50;
+		SparksSpawnRate = 100;
+		break;
+	}
+	
+
+	if (IsValid(FireVFX))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Spawn Fire Effect"));
+		FireVFX->SetVariableFloat(FName("SpawnRateFire"), FireSpawnRate);
+		FireVFX->SetVariableFloat(FName("SpawnRateSmoke"), SmokeSpawnRate);
+		FireVFX->SetVariableFloat(FName("SpawnRateSparks"), SparksSpawnRate);
+	}
+
 }
 
 

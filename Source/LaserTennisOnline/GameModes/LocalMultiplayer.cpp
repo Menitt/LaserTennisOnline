@@ -119,8 +119,6 @@ void ALocalMultiplayer::BeginPlay()
     FTimerHandle StartGameTimerHandle;
     GetWorld()->GetTimerManager().SetTimer(StartGameTimerHandle, this, &ThisClass::StartCountdown, .5f, false);
 
-    // StartCountdown();
-
 }
 
 
@@ -166,9 +164,10 @@ void ALocalMultiplayer::StartCountdown()
 {
     Super::StartCountdown();
 
-    if (SharedInputPawn)
+    if (IsValid(SharedInputPawn) and not TestingFlag)
     {
         SharedInputPawn->StartCountdown(CountdownTime);
+        UE_LOG(LogTemp, Warning, TEXT("LocalMultiplayer->StartCountdown, testing not active"));
     }
 
 }
@@ -186,28 +185,30 @@ void ALocalMultiplayer::StartGame()
 
 void ALocalMultiplayer::HandleMatchHasEnded()
 {
-    if (Player1 and Player1->GameOverWidget)
-    {
-        Player1->GameOverWidget->RemoveFromParent();
-    }
-    if (Player2 and Player2->GameOverWidget)
-    {
-        Player2->GameOverWidget->RemoveFromParent();
-    }
     
-    UGameOverWidget* NewGameOverWidget;
-    if (Player1 and Player1->bIsAlive())
-    {
-        NewGameOverWidget = CreateWidget<UGameOverWidget>(GetWorld(), Player1WinnerWidgetClass);
-    }
-    else
-    {
-        NewGameOverWidget = CreateWidget<UGameOverWidget>(GetWorld(), Player2WinnerWidgetClass);
-    }
-    if (NewGameOverWidget)
-    {
-        NewGameOverWidget->MenuSetup();
-    }
+    Super::HandleMatchHasEnded();
+    // if (Player1 and Player1->GameOverWidget)
+    // {
+    //     Player1->GameOverWidget->RemoveFromParent();
+    // }
+    // if (Player2 and Player2->GameOverWidget)
+    // {
+    //     Player2->GameOverWidget->RemoveFromParent();
+    // }
+    
+    // UGameOverWidget* NewGameOverWidget;
+    // if (Player1 and Player1->bIsAlive())
+    // {
+    //     NewGameOverWidget = CreateWidget<UGameOverWidget>(GetWorld(), Player1WinnerWidgetClass);
+    // }
+    // else
+    // {
+    //     NewGameOverWidget = CreateWidget<UGameOverWidget>(GetWorld(), Player2WinnerWidgetClass);
+    // }
+    // if (NewGameOverWidget)
+    // {
+    //     NewGameOverWidget->MenuSetup();
+    // }
 }
 
 

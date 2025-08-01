@@ -128,19 +128,12 @@ void ALaserRay::OnHitObject(UPrimitiveComponent *HitComponent, AActor *OtherActo
 
 			if (Player)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("On Hit Object: Hit Player!"));
-
 				Player->CustomTakeDamage();
 				
 				PlaySound();
 
 				Destroy();
 			}
-
-			else
-			{
-				UE_LOG(LogTemp, Warning, TEXT("On Hit Object!"));
-			}	
 		}
 
 	}

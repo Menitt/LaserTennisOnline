@@ -163,4 +163,21 @@ public:
 	class UGameOverWidget* GameOverWidget;
 	UBaseUserWidget* GameStartCountdown;
 
+//
+// VFX
+//
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "VFX") class UNiagaraSystem* FireVFXTemplate;
+	UPROPERTY(EditDefaultsOnly, Category = "VFX") class UNiagaraSystem* ExplosionVFXTemplate;
+
+	class UNiagaraComponent* FireVFX;
+
+	int DamageCounter = 0;
+	float FireSpawnRate = 0;
+	float SmokeSpawnRate = 0;
+	float SparksSpawnRate = 0;
+	void SpawnFireEffect();
+
+
+
 };

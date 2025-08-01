@@ -82,4 +82,13 @@ public:
 
 	virtual void ReturnToMainMenuHost() override;
 	virtual void StartGame() override;
+
+//
+// TESTING
+//
+private:
+	UPROPERTY(EditAnywhere, Category = "Testing") bool TestingFlag = false;
+
+
+
 };

@@ -13,6 +13,8 @@
 #include "HealthPanel.h"
 #include "GameFramework/GameStateBase.h"
 #include "CountDownWidget.h"
+#include "MegaScreen.h"
+
 
 void ALaserTennisGameModeBase::SetupGame()
 {
@@ -38,6 +40,14 @@ void ALaserTennisGameModeBase::SetupGame()
     {
         HealthPanel2 = Cast<AHealthPanel>(TempArray[0]);
     }
+
+    // Get Mega Screen
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(),AMegaScreen::StaticClass(),TempArray);
+    if (TempArray.Num() > 0)
+    {
+        MegaScreen = Cast<AMegaScreen>(TempArray[0]);
+    }
+
 
 
 }
@@ -201,11 +211,11 @@ void ALaserTennisGameModeBase::HandleMatchHasEnded()
 {
     Super::HandleMatchHasEnded();
 
-    if (Player1)
+    if (IsValid(Player1))
     {
         Player1->GameOver(Player1->bIsAlive());
     }
-    if (Player2)
+    if (IsValid(Player2))
     {
         Player2->GameOver(Player2->bIsAlive());
     }
@@ -230,18 +240,27 @@ void ALaserTennisGameModeBase::StartGame()
 void ALaserTennisGameModeBase::StartCountdown()
 {
     
+
+    // Setup Platforms
     for (int i=0; i<laserPlatforms1.Num(); ++i)
     {
         ManagePlatforms();
     }
 
-    if (HealthPanel1)
+    // Setup HealthPanels
+    if (IsValid(HealthPanel1))
     {
         HealthPanel1->Activate(CountdownTime);
     }
-    if (HealthPanel2)
+    if (IsValid(HealthPanel2))
     {
         HealthPanel2->Activate(CountdownTime);
+    }
+
+    // Start Countfown on Screen
+    if (IsValid(MegaScreen))
+    {
+        MegaScreen->StartCountdown(CountdownTime);
     }
 
 }

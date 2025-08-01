@@ -35,11 +35,17 @@ private:
 
 	void StartGame();
 
-	UPROPERTY(meta = (BindWidget))
-	class UEditableTextBox* CountdownText;
+	UPROPERTY(meta = (BindWidget)) class UMultiLineEditableTextBox* CountdownText;
+	// class UEditableTextBox* CountdownText;
+	
+
 
 	FTimerHandle TimerHandle;
 
 	void BroadcastGameStart();
+
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "Color")
+	FVector TextColorRGB;
 
 };
