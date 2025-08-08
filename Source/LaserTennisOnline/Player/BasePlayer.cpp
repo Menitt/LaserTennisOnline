@@ -298,20 +298,23 @@ void ABasePlayer::GameOver_Implementation(bool bWonGame)
 	{
 		this->DisableInput(PlayerController);
 		
-		// Spawn Menu Widget
-		if (bWonGame)
-		{
-			GameOverWidget = CreateWidget<UGameOverWidget>(GetWorld(),GameOverVictoryClass);
-		}
-		else
-		{
-			GameOverWidget = CreateWidget<UGameOverWidget>(GetWorld(),GameOverDefeatClass);
-		}
+		//--------------------------------------------
+		// The type of widget to swpawn at the end should be handled in a separate function and called bt the GameMode
 		
-		if (GameOverWidget)
-		{
-			GameOverWidget->MenuSetup();
-		}
+		// // Spawn Menu Widget
+		// if (bWonGame)
+		// {
+		// 	GameOverWidget = CreateWidget<UGameOverWidget>(GetWorld(),GameOverVictoryClass);
+		// }
+		// else
+		// {
+		// 	GameOverWidget = CreateWidget<UGameOverWidget>(GetWorld(),GameOverDefeatClass);
+		// }
+		
+		// if (GameOverWidget)
+		// {
+		// 	GameOverWidget->MenuSetup();
+		// }
 	}
 
 	if (not bWonGame)
@@ -324,29 +327,19 @@ void ABasePlayer::GameOver_Implementation(bool bWonGame)
 
 void ABasePlayer::HandleDestruction()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Handle Player Destruction"));
-	// Spawn Explosion Effect
-	UNiagaraFunctionLibrary::SpawnSystemAttached(
-    ExplosionVFXTemplate,                  // UNiagaraSystem*
-    GetMesh(),
-	FName("Spine"),                       // USceneComponent* to attach to                 // Optional socket name
-    FVector::ZeroVector,                 // Relative location
-    FRotator::ZeroRotator,              // Relative rotation
-    EAttachLocation::SnapToTarget,       // How to align
-    true); 
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+    GetWorld(),
+    ExplosionVFXTemplate,
+    GetActorLocation() + FVector(0,0,15),
+    GetActorRotation(),
+    FVector(1.0),
+	true,    // bAutoDestroy
+    true,    // bAutoActivate
+    ENCPoolMethod::None,
+    true     // bPreCullCheck
+	);
 
-	// Hide Mesh
-	GetMesh()->SetVisibility(false);
-
-	// Stop Emitters
-	if (IsValid(FireVFX))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Changing Spawn Rates"));
-		float Zero = 0.0f;
-		FireVFX->SetVariableFloat(FName("SpawnRateFire"), Zero);
-		FireVFX->SetVariableFloat(FName("SpawnRateSmoke"), Zero);
-		FireVFX->SetVariableFloat(FName("SpawnRateSparks"), Zero);
-	}
+	Destroy();
 
 	// Destroy Pawn if AI controlled
 	AAIController* AIController = Cast<AAIController>(GetController());
@@ -404,11 +397,6 @@ void ABasePlayer::SpawnFireEffect()
     EAttachLocation::SnapToTarget,       // How to align
     true);                                 // AutoDestroy
 
-	if (IsValid(FireVFX))
-	{
-		FireVFX->Activate();
-	}
-
 	// Update Dynamic parameters
 	switch (DamageCounter)
 	{
@@ -419,14 +407,14 @@ void ABasePlayer::SpawnFireEffect()
 		break;
 	
 	case 2:
-		FireSpawnRate = 0;
+		FireSpawnRate = 30;
 		SmokeSpawnRate = 30;
 		SparksSpawnRate = 40;
 		break;
 	
 	case 3:
 		FireSpawnRate = 45;
-		SmokeSpawnRate = 30;
+		SmokeSpawnRate = 40;
 		SparksSpawnRate = 75;
 		break;
 	
@@ -440,10 +428,11 @@ void ABasePlayer::SpawnFireEffect()
 
 	if (IsValid(FireVFX))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Spawn Fire Effect"));
-		FireVFX->SetVariableFloat(FName("SpawnRateFire"), FireSpawnRate);
-		FireVFX->SetVariableFloat(FName("SpawnRateSmoke"), SmokeSpawnRate);
-		FireVFX->SetVariableFloat(FName("SpawnRateSparks"), SparksSpawnRate);
+		UE_LOG(LogTemp, Warning, TEXT("Updating Spawn Rates"));
+		
+		FireVFX->SetVariableFloat(FName("User.SpawnRateSmoke"), SmokeSpawnRate);
+		FireVFX->SetVariableFloat(FName("User.SpawnRateSparks"), SparksSpawnRate);
+		FireVFX->SetVariableFloat(FName("User.SpawnRateFire"), FireSpawnRate);
 	}
 
 }

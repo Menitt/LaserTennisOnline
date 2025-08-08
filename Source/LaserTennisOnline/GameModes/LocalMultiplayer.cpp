@@ -187,28 +187,20 @@ void ALocalMultiplayer::HandleMatchHasEnded()
 {
     
     Super::HandleMatchHasEnded();
-    // if (Player1 and Player1->GameOverWidget)
-    // {
-    //     Player1->GameOverWidget->RemoveFromParent();
-    // }
-    // if (Player2 and Player2->GameOverWidget)
-    // {
-    //     Player2->GameOverWidget->RemoveFromParent();
-    // }
     
-    // UGameOverWidget* NewGameOverWidget;
-    // if (Player1 and Player1->bIsAlive())
-    // {
-    //     NewGameOverWidget = CreateWidget<UGameOverWidget>(GetWorld(), Player1WinnerWidgetClass);
-    // }
-    // else
-    // {
-    //     NewGameOverWidget = CreateWidget<UGameOverWidget>(GetWorld(), Player2WinnerWidgetClass);
-    // }
-    // if (NewGameOverWidget)
-    // {
-    //     NewGameOverWidget->MenuSetup();
-    // }
+    UGameOverWidget* NewGameOverWidget;
+    if (Player1 and Player1->bIsAlive())
+    {
+        NewGameOverWidget = CreateWidget<UGameOverWidget>(GetWorld(), Player1WinnerWidgetClass);
+    }
+    else
+    {
+        NewGameOverWidget = CreateWidget<UGameOverWidget>(GetWorld(), Player2WinnerWidgetClass);
+    }
+    if (NewGameOverWidget)
+    {
+        NewGameOverWidget->MenuSetup();
+    }
 }
 
 

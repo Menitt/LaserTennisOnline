@@ -18,6 +18,8 @@ class LASERTENNISONLINE_API AMainMenuGameMode : public AGameMode
 	
 	virtual void PostLogin(class APlayerController* NewPlayer) override;
 
+	virtual void BeginPlay() override;
+
 public:
 	AMainMenuGameMode();
 
