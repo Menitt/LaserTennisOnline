@@ -14,3 +14,5 @@ This mode fully supports network replication within the Server-Client framework 
 ------------------------------------------------------------------------------------------------------------
 
 ![unknown_2025 08 22-14 49](https://github.com/user-attachments/assets/a7e181cb-3a3b-4315-903d-3e3adaa1782a)
+
+![Gameplay](https://github.com/user-attachments/assets/85134932-4b76-46d1-8c83-a8e65bfb35ba)
