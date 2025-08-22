@@ -12,4 +12,5 @@ The online game mode utilizes the _Steam Multipayer Subsystem_ to establish a co
 This mode fully supports network replication within the Server-Client framework of Unreal Engine. 
 
 ------------------------------------------------------------------------------------------------------------
-![InstantGif_2025 01 23-22 33](https://github.com/user-attachments/assets/146d5323-0832-49a4-a826-2874a113d9aa)
+
+![unknown_2025 08 22-14 49](https://github.com/user-attachments/assets/a7e181cb-3a3b-4315-903d-3e3adaa1782a)
