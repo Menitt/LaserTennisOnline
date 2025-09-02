@@ -27,4 +27,16 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UUserWidget> MainMenuWidgetClass;
 
+	//
+	// Lighting
+	//
+	TArray<AActor*> CeilingLights;
+	void FetchLightActors();
+	void ActivateLights();
+	FTimerHandle LightTimerHandle;
+
+	UPROPERTY(Category = "Lighting", EditDefaultsOnly) TArray<FLinearColor> ColorList;
+	UPROPERTY(Category = "Lighting", EditDefaultsOnly) int MinLightActivate = 3;
+	UPROPERTY(Category = "Lighting", EditDefaultsOnly) int MAxLightActivate = 12;
+
 };

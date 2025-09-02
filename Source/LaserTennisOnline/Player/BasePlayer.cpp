@@ -341,13 +341,13 @@ void ABasePlayer::HandleDestruction()
 
 	Destroy();
 
-	// Destroy Pawn if AI controlled
-	AAIController* AIController = Cast<AAIController>(GetController());
+	// // Destroy Pawn if AI controlled
+	// AAIController* AIController = Cast<AAIController>(GetController());
 
-	if (AIController)
-	{
-		Destroy();
-	}
+	// if (AIController)
+	// {
+	// 	Destroy();
+	// }
 }
 
 
