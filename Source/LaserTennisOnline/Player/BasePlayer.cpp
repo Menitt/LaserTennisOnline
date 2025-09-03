@@ -89,6 +89,10 @@ void ABasePlayer::BeginPlay()
 		}
 	}
 
+	//
+	// Setup Sound
+	// 
+	GetWorld()->GetTimerManager().SetTimer(WalkedDistanceHandle, this, &ThisClass::UpdateWalkedDistance, WalkedDistanceUpdateLag, true);
 }
 
 void ABasePlayer::PossessedBy(AController* NewController)
@@ -177,6 +181,7 @@ void ABasePlayer::jump(const FInputActionValue& value)
 		}
 		ACharacter::Jump();
 
+		PlayJumpSound();
 	}
 } 
 
@@ -245,6 +250,8 @@ void ABasePlayer::StartGame_Implementation()
 		EnableEnhancedInputSystem(PlayerController);
 		this->EnableInput(PlayerController);
 	}
+
+	GameStarted = true;
 }
 
 
@@ -422,6 +429,69 @@ void ABasePlayer::SpawnExplosion()
     true     // bPreCullCheck
 	);
 
+}
+
+#pragma endregion
+
+
+#pragma region Sound
+
+void ABasePlayer::UpdateWalkedDistance()
+{
+	
+	if(IsValid(CustomCharacterMovementComponent) and CustomCharacterMovementComponent->IsWalking()
+		and not CustomCharacterMovementComponent->IsFalling())
+	{
+		// Get Speed
+		FVector Velocity = CustomCharacterMovementComponent->Velocity;
+		float CurrentSpeed = Velocity.Size();
+
+		// Rest Walked Distance if Character stops
+		if (CurrentSpeed == 0)
+		{
+			WalkedDistance = 0;
+		}
+		else
+		{
+			WalkedDistance += CurrentSpeed * WalkedDistanceUpdateLag;
+
+			float DistanceStepSound = StartSpeed < 300 ? WalkDistanceStepSound : RunDistanceStepSound;
+
+			if(WalkedDistance > DistanceStepSound)
+			{
+				PlayStepSound();
+				WalkedDistance = 0.0;
+			}
+		}
+
+		StartSpeed = CurrentSpeed;
+	}
+}
+
+
+void ABasePlayer::PlayStepSound()
+{
+	if (IsValid(StepSound))
+	{
+		UGameplayStatics::PlaySoundAtLocation(this,StepSound,GetActorLocation(),1.0,1.0,StepSoundStartTime);
+	}
+}
+
+
+void ABasePlayer::PlayJumpSound()
+{
+	if (IsValid(JumpSound))
+	{
+		UGameplayStatics::PlaySoundAtLocation(this,JumpSound,GetActorLocation(),1.0,1.0,JumpSoundStartTime);
+	}
+}
+
+void ABasePlayer::PlayLandSound()
+{
+	if (IsValid(LandSound) and GameStarted)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this,LandSound,GetActorLocation(),1.0,1.0,LandSoundStartTime);
+	}
 }
 
 #pragma endregion

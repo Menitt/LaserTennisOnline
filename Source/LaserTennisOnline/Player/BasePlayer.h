@@ -166,4 +166,35 @@ private:
 	void SpawnFireEffect();
 	void SpawnExplosion();
 
+//
+// SOUND
+//
+private:
+	// ASSETS
+	UPROPERTY(EditDefaultsOnly, Category = "Sound")
+	class USoundCue* StepSound;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound") float StepSoundStartTime = 0.0;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound")
+	class USoundCue* JumpSound;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound") float JumpSoundStartTime = 0.0;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound")
+	class USoundCue* LandSound;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound") float LandSoundStartTime = 0.0;
+
+	// GAMEPLAY
+	bool GameStarted = true; // change to false
+	UPROPERTY(EditDefaultsOnly, Category = "Sound") float RunDistanceStepSound = 80;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound") float WalkDistanceStepSound = 40;
+	float WalkedDistance = 0.0;
+	float StartSpeed = 0.0;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound") float WalkedDistanceUpdateLag = 0.1;
+
+	FTimerHandle WalkedDistanceHandle;
+	UFUNCTION() void UpdateWalkedDistance();
+	void PlayStepSound();
+	void PlayJumpSound();
+public:
+	void PlayLandSound();
+
+
 };

@@ -162,6 +162,23 @@ bool UCustomCharacterMovementComponent::IsCustomMovementMode(ECustomMovementMode
     return MovementMode == MOVE_Custom && CustomMovementMode == InCustomMovementMode;
 }
 
+
+void UCustomCharacterMovementComponent::OnMovementModeChanged(EMovementMode PreviousMovementMode, uint8 PreviousCustomMode)
+{
+    Super::OnMovementModeChanged(PreviousMovementMode, PreviousCustomMode);
+
+    if (PreviousMovementMode == MOVE_Falling && MovementMode == MOVE_Walking)
+    {
+        // Character just landed on the ground
+        if (ABasePlayer* OwnerPlayer = Cast<ABasePlayer>(GetOwner()))
+        {
+            // Play your land sound
+            OwnerPlayer->PlayLandSound();
+        }
+    }
+
+}
+
 #pragma endregion
 
 #pragma region Dash

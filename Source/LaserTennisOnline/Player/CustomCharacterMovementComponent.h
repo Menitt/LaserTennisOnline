@@ -135,6 +135,8 @@ protected:
 	virtual void OnMovementUpdated(float DeltaSeconds, const FVector& OldLocation, 
 	const FVector& OldVelocity) override;
 
+	virtual void OnMovementModeChanged(EMovementMode PreviousMovementMode, uint8 PreviousCustomMode) override;
+
 //
 // Custom Movement Implementation
 //
