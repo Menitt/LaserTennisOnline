@@ -41,6 +41,9 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"));
 	class UBoxComponent* CollisionComponent;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	class UNiagaraComponent* MeshNiagara;
+
 //
 // Gameplay
 //
@@ -62,22 +65,23 @@ public:
 
 //Sound
 private:
-	UPROPERTY(EditDefaultsOnly, Category = "Sound") FString HitSoundFile;
-	UPROPERTY(EditDefaultsOnly, Category = "Sound") float ScaleVolume = 1.;
-	UPROPERTY(EditDefaultsOnly, Category = "Sound") float ScalePitch = 1.;
-	UPROPERTY(EditDefaultsOnly, Category = "Sound") float StartTime = 0.;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound") 
+	class USoundCue* HitSound;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound") float HitScaleVolume = 1.;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound") float HitScalePitch = 1.;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound") float HitStartTime = 0.;
+	UFUNCTION(NetMulticast, Reliable) void PlayHitSound();
 
-	UPROPERTY() class USoundCue* HitSound;
-	FString SoundFolder = "/Game/Assets/Audio/";
-
-	UFUNCTION(NetMulticast, Reliable) void PlaySound();
-
+	UPROPERTY(EditDefaultsOnly, Category = "Sound") 
+	class USoundCue* ChargeSound;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound") float ChargeScaleVolume = 1.;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound") float ChargeScalePitch = 1.;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound") float ChargeStartTime = 0.;
+	UFUNCTION(NetMulticast, Reliable) void PlayChargeSound();
 
 // VFX
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "VFX") class UNiagaraSystem* LaserSpawnVFXTemplate;
-	UPROPERTY(EditDefaultsOnly, Category = "VFX") class UNiagaraSystem* LaserMeshVFXTemplate;
-
 
 	UFUNCTION()
 	void ActivateLaser(class UNiagaraComponent* FinishedSystem);

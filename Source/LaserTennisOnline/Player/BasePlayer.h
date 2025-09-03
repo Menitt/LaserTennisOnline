@@ -56,6 +56,9 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	class UAudioComponent* AudioComponent;
 
+	UPROPERTY(EditDefaultsOnly)
+	class UNiagaraComponent* DamageNiagara;
+
 //
 // Constructor
 //
@@ -126,20 +129,6 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void StartGame();
 
-//
-// Sound
-// 
-private:
-	class USoundCue* WalkSound;
-	FString SoundFolder = "/Game/Assets/Audio/";
-	UPROPERTY(EditDefaultsOnly) FString WalkSoundFile;
-	UPROPERTY(EditDefaultsOnly) float WalkSoundConstantRate = 200;
-	void SetWalkSound(float Speed);
-	void PlayWalkSound();
-	FTimerHandle WalkSoundTimerHandle;
-	float WalkSpeed = 0;
-	bool bWalkSoundActive = false;
-
 
 //
 // UI
@@ -170,14 +159,11 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "VFX") class UNiagaraSystem* FireVFXTemplate;
 	UPROPERTY(EditDefaultsOnly, Category = "VFX") class UNiagaraSystem* ExplosionVFXTemplate;
 
-	class UNiagaraComponent* FireVFX;
-
 	int DamageCounter = 0;
 	float FireSpawnRate = 0;
 	float SmokeSpawnRate = 0;
 	float SparksSpawnRate = 0;
 	void SpawnFireEffect();
-
-
+	void SpawnExplosion();
 
 };

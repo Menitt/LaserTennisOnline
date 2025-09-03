@@ -65,10 +65,6 @@ void ALaserActivationPlatform::BeginPlay()
 	// Try to Fetch LaserSpawnManager Reference (not reliable to be already initialized -> need redundancy)
 	FetchLaserSpawnManager();
 
-	// Bind Sound File
-	FString SoundPath = SoundFolder + SoundFile + "." + SoundFile;
-	Sound = LoadObject<USoundCue>(nullptr, *SoundPath);
-
 }
 
 void ALaserActivationPlatform::FetchLaserSpawnManager()
@@ -236,12 +232,8 @@ void ALaserActivationPlatform::Activate()
 
 void ALaserActivationPlatform::PlaySoundEffect_Implementation()
 {
-	if (Sound and Sound->IsValidLowLevel())
+	if (IsValid(Sound))
 	{
 		UGameplayStatics::PlaySoundAtLocation(this, Sound, GetActorLocation(), ScaleVolume, ScalePitch, StartTime);
-	}
-	else if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(1010, 2.f, FColor::Red, TEXT("LaserActivationPlatform->PlaySoundEffec: Could not play sound due to bad sound file"));
 	}
 }

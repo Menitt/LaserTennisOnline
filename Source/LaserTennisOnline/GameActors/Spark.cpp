@@ -6,6 +6,8 @@
 #include "Components\TimelineComponent.h"
 #include "Components\SplineComponent.h"
 #include "DrawDebugHelpers.h"
+#include "Components/AudioComponent.h"
+#include "NiagaraComponent.h"
 
 // Sets default values
 ASpark::ASpark()
@@ -13,8 +15,29 @@ ASpark::ASpark()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	Timeline = CreateDefaultSubobject<UTimelineComponent>("Timeline");
-	
+	//
+    // Mesh
+    //
+    Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
+    RootComponent = Mesh;
+
+    //
+    // Niagara
+    //
+    Niagara = CreateDefaultSubobject<UNiagaraComponent>("Niagara");
+    Niagara->SetupAttachment(RootComponent);
+
+    // 
+    // Sound
+    //
+    AudioComponent = CreateDefaultSubobject<UAudioComponent>("Audio Component");
+    AudioComponent->SetupAttachment(RootComponent);
+
+    // 
+    // Timeline
+    //
+    Timeline = CreateDefaultSubobject<UTimelineComponent>("Timeline");
+
 }
 
 // Called when the game starts or when spawned
@@ -36,10 +59,19 @@ void ASpark::BeginPlay()
 		// Timeline->SetPlayRate(1.0f / Period);
         Timeline->PlayFromStart();
     }
-    else
-    {
-        UE_LOG(LogTemp, Warning, TEXT("SplineFollower: MovementCurve not assigned!"));
-    }
+
+    // //
+    // // Audio Component
+    // //
+
+    // FString SoundPath = SoundFolder + SoundFile + "." + SoundFile;
+	// USoundWave* Sound = LoadObject<USoundWave>(nullptr, *SoundPath); 
+
+    // if (IsValid(AudioComponent) and IsValid(Sound) and Sound->IsValidLowLevel())
+    // {
+    //     AudioComponent->SetSound(Sound);
+	// 	AudioComponent->Play();
+    // }
 
 }
 

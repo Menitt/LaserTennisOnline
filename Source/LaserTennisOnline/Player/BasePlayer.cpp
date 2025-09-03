@@ -64,8 +64,9 @@ Super(ObjectInitializer.SetDefaultSubobjectClass<UCustomCharacterMovementCompone
 	AudioComponent = CreateDefaultSubobject<UAudioComponent>("Audio Component");
 	AudioComponent->SetupAttachment(RootComponent);
 
-	// Niagara Component
-	FireVFX = CreateDefaultSubobject<UNiagaraComponent>("Niagara Comp");
+	// Damage Niagara Component
+	DamageNiagara = CreateDefaultSubobject<UNiagaraComponent>("Niagara Comp");
+	DamageNiagara->SetupAttachment(GetMesh(), TEXT("Spline2"));
 }
 
 // Called when the game starts or when spawned
@@ -88,15 +89,6 @@ void ABasePlayer::BeginPlay()
 		}
 	}
 
-	// Fetch Sound Asset
-	FString WalkSoundPath = SoundFolder + WalkSoundFile + "." + WalkSoundFile; 
-	WalkSound = LoadObject<USoundCue>(nullptr, *WalkSoundPath);
-
-	if (AudioComponent and WalkSound)
-	{
-		AudioComponent->SetSound(WalkSound);
-	}
-
 }
 
 void ABasePlayer::PossessedBy(AController* NewController)
@@ -109,7 +101,6 @@ void ABasePlayer::PossessedBy(AController* NewController)
 		EnableEnhancedInputSystem(PlayerController);
 	}
 }
-
 
 
 #pragma endregion
@@ -327,27 +318,16 @@ void ABasePlayer::GameOver_Implementation(bool bWonGame)
 
 void ABasePlayer::HandleDestruction()
 {
-	UNiagaraFunctionLibrary::SpawnSystemAtLocation(
-    GetWorld(),
-    ExplosionVFXTemplate,
-    GetActorLocation() + FVector(0,0,15),
-    GetActorRotation(),
-    FVector(1.0),
-	true,    // bAutoDestroy
-    true,    // bAutoActivate
-    ENCPoolMethod::None,
-    true     // bPreCullCheck
-	);
 
-	Destroy();
+	SpawnExplosion();
 
-	// // Destroy Pawn if AI controlled
-	// AAIController* AIController = Cast<AAIController>(GetController());
+	if (IsValid(DamageNiagara))
+	{
+		DamageNiagara->Deactivate();
+	}
 
-	// if (AIController)
-	// {
-	// 	Destroy();
-	// }
+	// Destroy();
+
 }
 
 
@@ -387,16 +367,6 @@ void ABasePlayer::SpawnFireEffect()
 	// Update Damage Counter
 	DamageCounter += 1;
 
-	// Spawn Niagara System
-	FireVFX = UNiagaraFunctionLibrary::SpawnSystemAttached(
-    FireVFXTemplate,                  // UNiagaraSystem*
-    GetMesh(),
-	FName("Spine2"),                       // USceneComponent* to attach to                 // Optional socket name
-    FVector::ZeroVector,                 // Relative location
-    FRotator::ZeroRotator,              // Relative rotation
-    EAttachLocation::SnapToTarget,       // How to align
-    true);                                 // AutoDestroy
-
 	// Update Dynamic parameters
 	switch (DamageCounter)
 	{
@@ -426,16 +396,32 @@ void ABasePlayer::SpawnFireEffect()
 	}
 	
 
-	if (IsValid(FireVFX))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Updating Spawn Rates"));
-		
-		FireVFX->SetVariableFloat(FName("User.SpawnRateSmoke"), SmokeSpawnRate);
-		FireVFX->SetVariableFloat(FName("User.SpawnRateSparks"), SparksSpawnRate);
-		FireVFX->SetVariableFloat(FName("User.SpawnRateFire"), FireSpawnRate);
+	if (IsValid(DamageNiagara))
+	{	
+		UE_LOG(LogTemp, Warning, TEXT("Updating the Fire Parameters"));
+		DamageNiagara->SetVariableFloat(FName("User.SpawnRateSmoke"), SmokeSpawnRate);
+		DamageNiagara->SetVariableFloat(FName("User.SpawnRateSparks"), SparksSpawnRate);
+		DamageNiagara->SetVariableFloat(FName("User.SpawnRateFire"), FireSpawnRate);
 	}
 
 }
 
+void ABasePlayer::SpawnExplosion()
+{
+	
+	// Spawn Niagara System
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+    GetWorld(),
+    ExplosionVFXTemplate,
+    GetActorLocation() + FVector(0,0,15),
+    GetActorRotation(),
+    FVector(1.0),
+	true,    // bAutoDestroy
+    true,    // bAutoActivate
+    ENCPoolMethod::None,
+    true     // bPreCullCheck
+	);
+
+}
 
 #pragma endregion

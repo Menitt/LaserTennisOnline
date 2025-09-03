@@ -110,8 +110,10 @@ private:
 
 // Sound
 protected:
+	// UPROPERTY(EditDefaultsOnly, Category = "Sound")
+	// FString SoundFile;
 	UPROPERTY(EditDefaultsOnly, Category = "Sound")
-	FString SoundFile;
+	class USoundCue* Sound;
 	UPROPERTY(EditDefaultsOnly, Category = "Sound")
 	float StartTime = 0.f;
 	UPROPERTY(EditDefaultsOnly, Category = "Sound")
@@ -120,8 +122,6 @@ protected:
 	float ScalePitch = 1.f;
 
 	FString SoundFolder = "/Game/Assets/Audio/";
-	UPROPERTY() class USoundCue* Sound;
-	void PlayUISound();
 
 	UFUNCTION(NetMulticast, Reliable)
 	void PlaySoundEffect();

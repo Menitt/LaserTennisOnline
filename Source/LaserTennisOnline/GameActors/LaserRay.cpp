@@ -26,20 +26,21 @@ ALaserRay::ALaserRay()
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");	
 	ProjectileComp = CreateDefaultSubobject<UProjectileMovementComponent>("Projectile Component");
 	CollisionComponent = CreateDefaultSubobject<UBoxComponent>("Collision Component");
-	
+
 	RootComponent = CollisionComponent;
 	Mesh->SetupAttachment(RootComponent);
 	
 	ProjectileComp->UpdatedComponent = RootComponent;
+
+	MeshNiagara = CreateDefaultSubobject<UNiagaraComponent>("Mesh VFX");
+	MeshNiagara->SetupAttachment(Mesh);
+
 }
 
 // Called when the game starts or when spawned
 void ALaserRay::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	FString HitSoundPath = SoundFolder + HitSoundFile + "." + HitSoundFile;
-	HitSound = LoadObject<USoundCue>(nullptr, *HitSoundPath);
 
 	if (GetLocalRole() == ROLE_Authority)
 	{
@@ -47,6 +48,11 @@ void ALaserRay::BeginPlay()
 		CollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnBeginOverlapObject);
 	}
 
+	// Deactivate Mesh Niagara
+	if (IsValid(MeshNiagara))
+	{
+		MeshNiagara->Deactivate();
+	}
 
 	// LaserSpawnVFX
 	UNiagaraComponent* LaserSpawnNiagara = UNiagaraFunctionLibrary::SpawnSystemAtLocation(
@@ -63,6 +69,9 @@ void ALaserRay::BeginPlay()
 	// Bind StartLaser to OnFinished
 	if (IsValid(LaserSpawnNiagara))
 	{
+		
+		PlayChargeSound();
+
 		LaserSpawnNiagara->OnSystemFinished.AddDynamic(this, &ALaserRay::ActivateLaser);
 	
 		// Set Speed to 0
@@ -77,6 +86,8 @@ void ALaserRay::BeginPlay()
 			Mesh->SetVisibility(false);
 		}
 	}
+
+
 }
 
 
@@ -95,17 +106,10 @@ void ALaserRay::ActivateLaser(UNiagaraComponent* FinishedSystem)
 		ProjectileComp->Velocity *= 400;
 	}
 
-	// Spawn Laser Mesh VFX
-	UNiagaraFunctionLibrary::SpawnSystemAttached(
-    LaserMeshVFXTemplate,                  // UNiagaraSystem*
-    Mesh,
-	NAME_None,                       // USceneComponent* to attach to                 // Optional socket name
-    FVector::ZeroVector,                 // Relative location
-    FRotator::ZeroRotator,              // Relative rotation
-    EAttachLocation::SnapToTarget,       // How to align
-    true                                 // AutoDestroy
-);
-
+	if (IsValid(MeshNiagara))
+	{
+		MeshNiagara->Activate();
+	}
 
 }
 
@@ -130,7 +134,7 @@ void ALaserRay::OnHitObject(UPrimitiveComponent *HitComponent, AActor *OtherActo
 			{
 				Player->CustomTakeDamage();
 				
-				PlaySound();
+				PlayHitSound();
 
 				Destroy();
 			}
@@ -156,17 +160,25 @@ void ALaserRay::OnBeginOverlapObject(UPrimitiveComponent* OverlappedComp, AActor
 }
 
 
-void ALaserRay::PlaySound_Implementation()
+void ALaserRay::PlayHitSound_Implementation()
 {
-	if (HitSound and HitSound->IsValidLowLevel())
+	if (IsValid(HitSound))
 	{
-		UGameplayStatics::PlaySoundAtLocation(this,HitSound,GetActorLocation(),ScaleVolume,ScalePitch,StartTime);
-	}
-	else if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(1010, 2.f, FColor::Red, TEXT("ALaserRay->PlaySound: Could not play sound due to bad sound file"));
+		UGameplayStatics::PlaySoundAtLocation(this,HitSound,GetActorLocation(),HitScaleVolume,HitScalePitch,HitStartTime);
 	}
 }
+
+
+void ALaserRay::PlayChargeSound_Implementation()
+{
+	if (IsValid(ChargeSound))
+	{
+		UGameplayStatics::PlaySoundAtLocation(this,ChargeSound,GetActorLocation(),ChargeScaleVolume,ChargeScalePitch,ChargeStartTime);
+	}
+}
+
+
+
 
 void ALaserRay::Destroyed()
 {
