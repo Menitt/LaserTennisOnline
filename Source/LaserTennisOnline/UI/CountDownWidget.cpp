@@ -25,7 +25,7 @@ void UCountDownWidget::StartCountdown(int Time)
         // Load your font asset (must be a UFont)
         FontInfo.FontObject = LoadObject<UObject>(nullptr, TEXT("/Game/UI/fonts/ASTERA_v2_Font.ASTERA_v2_Font")); // Path to .ufont
         FontInfo.TypefaceFontName = FName("Regular");  // "Regular", "Italic", etc. must exist in the font asset
-        FontInfo.Size = 250;
+        FontInfo.Size = FontSize;
         TextStyle.Font = FontInfo;
         // Set Color
         TextStyle.ColorAndOpacity = FLinearColor(TextColorRGB.X, TextColorRGB.Y, TextColorRGB.Z);
@@ -46,7 +46,7 @@ void UCountDownWidget::StartCountdown(int Time)
 
     }
     
-    // PlayUISound();
+    PlayUISound();
 }
 
 void UCountDownWidget::UpdateCountdown()
@@ -71,29 +71,35 @@ void UCountDownWidget::StartGame()
     GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
     // Broadcast Game Starting
     BroadcastGameStart();
-    // RemoveWidget
-    // MenuTearDown();
-
-    // Update Text
-    FTextBlockStyle TextStyle;
-
-    FSlateFontInfo FontInfo;
-
-    // Load your font asset (must be a UFont)
-    FontInfo.FontObject = LoadObject<UObject>(nullptr, TEXT("/Game/UI/fonts/ASTERA_v2_Font.ASTERA_v2_Font")); // Path to .ufont 
-    FontInfo.TypefaceFontName = FName("Regular");  // "Regular", "Italic", etc. must exist in the font asset
-    FontInfo.Size = 100;
-    TextStyle.Font = FontInfo;
-    // Set Color
-    // TextStyle.ColorAndOpacity = FSlateColor(FLinearColor::Green); // or any color
-    TextStyle.ColorAndOpacity = FLinearColor(TextColorRGB.X, TextColorRGB.Y, TextColorRGB.Z);
-
-    if (CountdownText)
-    {       
-        // Apply style
-        CountdownText->SetTextStyle(TextStyle);
-        CountdownText->SetText(FText::FromString("Game On!"));
+    // RemoveWidget (GameMode = OnlineMult or Singleplayer -> Different widget blueprint)
+    if (not IsPermanent)
+    {
+        MenuTearDown();
     }
+    else
+    {
+        // Update Text
+        FTextBlockStyle TextStyle;
+
+        FSlateFontInfo FontInfo;
+
+        // Load your font asset (must be a UFont)
+        FontInfo.FontObject = LoadObject<UObject>(nullptr, TEXT("/Game/UI/fonts/ASTERA_v2_Font.ASTERA_v2_Font")); // Path to .ufont 
+        FontInfo.TypefaceFontName = FName("Regular");  // "Regular", "Italic", etc. must exist in the font asset
+        FontInfo.Size = 100;
+        TextStyle.Font = FontInfo;
+        // Set Color
+        // TextStyle.ColorAndOpacity = FSlateColor(FLinearColor::Green); // or any color
+        TextStyle.ColorAndOpacity = FLinearColor(TextColorRGB.X, TextColorRGB.Y, TextColorRGB.Z);
+
+        if (CountdownText)
+        {       
+            // Apply style
+            CountdownText->SetTextStyle(TextStyle);
+            CountdownText->SetText(FText::FromString("Game On!"));
+        }
+    }
+    
 
 }
 

@@ -78,7 +78,6 @@ void AOnlineMultiplayer::BeginPlay()
     SetupTimer();
 }
 
-
 void AOnlineMultiplayer::StartCountdown()
 {
     UE_LOG(LogTemp, Warning, TEXT("Online Multiplayer: Start Countdown!"));

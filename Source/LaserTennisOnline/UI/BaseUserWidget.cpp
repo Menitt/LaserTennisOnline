@@ -33,33 +33,7 @@ void UBaseUserWidget::MenuSetup()
 
 bool UBaseUserWidget::Initialize()
 {
-	if (!Super::Initialize())
-	{
-		return false;
-	}
-
-	// Load Sound File
-	FString SoundPath = SoundFolder + SoundFile + "." + SoundFile;
-	Sound = LoadObject<USoundWave>(nullptr, *SoundPath);
-
-	if (Sound and Sound->IsValidLowLevel())
-	{
-		if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Green, TEXT("UBaseUserWidget->Initialize: Sound is loaded and valid!"));
-		}
-		
-	}
-	else
-	{
-		if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("UBaseUserWidget->Initialize: Sound File is not valid!"));
-		}
-	}
-
-
-	return true;
+	return Super::Initialize();
 }
 
 void UBaseUserWidget::MenuTearDown()
@@ -87,13 +61,6 @@ void UBaseUserWidget::PlayUISound()
 	if (ValidSound)
 	{		
 		UGameplayStatics::PlaySound2D(World, Sound, ScaleVolume, ScalePitch, StartTime);
-	}
-	else if (World and Sound and !Sound->IsValidLowLevel())
-	{
-		if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("UBaseUserWidget->PlayUISound: Could not play Sound due to bad Sound File!"));
-		}
 	}
 	
 }

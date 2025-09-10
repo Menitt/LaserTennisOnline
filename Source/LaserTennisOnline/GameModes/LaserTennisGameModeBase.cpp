@@ -214,10 +214,18 @@ void ALaserTennisGameModeBase::HandleMatchHasEnded()
     if (IsValid(Player1))
     {
         Player1->GameOver(Player1->bIsAlive());
+        if (not LocalMultiplayer)
+        {
+            Player1->SpawnGameOverWidget(Player1->bIsAlive());
+        }
     }
     if (IsValid(Player2))
     {
         Player2->GameOver(Player2->bIsAlive());
+        if (not LocalMultiplayer)
+        {
+            Player2->SpawnGameOverWidget(Player2->bIsAlive());
+        }
     }
 
 }

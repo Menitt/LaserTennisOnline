@@ -122,7 +122,6 @@ public:
 
 	FOnCustomTakeDamage OnCustomTakeDamage;
 
-
 	UFUNCTION(NetMulticast, Reliable)
 	void StartCountdown(int Timer);
 
@@ -148,6 +147,12 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UBaseUserWidget> CountdownWidgetClass;
 
+	void SpawnCountdownWidget();
+
+public:
+	
+	UFUNCTION(NetMulticast, Reliable) void SpawnGameOverWidget(bool bWonGame);
+
 public:
 	class UGameOverWidget* GameOverWidget;
 	UBaseUserWidget* GameStartCountdown;
@@ -171,15 +176,16 @@ private:
 //
 private:
 	// ASSETS
-	UPROPERTY(EditDefaultsOnly, Category = "Sound")
-	class USoundCue* StepSound;
-	UPROPERTY(EditDefaultsOnly, Category = "Sound") float StepSoundStartTime = 0.0;
-	UPROPERTY(EditDefaultsOnly, Category = "Sound")
-	class USoundCue* JumpSound;
-	UPROPERTY(EditDefaultsOnly, Category = "Sound") float JumpSoundStartTime = 0.0;
-	UPROPERTY(EditDefaultsOnly, Category = "Sound")
-	class USoundCue* LandSound;
-	UPROPERTY(EditDefaultsOnly, Category = "Sound") float LandSoundStartTime = 0.0;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound") class USoundCue* StepSound;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound") float StepSoundStartTime = 0.05;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound") class USoundCue* JumpSound;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound") float JumpSoundStartTime = 0.15;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound") class USoundCue* LandSound;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound") float LandSoundStartTime = 0.05;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound") class USoundCue* DashSound;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound") float DashSoundStartTime = 0.0;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound") class USoundCue* ExplosionSound;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound") float ExplosionSoundStartTime = 0.0;
 
 	// GAMEPLAY
 	bool GameStarted = true; // change to false
@@ -193,6 +199,9 @@ private:
 	UFUNCTION() void UpdateWalkedDistance();
 	void PlayStepSound();
 	void PlayJumpSound();
+	void PlayDashSound();
+	void PlayExplosionSound();
+	void UpdateFireSound();
 public:
 	void PlayLandSound();
 

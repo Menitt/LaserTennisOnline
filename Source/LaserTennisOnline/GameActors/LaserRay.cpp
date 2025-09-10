@@ -12,6 +12,7 @@
 #include "DrawDebugHelpers.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
+#include "Components/AudioComponent.h"
 
 // Sets default values
 ALaserRay::ALaserRay()
@@ -35,7 +36,10 @@ ALaserRay::ALaserRay()
 	MeshNiagara = CreateDefaultSubobject<UNiagaraComponent>("Mesh VFX");
 	MeshNiagara->SetupAttachment(Mesh);
 
-}
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>("Audio");
+	AudioComponent->SetupAttachment(RootComponent);
+
+}	
 
 // Called when the game starts or when spawned
 void ALaserRay::BeginPlay()
@@ -52,6 +56,12 @@ void ALaserRay::BeginPlay()
 	if (IsValid(MeshNiagara))
 	{
 		MeshNiagara->Deactivate();
+	}
+
+	// Deactivate AudioComponent
+	if (IsValid(AudioComponent))
+	{
+		AudioComponent->Deactivate();
 	}
 
 	// LaserSpawnVFX
@@ -106,10 +116,17 @@ void ALaserRay::ActivateLaser(UNiagaraComponent* FinishedSystem)
 		ProjectileComp->Velocity *= 400;
 	}
 
+	// Activate Niagara Effect
 	if (IsValid(MeshNiagara))
 	{
 		MeshNiagara->Activate();
 	}
+	
+	if (IsValid(AudioComponent))
+	{
+		AudioComponent->Activate();
+	}	
+	
 
 }
 
@@ -177,13 +194,6 @@ void ALaserRay::PlayChargeSound_Implementation()
 	}
 }
 
-
-
-
-void ALaserRay::Destroyed()
-{
-	Super::Destroyed();
-}
 
 FVector ALaserRay::GetLaserBox() const
 {

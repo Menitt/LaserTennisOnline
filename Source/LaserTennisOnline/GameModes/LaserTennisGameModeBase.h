@@ -106,6 +106,11 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	FName MainMenuLevel;
 
+private:
+	UPROPERTY(EditDefaultsOnly) bool LocalMultiplayer = false;
+public:
+	bool IsLocalMultiplayer() const {return LocalMultiplayer;};
+
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	int CountdownTime = 3;

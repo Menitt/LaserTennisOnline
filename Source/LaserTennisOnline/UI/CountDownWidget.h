@@ -27,7 +27,6 @@ public:
 	virtual void MenuSetup() override;
 
 private:
-	
 
 	int Counter = -1;
 
@@ -36,9 +35,9 @@ private:
 	void StartGame();
 
 	UPROPERTY(meta = (BindWidget)) class UMultiLineEditableTextBox* CountdownText;
-	// class UEditableTextBox* CountdownText;
-	
 
+	UPROPERTY(EditDefaultsOnly) bool IsPermanent = false;	
+	UPROPERTY(EditDefaultsOnly) float FontSize = 250;
 
 	FTimerHandle TimerHandle;
 

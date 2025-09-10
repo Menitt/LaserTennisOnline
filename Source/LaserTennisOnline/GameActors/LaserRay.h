@@ -23,10 +23,6 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-protected:
-// Destructor
-	virtual void Destroyed() override;
-
 
 //
 // Components
@@ -44,6 +40,9 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	class UNiagaraComponent* MeshNiagara;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	class UAudioComponent* AudioComponent;
+	
 //
 // Gameplay
 //
@@ -69,14 +68,14 @@ private:
 	class USoundCue* HitSound;
 	UPROPERTY(EditDefaultsOnly, Category = "Sound") float HitScaleVolume = 1.;
 	UPROPERTY(EditDefaultsOnly, Category = "Sound") float HitScalePitch = 1.;
-	UPROPERTY(EditDefaultsOnly, Category = "Sound") float HitStartTime = 0.;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound") float HitStartTime = 0.2;
 	UFUNCTION(NetMulticast, Reliable) void PlayHitSound();
 
 	UPROPERTY(EditDefaultsOnly, Category = "Sound") 
 	class USoundCue* ChargeSound;
 	UPROPERTY(EditDefaultsOnly, Category = "Sound") float ChargeScaleVolume = 1.;
 	UPROPERTY(EditDefaultsOnly, Category = "Sound") float ChargeScalePitch = 1.;
-	UPROPERTY(EditDefaultsOnly, Category = "Sound") float ChargeStartTime = 0.;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound") float ChargeStartTime = 0.2;
 	UFUNCTION(NetMulticast, Reliable) void PlayChargeSound();
 
 // VFX

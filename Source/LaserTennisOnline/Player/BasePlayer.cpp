@@ -93,6 +93,12 @@ void ABasePlayer::BeginPlay()
 	// Setup Sound
 	// 
 	GetWorld()->GetTimerManager().SetTimer(WalkedDistanceHandle, this, &ThisClass::UpdateWalkedDistance, WalkedDistanceUpdateLag, true);
+
+	if (IsValid(AudioComponent))
+	{
+		AudioComponent->Deactivate();
+	}
+
 }
 
 void ABasePlayer::PossessedBy(AController* NewController)
@@ -174,14 +180,13 @@ void ABasePlayer::jump(const FInputActionValue& value)
 	bool jumpNow = value.Get<bool>();
 	if(jumpNow) 
 	{
+		PlayJumpSound();
 		// Animation for double jump
 		if (JumpCurrentCount == 1)
 		{
 			this->PlayAnimMontage(DoubleJumpMontage);	
 		}
 		ACharacter::Jump();
-
-		PlayJumpSound();
 	}
 } 
 
@@ -201,6 +206,7 @@ void ABasePlayer::dodge(const FInputActionValue& value)
 {
 	if (CustomCharacterMovementComponent)
 	{
+		PlayDashSound();
 		CustomCharacterMovementComponent->DashPressed();
 	}
 }
@@ -219,26 +225,41 @@ void ABasePlayer::StartCountdown_Implementation(int Timer)
 		APlayerController* PlayerController = Cast<APlayerController>(GetController());
 		DisableInput(PlayerController);
 		
-		// // Spawn Countdown Widget -> Logic moved to MegaScreen class
-		// UCountDownWidget* CountdownWidget = CreateWidget<UCountDownWidget>(GetWorld(),CountdownWidgetClass);
-		// if (CountdownWidget)
-		// {
-		// 	CountdownWidget->MenuSetup();
-		// 	CountdownWidget->StartCountdown(Timer);
-		// 	// If Actor is on the server, bind end of count down to Game mode start
-		// 	if (GetLocalRole() == ROLE_Authority)
-		// 	{
-		// 		ALaserTennisGameModeBase* GameMode = Cast<ALaserTennisGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
-		// 		if (GameMode)
-		// 		{
-		// 			CountdownWidget->OnCountdownComplete.AddDynamic(GameMode,&ALaserTennisGameModeBase::StartGame);
-		// 		}
-		// 	}
+		// SpawnCountdown Widget For Online & Single Player
+		if (GetLocalRole() == ROLE_Authority)
+		{
+			ALaserTennisGameModeBase* CurrentGameMode = Cast<ALaserTennisGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
+			if (IsValid(CurrentGameMode) and not CurrentGameMode->IsLocalMultiplayer())
+			{
+				SpawnCountdownWidget();
+			}
+		}
+		else
+		{
+			SpawnCountdownWidget();
+		}
+	}
+}
 
-		// }
+void ABasePlayer::SpawnCountdownWidget()
+{
+	// Spawn Countdown Widget -> Only for Online & SinglePlayer
+	UCountDownWidget* CountdownWidget = CreateWidget<UCountDownWidget>(GetWorld(),CountdownWidgetClass);
+	if (CountdownWidget)
+	{
+		CountdownWidget->MenuSetup();
+		CountdownWidget->StartCountdown(3);
+		// If Actor is on the server, bind end of count down to Game mode start
+		if (GetLocalRole() == ROLE_Authority)
+		{
+			ALaserTennisGameModeBase* GameMode = Cast<ALaserTennisGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
+			if (GameMode)
+			{
+				CountdownWidget->OnCountdownComplete.AddDynamic(GameMode,&ALaserTennisGameModeBase::StartGame);
+			}
+		}
 
 	}
-
 }
 
 void ABasePlayer::StartGame_Implementation()
@@ -258,12 +279,18 @@ void ABasePlayer::StartGame_Implementation()
 void ABasePlayer::CustomTakeDamage_Implementation()
 {
 
+	// Disable Input
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
-
 	if (PlayerController)
 	{
 		this->DisableInput(PlayerController);
 	}
+
+	// Update Damage Counter
+	DamageCounter += 1;
+
+	// Sound
+	UpdateFireSound();
 
 	// Animation
 	this->PlayAnimMontage(TakeDamageMontage);
@@ -271,11 +298,11 @@ void ABasePlayer::CustomTakeDamage_Implementation()
 	// VFX
 	this->SpawnFireEffect();
 
+	// Update Health
 	if (GetLocalRole() == ROLE_Authority)
 	{
-		ALaserTennisGameModeBase* GameMode = Cast<ALaserTennisGameModeBase>(GetWorld()->GetAuthGameMode());
-		// Update Health
 		HealthComponent->TakeDamage();
+		ALaserTennisGameModeBase* GameMode = Cast<ALaserTennisGameModeBase>(GetWorld()->GetAuthGameMode());
 		if (GameMode)
 		{
 			GameMode->UpdateHealthPanel();
@@ -294,25 +321,7 @@ void ABasePlayer::GameOver_Implementation(bool bWonGame)
 
 	if (PlayerController and PlayerController->IsLocalController())
 	{
-		this->DisableInput(PlayerController);
-		
-		//--------------------------------------------
-		// The type of widget to swpawn at the end should be handled in a separate function and called bt the GameMode
-		
-		// // Spawn Menu Widget
-		// if (bWonGame)
-		// {
-		// 	GameOverWidget = CreateWidget<UGameOverWidget>(GetWorld(),GameOverVictoryClass);
-		// }
-		// else
-		// {
-		// 	GameOverWidget = CreateWidget<UGameOverWidget>(GetWorld(),GameOverDefeatClass);
-		// }
-		
-		// if (GameOverWidget)
-		// {
-		// 	GameOverWidget->MenuSetup();
-		// }
+		this->DisableInput(PlayerController);	
 	}
 
 	if (not bWonGame)
@@ -322,10 +331,35 @@ void ABasePlayer::GameOver_Implementation(bool bWonGame)
 
 }
 
+void ABasePlayer::SpawnGameOverWidget_Implementation(bool bWonGame)
+{
+	if (IsLocallyControlled())
+	{	
+		// Spawn Menu Widget
+		if (bWonGame)
+		{
+			GameOverWidget = CreateWidget<UGameOverWidget>(GetWorld(),GameOverVictoryClass);
+		}
+		else
+		{
+			GameOverWidget = CreateWidget<UGameOverWidget>(GetWorld(),GameOverDefeatClass);
+		}
+		
+		if (IsValid(GameOverWidget))
+		{
+			GameOverWidget->MenuSetup();
+		}
+	}
+}
+
 
 void ABasePlayer::HandleDestruction()
 {
-
+	if (IsValid(AudioComponent))
+	{
+		AudioComponent->Deactivate();
+	}
+	PlayExplosionSound();
 	SpawnExplosion();
 
 	if (IsValid(DamageNiagara))
@@ -333,7 +367,10 @@ void ABasePlayer::HandleDestruction()
 		DamageNiagara->Deactivate();
 	}
 
-	// Destroy();
+	if (IsValid(GetMesh()))
+	{
+		GetMesh()->SetVisibility(false);
+	}
 
 }
 
@@ -371,9 +408,6 @@ void ABasePlayer::OnTakeDamageMontageCompleted(UAnimMontage* AnimMontage, bool b
 
 void ABasePlayer::SpawnFireEffect()
 {
-	// Update Damage Counter
-	DamageCounter += 1;
-
 	// Update Dynamic parameters
 	switch (DamageCounter)
 	{
@@ -493,5 +527,48 @@ void ABasePlayer::PlayLandSound()
 		UGameplayStatics::PlaySoundAtLocation(this,LandSound,GetActorLocation(),1.0,1.0,LandSoundStartTime);
 	}
 }
+
+void ABasePlayer::PlayDashSound()
+{
+	if (IsValid(DashSound))
+	{
+		UGameplayStatics::PlaySoundAtLocation(this,DashSound,GetActorLocation(),1.0,1.0,DashSoundStartTime);
+	}
+}
+
+void ABasePlayer::PlayExplosionSound()
+{
+	if (IsValid(ExplosionSound))
+	{
+		UGameplayStatics::PlaySoundAtLocation(this,ExplosionSound,GetActorLocation(),1.0,1.0,ExplosionSoundStartTime);
+	}
+}
+
+
+
+void ABasePlayer::UpdateFireSound()
+{
+	if (IsValid(AudioComponent))
+	{
+		switch (DamageCounter)
+		{
+		case 1:
+			break;
+		case 2:
+			AudioComponent->SetVolumeMultiplier(0.5);
+			AudioComponent->Activate();
+			break;
+		
+		case 3:
+			AudioComponent->SetVolumeMultiplier(0.75);
+			break;
+		
+		case 4:
+			AudioComponent->SetVolumeMultiplier(1.0);
+			break;
+		}
+	}
+}
+
 
 #pragma endregion
