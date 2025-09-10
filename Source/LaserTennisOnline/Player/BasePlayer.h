@@ -35,8 +35,6 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-
-
 //
 // Components
 //
@@ -46,25 +44,18 @@ protected:
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true")) 
 	class USpringArmComponent* CameraBoom;
-	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true")) 
 	class UCameraComponent* FollowCamera;
-	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Health, meta = (AllowPrivateAccess = "true")) 
 	class UHealthComponent* HealthComponent;
-
-	UPROPERTY(EditDefaultsOnly)
-	class UAudioComponent* AudioComponent;
-
-	UPROPERTY(EditDefaultsOnly)
-	class UNiagaraComponent* DamageNiagara;
+	UPROPERTY(EditDefaultsOnly) class UAudioComponent* AudioComponent;
+	UPROPERTY(EditDefaultsOnly) class UNiagaraComponent* DamageNiagara;
 
 //
 // Constructor
 //
 public:
 	ABasePlayer(const FObjectInitializer& ObjectInitializer);
-
 
 //
 // Inputs
@@ -73,8 +64,6 @@ private:
 	// Input Map Context
 	UPROPERTY(EditDefaultsOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	class UInputMappingContext* InputMapContext;
-	// Input Map Context
-	
 	// Input Actions
 	UPROPERTY(EditDefaultsOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	class UInputAction* moveAction;
@@ -84,76 +73,52 @@ private:
 	class UInputAction* pauseGameAction;
 	UPROPERTY(EditDefaultsOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	class UInputAction* dodgeAction;
-
 public:
 	// Input Binding Functions
 	void move(const FInputActionValue& value);
 	void jump(const FInputActionValue& value);
 	void pauseGame(const FInputActionValue& value);
 	void dodge(const FInputActionValue& value);
-
-public:
-
 	void EnableEnhancedInputSystem(class APlayerController* PlayerController);
 
 //
-// Gameplay
+// GAMEPLAY
 //
 public:
+	// Game Start
+	UFUNCTION(NetMulticast, Reliable) void StartCountdown(int Timer);
+	UFUNCTION(NetMulticast, Reliable) void StartGame();
 
-	UFUNCTION(NetMulticast, Reliable)
-	void CustomTakeDamage();
-
-	UFUNCTION(NetMulticast, Reliable)
-	void GameOver(bool bWonGame);
-
+	// Damage
+	UFUNCTION(NetMulticast, Reliable) void CustomTakeDamage();
+	FOnCustomTakeDamage OnCustomTakeDamage;
 	UPROPERTY(EditDefaultsOnly) UAnimMontage* TakeDamageMontage; // (Animation)
+	UFUNCTION() void OnTakeDamageMontageCompleted(UAnimMontage* AnimMontage, bool bInterrupted);
+
+	// End Game
+	UFUNCTION(NetMulticast, Reliable) void GameOver(bool bWonGame);
+	void HandleDestruction();
 	
+	// Other
 	UPROPERTY(EditDefaultsOnly) UAnimMontage* DoubleJumpMontage; // (Animation)
-
-
 	bool bIsAlive() const {return HealthComponent->bIsPlayerAlive();};
 	int GetPlayerHealth() const {return HealthComponent->GetPlayerHealth();};	
-
-	UFUNCTION()
-	void OnTakeDamageMontageCompleted(UAnimMontage* AnimMontage, bool bInterrupted);
-
-	void HandleDestruction();
-
-	FOnCustomTakeDamage OnCustomTakeDamage;
-
-	UFUNCTION(NetMulticast, Reliable)
-	void StartCountdown(int Timer);
-
-	UFUNCTION(NetMulticast, Reliable)
-	void StartGame();
-
 
 //
 // UI
 //
-
 private:
 
-	UPROPERTY(EditDefaultsOnly, Category = "UI")
-	TSubclassOf<UUserWidget> InGameMenuWidgetClass;
-
-	UPROPERTY(EditDefaultsOnly, Category = "UI")
-	TSubclassOf<UBaseUserWidget> GameOverVictoryClass;
-
-	UPROPERTY(EditDefaultsOnly, Category = "UI")
-	TSubclassOf<UBaseUserWidget> GameOverDefeatClass;
-
-	UPROPERTY(EditDefaultsOnly, Category = "UI")
-	TSubclassOf<UBaseUserWidget> CountdownWidgetClass;
+	// Assets
+	UPROPERTY(EditDefaultsOnly, Category = "UI") TSubclassOf<UUserWidget> InGameMenuWidgetClass;
+	UPROPERTY(EditDefaultsOnly, Category = "UI") TSubclassOf<UBaseUserWidget> GameOverVictoryClass;
+	UPROPERTY(EditDefaultsOnly, Category = "UI") TSubclassOf<UBaseUserWidget> GameOverDefeatClass;
+	UPROPERTY(EditDefaultsOnly, Category = "UI") TSubclassOf<UBaseUserWidget> CountdownWidgetClass;
 
 	void SpawnCountdownWidget();
-
 public:
 	
 	UFUNCTION(NetMulticast, Reliable) void SpawnGameOverWidget(bool bWonGame);
-
-public:
 	class UGameOverWidget* GameOverWidget;
 	UBaseUserWidget* GameStartCountdown;
 
@@ -163,7 +128,6 @@ public:
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "VFX") class UNiagaraSystem* FireVFXTemplate;
 	UPROPERTY(EditDefaultsOnly, Category = "VFX") class UNiagaraSystem* ExplosionVFXTemplate;
-
 	int DamageCounter = 0;
 	float FireSpawnRate = 0;
 	float SmokeSpawnRate = 0;

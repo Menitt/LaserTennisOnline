@@ -69,8 +69,7 @@ protected:
 //
 public:
 
-	UFUNCTION()
-	virtual void StartGame();
+	UFUNCTION() virtual void StartGame();
 
 	void ManagePlatforms();
 
@@ -92,6 +91,7 @@ public:
 
 	void DelayedStartCountdown();
 
+	// Used by Local Multiplayer
 	virtual void DisablePlayerInput(class ABasePlayer* Player);
 	virtual void EnablePlayerInput(class ABasePlayer* Player);
 

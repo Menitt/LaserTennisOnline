@@ -43,7 +43,7 @@ Super(ObjectInitializer.SetDefaultSubobjectClass<UCustomCharacterMovementCompone
 	CustomCharacterMovementComponent = Cast<UCustomCharacterMovementComponent>(GetCharacterMovement());
 	CustomCharacterMovementComponent->SetIsReplicated(true);
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 0.f, 350.0f);
-	GetCharacterMovement()->JumpZVelocity = 700.f;
+	GetCharacterMovement()->JumpZVelocity = 500.f;
 	GetCharacterMovement()->AirControl = 0.35f;
 	GetCharacterMovement()->MaxWalkSpeed = 500.f;
 	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
@@ -112,7 +112,6 @@ void ABasePlayer::PossessedBy(AController* NewController)
 	}
 }
 
-
 #pragma endregion
 
 // Called every frame
@@ -124,7 +123,6 @@ void ABasePlayer::Tick(float DeltaTime)
 	float Speed = Velocity.Size();
 
 }
-
 
 #pragma region Input
 
@@ -139,7 +137,6 @@ void ABasePlayer::EnableEnhancedInputSystem(APlayerController* PlayerController)
 	}
 }
 	
-
 // Called to bind functionality to input
 void ABasePlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -155,7 +152,7 @@ void ABasePlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 		enhancedInputComponent->BindAction(pauseGameAction, ETriggerEvent::Started, 
 		this, &ABasePlayer::pauseGame);
 		enhancedInputComponent->BindAction(dodgeAction, ETriggerEvent::Started, 
-		CustomCharacterMovementComponent, &UCustomCharacterMovementComponent::DashPressed);
+		this, &ABasePlayer::dodge);
 	}
 
 
@@ -204,13 +201,17 @@ void ABasePlayer::pauseGame(const FInputActionValue& value)
 
 void ABasePlayer::dodge(const FInputActionValue& value)
 {
-	if (CustomCharacterMovementComponent)
+	bool DashNow = value.Get<bool>();
+	if (DashNow)
 	{
 		PlayDashSound();
-		CustomCharacterMovementComponent->DashPressed();
+		if (IsValid(CustomCharacterMovementComponent))
+		{
+			CustomCharacterMovementComponent->DashPressed();
+		}
 	}
+	
 }
-
 
 #pragma endregion
 
@@ -220,11 +221,7 @@ void ABasePlayer::dodge(const FInputActionValue& value)
 void ABasePlayer::StartCountdown_Implementation(int Timer)
 {
 	if (IsLocallyControlled())
-	{
-		// Disable Inputs
-		APlayerController* PlayerController = Cast<APlayerController>(GetController());
-		DisableInput(PlayerController);
-		
+	{	
 		// SpawnCountdown Widget For Online & Single Player
 		if (GetLocalRole() == ROLE_Authority)
 		{
@@ -275,7 +272,6 @@ void ABasePlayer::StartGame_Implementation()
 	GameStarted = true;
 }
 
-
 void ABasePlayer::CustomTakeDamage_Implementation()
 {
 
@@ -312,7 +308,6 @@ void ABasePlayer::CustomTakeDamage_Implementation()
 	}
 
 }
-
 
 void ABasePlayer::GameOver_Implementation(bool bWonGame)
 {
@@ -352,7 +347,6 @@ void ABasePlayer::SpawnGameOverWidget_Implementation(bool bWonGame)
 	}
 }
 
-
 void ABasePlayer::HandleDestruction()
 {
 	if (IsValid(AudioComponent))
@@ -373,7 +367,6 @@ void ABasePlayer::HandleDestruction()
 	}
 
 }
-
 
 void ABasePlayer::OnTakeDamageMontageCompleted(UAnimMontage* AnimMontage, bool bInterrupted)
 {
@@ -533,6 +526,7 @@ void ABasePlayer::PlayDashSound()
 	if (IsValid(DashSound))
 	{
 		UGameplayStatics::PlaySoundAtLocation(this,DashSound,GetActorLocation(),1.0,1.0,DashSoundStartTime);
+		UE_LOG(LogTemp, Warning, TEXT("PlayDashSound!"));
 	}
 }
 

@@ -15,9 +15,7 @@
 void ALocalMultiplayer::PostLogin(APlayerController* NewPlayer)
 {
     Super::PostLogin(NewPlayer);
-
 }
-
 
 
 void ALocalMultiplayer::BeginPlay()
@@ -117,7 +115,7 @@ void ALocalMultiplayer::BeginPlay()
     HandleInputAssignment();
 
     FTimerHandle StartGameTimerHandle;
-    GetWorld()->GetTimerManager().SetTimer(StartGameTimerHandle, this, &ThisClass::StartCountdown, .5f, false);
+    GetWorld()->GetTimerManager().SetTimer(StartGameTimerHandle, this, &ThisClass::StartCountdown, .3f, false);
 
 }
 
@@ -164,10 +162,13 @@ void ALocalMultiplayer::StartCountdown()
 {
     Super::StartCountdown();
 
-    if (IsValid(SharedInputPawn) and not TestingFlag)
+    if (IsValid(SharedInputPawn))
     {
         SharedInputPawn->StartCountdown(CountdownTime);
-        UE_LOG(LogTemp, Warning, TEXT("LocalMultiplayer->StartCountdown, testing not active"));
+    }
+    if (not TestingFlag and IsValid(SharedInputPawn))
+    {
+        SharedInputPawn->DisableInput(SharedPlayerController);
     }
 
 }
@@ -202,7 +203,6 @@ void ALocalMultiplayer::HandleMatchHasEnded()
         NewGameOverWidget->MenuSetup();
     }
 }
-
 
 void ALocalMultiplayer::RemovePlayers()
 {

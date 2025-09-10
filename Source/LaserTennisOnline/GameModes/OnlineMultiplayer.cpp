@@ -11,7 +11,6 @@
 
 void AOnlineMultiplayer::PostLogin(APlayerController* NewPlayer)
 {
-
     Super::PostLogin(NewPlayer);
 
     // Destroy Default Player Pawn
@@ -42,6 +41,7 @@ void AOnlineMultiplayer::PostLogin(APlayerController* NewPlayer)
             PlayerStart1->GetActorRotation());
             NewPlayer->Possess(Player1);
         }
+
     }
     // Assign Player 2 to Client
     else
@@ -69,32 +69,26 @@ void AOnlineMultiplayer::PostLogin(APlayerController* NewPlayer)
         DelayedStartCountdown();
     }
 
+    // Disable Inputs
+    if (NewPlayer && NewPlayer->GetPawn())
+    {
+        NewPlayer->GetPawn()->DisableInput(NewPlayer);
+    }
+
 }
 
 void AOnlineMultiplayer::BeginPlay()
 {
     Super::BeginPlay();
-
-    SetupTimer();
 }
 
 void AOnlineMultiplayer::StartCountdown()
 {
     UE_LOG(LogTemp, Warning, TEXT("Online Multiplayer: Start Countdown!"));
-    for (int i=0; i<laserPlatforms1.Num(); ++i)
-    {
-        ALaserActivationPlatform* Platform1 = Cast<ALaserActivationPlatform>(laserPlatforms1[i]);
-        ALaserActivationPlatform* Platform2 = Cast<ALaserActivationPlatform>(laserPlatforms2[i]);
-        if (Platform1 and Platform2)
-        {
-            Platform1->Activate();
-            Platform2->Activate();
-        }
-    }
     
     Super::StartCountdown();
 
-    if (Player1)
+    if (IsValid(Player1))
     {
         Player1->StartCountdown(CountdownTime);
     }

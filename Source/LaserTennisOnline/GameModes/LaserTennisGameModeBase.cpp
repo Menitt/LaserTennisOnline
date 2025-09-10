@@ -18,6 +18,7 @@
 
 void ALaserTennisGameModeBase::SetupGame()
 {
+    UE_LOG(LogTemp, Warning, TEXT("GameMode->SetupGame()"));
     TArray<AActor*> TempArray;
 
     // Get Laser Platforms
@@ -48,12 +49,11 @@ void ALaserTennisGameModeBase::SetupGame()
         MegaScreen = Cast<AMegaScreen>(TempArray[0]);
     }
 
-
-
 }
 
 void ALaserTennisGameModeBase::SetupTimer()
 {
+    UE_LOG(LogTemp, Warning, TEXT("GameMode->SetupTimer()"));
     GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ALaserTennisGameModeBase::ManagePlatforms, 0.5f, true);
 }
 
@@ -187,19 +187,16 @@ int ALaserTennisGameModeBase::GetNumberPlatformsByKey(const TArray<int>& Platfor
 
 void ALaserTennisGameModeBase::PostLogin(APlayerController* NewPlayer)
 {
-    
+    UE_LOG(LogTemp, Warning, TEXT("GameMode->PostLogin()"));
     Super::PostLogin(NewPlayer);
     PlayerCount++;
-    if (PlayerCount == 1)
-    {
-        SetupGame();
-    }
-
 }
 
 void ALaserTennisGameModeBase::BeginPlay()
 {
+    UE_LOG(LogTemp, Warning, TEXT("GameMode->BeginPlay()"));
     Super::BeginPlay();
+    SetupGame();
 }
 
 void ALaserTennisGameModeBase::GameOver()
@@ -232,23 +229,20 @@ void ALaserTennisGameModeBase::HandleMatchHasEnded()
 
 void ALaserTennisGameModeBase::ReturnToMainMenuHost()
 {
-
     // UGameplayStatics::OpenLevel(GetWorld(), MainMenuLevel);
-
     Super::ReturnToMainMenuHost();
 }
 
 void ALaserTennisGameModeBase::StartGame()
 {
+    UE_LOG(LogTemp, Warning, TEXT("GameMode->StartGame()"));
     SetupTimer();
-
     UpdateHealthPanel();
 }
 
 void ALaserTennisGameModeBase::StartCountdown()
 {
-    
-
+    UE_LOG(LogTemp, Warning, TEXT("GameMode->StartCountdown()"));
     // Setup Platforms
     for (int i=0; i<laserPlatforms1.Num(); ++i)
     {
@@ -275,12 +269,12 @@ void ALaserTennisGameModeBase::StartCountdown()
 
 void ALaserTennisGameModeBase::DelayedStartCountdown()
 {
+    UE_LOG(LogTemp, Warning, TEXT("GameMode->DelayedStartCountdown()"));
     // Only used in Online multiplayer
     // Set the timer to call MyFunction every 1 second, for 5 seconds
     FTimerHandle NewTimerHandle;
-    GetWorld()->GetTimerManager().SetTimer(NewTimerHandle, this, &ALaserTennisGameModeBase::StartCountdown, 0.5f, false);
+    GetWorld()->GetTimerManager().SetTimer(NewTimerHandle, this, &ALaserTennisGameModeBase::StartCountdown, 0.05f, false);
 }
-
 
 void ALaserTennisGameModeBase::UpdateHealthPanel()
 {
